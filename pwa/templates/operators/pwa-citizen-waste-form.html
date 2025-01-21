@@ -1,0 +1,51 @@
+{% extends "pwa_base.html" %}
+{% load i18n app_tags %}
+
+{% block title %} <span class="tiny">Recogidas</span> {% endblock %}
+{% block content %}
+    <h2 class="text-center">Formulario de Recogida</h2>
+    <p class="text-center"><strong>Fecha: </strong>{{today|date:"Y-m-d H:i:s"}}</p>
+    <div class="col-12">
+        <div class="row my-2">
+            <form method="post" action="{% url 'pwa-operator-citizen-waste-save' %}">
+                {% csrf_token %}
+                <input type="hidden" name="citizen_id" value="{{citizen.pk}}">
+                <input type="hidden" id="accept" name="accept" value="">
+                <div class="col-12 text-center">Seleccione residuo</div>
+                <div class="col-12 text-center">
+                    <select class="form form-control w-100 text-center" name="waste">
+                        {% for item in waste_list %}
+                            <option value="{{item.id}}" {%if item.id|slugify == waste_id%}selected{%endif%}>{{item.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 text-center">Cantidad</div>
+                <div class="col-12 text-center">
+                    <input class="form  form-control w-100 text-center" type="text" value="{{units}}" name="units">
+                </div>
+                <div class="row my-2"><div class="col-12">
+                    {%if msg != ""%}<div class="alert alert-danger"><small>{{msg|safe}}</small></div>{%else%}&nbsp;{%endif%}
+                </div></div>
+                <div class="row">
+                    <div class="col-6 text-center">
+                        <button type="submit" class="btn btn-success sinpromi"> <i class="fas fa-save fa-3x"></i> <br>Añadir residuo </button>
+                    </div>
+                    <div class="col-6 text-center">
+                        <button type="submit" class="btn btn-warning sinpromi" onclick="$('#accept').val('1')"> 
+                            <i class="fas fa-save fa-3x"></i> <br>Aceptar entrega </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <h2 class="text-center">Listado de residuos</h2>
+    {% for item in citizen.wastes.all %}
+        <div class="row">
+            <div class="col-8">{{item.waste}}</div>
+            <div class="col-4 text-end">{{item.units}}</div>
+        </div>
+    {% endfor %}
+    <div class="row my-2"><div class="col-12">&nbsp;</div></div>
+    <a href="{% url "pwa-operator-citizen-end" citizen.id %}" class="btn btn-danger">Finalizar</a>
+{% endblock %}
+{% block footer %} {% include "operators/footer.html" %} {% endblock %}

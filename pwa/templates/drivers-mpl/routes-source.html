@@ -1,0 +1,30 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+<div class="row m-0">
+    <div class="col-12" id="pl-list">
+        <select class="form-control pl-list py-3" id="source" name="source">
+            <option value="">{% trans "-- Seleccione un Mini Punto Limpio --" %}</option>
+            {% for item in item_list %} <option value="{{item.id}}">{{item.description}}</option> {% endfor %}
+        </select>
+    </div>
+ 
+    <div class="col-6 my-4">
+        <button id="btn-next" class="btn btn-md btn-primary w-100 ark" data-url="{% url "pwa-driver-mpl-routes-wastes" %}" 
+            data-target="div-step2" data-value="" data-route="{{route.id}}" disabled><strong>{% trans "Continuar" %}</strong></button>
+    </div>
+        
+    <div class="col-12 my-2" id="div-step2"> </div>
+    {#<div class="col-12 my-2"  id="div-step3"> </div>#}
+</div>
+<script>
+    $("#source").change(function(){
+        var val = $(this).val();
+        if (val != ""){
+            $("#btn-next").data("value", val);
+            $("#btn-next").prop("disabled", "");
+        }
+    });
+</script>
+{% endblock %}

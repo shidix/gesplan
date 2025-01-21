@@ -1,0 +1,302 @@
+from django.db import models
+from django.utils.translation import gettext_lazy as _ 
+import django.utils.timezone as tz
+import datetime 
+
+from .models import Company, Facility, Truck
+
+'''
+    ROUTES
+'''
+class Route(models.Model):
+    #start_location = models.PointField(verbose_name = 'Localización Inicial', null=True, blank=True)
+    #end_location = models.PointField(verbose_name = 'Localización Final', null = True, blank=True)
+    start_kilometers = models.BigIntegerField(verbose_name="Kilometros al inicio", null=True, blank=True)
+    end_kilometers = models.BigIntegerField(verbose_name="Kilometros al finalizar", null=True, blank=True)
+    date = models.DateField(default = tz.now() + datetime.timedelta(days=1), verbose_name=_('Fecha de la ruta'))
+    start_time = models.TimeField(verbose_name=_("Hora inicio"), blank=True, null=True, default=None)
+    end_time = models.TimeField(verbose_name=_("Hora finalizacion"), blank=True, null=True, default=None)
+    code = models.CharField(max_length=8, unique=True, verbose_name='Código')
+
+    #start_lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
+    #start_lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+    #end_lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
+    #end_lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+
+    truck = models.ForeignKey(Truck, on_delete=models.PROTECT, verbose_name='Camión')
+    #driver = models.ForeignKey(Driver, on_delete=models.PROTECT, verbose_name=_('Conductor'))
+    company = models.ForeignKey(Company, verbose_name=_('Company'), on_delete=models.SET_NULL, null=True, blank=True)
+    source = models.ForeignKey(Facility, verbose_name=_('Origen'), on_delete=models.SET_NULL, null=True, blank=True, related_name="routes_source")
+    target = models.ForeignKey(Facility, verbose_name=_('Destino'), on_delete=models.SET_NULL, null=True, blank=True, related_name="routes_target")
+
+    def toJSON(self):
+        route = self
+        df = DateFormat(self.date)
+        points =[]
+        for point in route.points.all():
+            points.append(point.toJSON())
+        myroute = {'pk':route.pk, 'truck':route.truck.number_plate, 'driver': route.driver.toJSON(),
+             'points':points, 'date':df.format('Y-m-d'), 'code':route.code, 'start_time': route.start_time, 'end_time': route.end_time,
+         'start_location': str(route.start_location), 'end_location': str(route.end_location) , 'start_kilometers': route.start_kilometers,
+         'end_kilometers': route.end_kilometers}
+        return myroute
+
+    @property
+    def is_closed(self):
+        return not (self.end_time is None)
+
+    @property
+    def operation_time(self):
+        time = 0
+        for point in self.points.all():
+            time += point.facility.fac_type.operation_time
+        return time * 60
+
+    def next_order_point(self):
+        try:
+            return ((self.points.all().order_by('-ordering')[0]).ordering) + 1
+        except:
+            return 1
+
+    def __str__(self):
+        return ("[%s] %s" % (self.date, self.code))
+
+    class Meta:
+        verbose_name=_('Ruta')
+        verbose_name_plural=_('Rutas')
+        ordering=['-date']
+
+
+class PointRoute(models.Model):
+    ordering = models.IntegerField(verbose_name=_('Orden'));
+    ref = models.IntegerField(verbose_name=_('Orden'), default="0", null=True, blank=True);
+    weight = models.DecimalField(verbose_name = _('Peso'), max_digits = 10, decimal_places = 2, default=0.)
+    verified_driver = models.DateTimeField(default=tz.datetime.max, blank=True)
+    verified_operator= models.DateTimeField(default=tz.datetime.max, blank=True)
+
+    route = models.ForeignKey(Route, related_name='points', verbose_name=_('Ruta'), on_delete=models.CASCADE)
+    facility = models.ForeignKey(Facility, related_name='+', verbose_name='Instalación', on_delete=models.SET_NULL, null=True)
+    source = models.ForeignKey(Facility, verbose_name=_('Punto de origen'), on_delete=models.SET_NULL, related_name='pr_source', null=True, default=None, blank=True)
+    #action = models.ForeignKey(PointAction, verbose_name='Acción')
+    #container = models.ForeignKey(WasteInFacility, verbose_name = _('Contenedor'), null=True, blank=True)
+    #waste = models.ForeignKey(Waste, verbose_name = _('Residuo'), null=True)
+
+    @property
+    def verified_time(self):
+        if self.verified_driver < self.verified_operator:
+            return (self.verified_driver)
+        else:
+            return (self.verified_operator)
+
+    @property
+    def is_loadpoint(self):
+        return (self.action.code == "02")
+
+    @property
+    def is_downloadpoint(self):
+        return (self.action.code == "01")
+
+    @property
+    def is_blocked(self):
+        return (self.verified_driver < tz.now() or self.verified_operator < tz.now())
+
+    @property
+    def get_waste(self):
+        if self.container is None:
+            return "Ninguno"
+        else:
+            return "%s - %s" % (self.container.code, self.container.waste.name)
+
+    @property
+    def location_at(self):
+        if not self.facility.code.startswith('MPL'):
+            return self.facility.location
+        else:
+            tray = mdltray.Tray.objects.filter(code=self.facility.code)
+            tracks = mdltray.TrayTrack.objects.filter(tray=tray, date__lte = self.route.date).order_by('-date')
+            if (tracks.first()):
+                return (tracks.first().location)
+            else:
+                return None
+        return None
+
+
+    def get_opposite(self):
+        result = None
+        if self.container is not None:
+            result = PointRoute.objects.filter(container=self.container, route=self.route).exclude(pk=self.id).first()
+        return result
+
+    def toJSON(self):
+        result = {}
+        try :
+
+            #result = {'pk':self.pk,'action':self.action.name,'facility':self.facility.description, 'weight':self.weight,
+            #'waste':self.get_waste, 'waste_type': self.waste.name ,'driver':DateFormat(self.verified_driver).format('Y-m-d H:i:s'),
+            #'operator':DateFormat(self.verified_operator).format('Y-m-d H:i:s')}
+            action_name = ""
+            if self.action != None:
+                action_name = self.action.name
+
+            result = {'pk':self.pk,'action':action_name,'facility':self.facility.description, 'weight':self.weight,
+            'waste':self.get_waste, 'driver':DateFormat(self.verified_driver).format('Y-m-d H:i:s'),
+            'operator':DateFormat(self.verified_operator).format('Y-m-d H:i:s')}
+
+            waste_type = ""
+            if self.waste != None:
+                waste_type = self.waste.name
+
+            result['waste_type'] = waste_type
+
+            if (self.facility.fac_type.code in ["MPL", "RUMPL"]):
+                geolocator = GoogleV3(api_key='AIzaSyADySKCYXjwAAYN0HHWDN0wA_a3SZANdt8')
+                location = geolocator.reverse("%lf, %lf" % (self.facility.location.y, self.facility.location.x))
+                location = location[0]
+                result['facility'] = location.address
+            if self.waste != None:
+                if self.waste.name == "Minipunto Residuos":
+                    wastes_mpl = WasteInFacility.objects.filter(facility=self.facility)
+                    wastes_json = []
+                    for item in wastes_mpl:
+                        if item.waste.name == "Minipunto Residuos" or item.waste.name == "Mover MPL":
+                            continue
+                        mpl_action = None
+                        try:
+                            mpl_action = item.minipoint_action.filter(route=self.route)[0]
+                        except:
+                            pass
+                        weight="0.00"
+                        if mpl_action != None:
+                            weight = mpl_action.weight
+
+                        waste_obj = {
+                            'pk' : item.pk,
+                            'name': item.waste.name,
+                            'weight': weight
+                        }
+
+
+                        wastes_json.append(waste_obj)
+                    result['wastes_mpl'] = wastes_json
+
+        except Exception as e:
+            print ("[PointRoute toJSON] %s"%(str(e)))
+
+        return(result)
+
+    def jsonDoc(self):
+        result = {}
+
+        try :
+            result["ref"] = "3800000471{}{}".format(self.route.date.year, str(self.ref).zfill(7))
+            result["ini_date"] = "{}".format(self.verified_driver.strftime("%d-%m-%Y %H:%M"))
+            result["ot_nima"] = "{}".format(self.facility.nima)
+            result["ot_address"] = "{}".format(self.facility.address)
+            result["ot_town"] = "{}".format(self.facility.town)
+            if self.facility.company_owner != None:
+                result["co_nif"] = "{}".format(self.facility.company_owner.nif)
+                result["co_name"] = "{}".format(self.facility.company_owner.name)
+                result["co_nima"] = "{}".format(self.facility.nima)
+                result["co_reg_number"] = "{}".format(self.facility.company_owner.register_number)
+                result["co_address"] = "{}".format(self.facility.company_owner.address)
+                result["co_cp"] = "{}".format(self.facility.company_owner.cp)
+                result["co_town"] = "{}".format(self.facility.company_owner.town)
+                result["co_province"] = "{}".format(self.facility.company_owner.province)
+                result["co_phone"] = "{}".format(self.facility.company_owner.phone)
+                result["co_email"] = "{}".format(self.facility.company_owner.email)
+            if self.facility.company != None:
+                result["cm_nif"] = "{}".format(self.facility.company.nif)
+                result["cm_name"] = "{}".format(self.facility.company.name)
+                result["cm_nima"] = "{}".format(self.facility.nima)
+                result["cm_reg_number"] = "{}".format(self.facility.company.register_number)
+                result["cm_address"] = "{}".format(self.facility.company.address)
+                result["cm_cp"] = "{}".format(self.facility.company.cp)
+                result["cm_town"] = "{}".format(self.facility.company.town)
+                result["cm_province"] = "{}".format(self.facility.company.province)
+                result["cm_phone"] = "{}".format(self.facility.company.phone)
+                result["cm_email"] = "{}".format(self.facility.company.email)
+            result["res_ler"] = "{}".format(self.waste.ler)
+            result["res_desc"] = "{}".format(self.waste.description)
+            result["res_treatment_code"] = "{}".format(self.waste.treatment.code)
+            result["res_treatment_desc"] = "{}".format(self.waste.treatment.description)
+            result["res_op_code"] = "{}".format("")
+            result["res_amount"] = "{}".format(self.weight)
+            result["trans_plate"] = "{}".format(self.route.truck.number_plate)
+            result["trans_nif"] = "{}".format(self.route.truck.company.nif)
+            result["trans_name"] = "{}".format(self.route.truck.company.name)
+            result["trans_nima"] = "{}".format("")
+            result["trans_insc"] = "{}".format(self.route.truck.company.register_number)
+            result["trans_addr"] = "{}".format(self.route.truck.company.address)
+            result["trans_cp"] = "{}".format(self.route.truck.company.cp)
+            result["trans_town"] = "{}".format(self.route.truck.company.town)
+            result["trans_province"] = "{}".format(self.route.truck.company.province)
+            result["trans_phone"] = "{}".format(self.route.truck.company.phone)
+            result["trans_email"] = "{}".format(self.route.truck.company.email)
+
+        except Exception as e:
+            print ("[PointRoute toJSON] %s"%(str(e)))
+        return(result)
+
+    def is_editable(self):
+        return (not self.is_blocked and self.action.code == "01")
+
+    @property
+    def class_verified(self):
+        if (self.verified_driver <= tz.now()) and (self.verified_operator <= tz.now()):
+            return "success"
+        if (self.verified_driver <= tz.now()) or (self.verified_operator <= tz.now()):
+            return "warning"
+        return "danger"
+
+    @property
+    def class_verified_pwa(self):
+        if (self.verified_driver <= tz.now()) and (self.verified_operator <= tz.now()):
+            return "success"
+        if (self.verified_driver <= tz.now()):
+            return "primary"
+        if (self.verified_operator <= tz.now()):
+            return "warning"
+        return "secondary"
+
+    @property
+    def icon_verified(self):
+        if (self.verified_driver <= tz.now()) and (self.verified_operator <= tz.now()):
+            return "fa fa-check"
+        if (self.verified_driver > tz.now()) and (self.verified_operator > tz.now()):
+            return "fa fa-remove"
+        if (self.verified_driver <= tz.now()):
+            #return "glyphicon glyphicon-user"
+            return "fa fa-user"
+        if (self.verified_operator <= tz.now()):
+            return "fa fa-truck"
+
+    @property
+    def icon_verified_pwa(self):
+        if (self.verified_driver > tz.now()) and (self.verified_operator > tz.now()):
+            return "fa fa-minus"
+        if (self.verified_driver <= tz.now()) and (self.verified_operator <= tz.now()):
+            return "fa fa-check"
+        if (self.verified_driver <= tz.now()):
+            #return "glyphicon glyphicon-user"
+            return "fa fa-truck"
+        if (self.verified_operator <= tz.now()):
+            return "fa fa-user"
+
+    def operator_check(self):
+        return (self.verified_operator <= tz.now())
+
+    def driver_check(self):
+        return (self.verified_driver <= tz.now())
+
+    @staticmethod
+    def get_last_ref():
+        return PointRoute.objects.all().aggregate(Max('ref'))["ref__max"] + 1
+
+    def __str__(self):
+        return str(self.facility)
+
+    class Meta:
+        verbose_name = _('Punto de ruta')
+        verbose_name_plural = _('Puntos de ruta')
+        ordering = ['ordering']
+

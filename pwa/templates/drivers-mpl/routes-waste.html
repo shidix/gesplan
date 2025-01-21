@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<form action="{% url 'pwa-driver-mpl-routes-confirm' %}" method="post" id="frmWastes" class="m-0">
+    {% csrf_token %}
+    <input type="hidden" id="route" name="route" value="{{route.id}}" /> 
+    <input type="hidden" id="source" name="source" value="{{source.id}}" /> 
+    {% for item in item_list %}
+        <h3>{{item.waste.description}}</h3>
+        <input type="text" class="form-control" id="{{item.waste.code}}" name="{{item.waste.code}}" value="" />
+    {% endfor %}
+    <div class="text-center mt-3"> <input type="submit" class="btn btn-info" value="{% trans "Enviar" %}"/></div> 
+    {#<button class="btn btn-info saveform" data-form="frmWastes" data-target="div-step3">{% trans "Enviar" %}</button></div>#}
+</form>
+
+{%comment%}
+<select class="form-control ark_change wt-list py-3" id="waste" name="waste" 
+    data-url="{% url "pwa-driver-routes-confirm" %}" data-target="div-step3" data-source="{{source.id}}">
+    <option value="">{% trans "-- Seleccione un Residuo --" %}</option>
+    {% for item in item_list %}
+        <option value="{{item.id}}">{{item.waste.description}}</option>
+    {% endfor %}
+</select>
+{%endcomment%}
+

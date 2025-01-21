@@ -1,0 +1,35 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="fas fa-route white"></i>&nbsp; {% trans 'Ruta' %} </div>
+    <div class="col-1"> <div class="d-flex justify-content-end"> 
+        <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
+            <i class="fas fa-times"></i></button> 
+    </div> </div>
+</div>
+
+<div class="row justify-center">
+    <div class="col-2"> {% trans "Inicio" %}:</div><div class="col-3">{{obj.ini_date|date:"d-m-Y H:i"}} </div>
+    <div class="col-2"> {% trans "Fin" %}:</div><div class="col-3">{{obj.end_date|date:"d-m-Y H:i"}} </div>
+    <div class="col-2"> 
+        {% trans "Finalizada" %}: {%if obj.finish%}<i class="fas fa-check"></i>{%else%}<i class="fas fa-times"></i>{%endif%} </div>
+</div>
+<div class="row justify-center">
+    <div class="col-2"> {% trans "Origen" %}:</div><div class="col-4"> {{obj.source.description|default:""}} </div>
+    <div class="col-2"> {% trans "Destino" %}:</div><div class="col-4"> {{obj.target.description|default:""}} </div>
+</div>
+<div class="row justify-center">
+    <div class="col-2"> {% trans "Vehículo" %}:</div><div class="col-4"> {{obj.driver.truck|default:""}} </div> 
+    <div class="col-2"> {% trans "Conductor" %}:</div><div class="col-4"> {{obj.driver.name|default:""}} </div> 
+</div>
+<div class="row justify-center">
+    <div class="col-2"> {% trans "Residuo" %}:</div><div class="col-4"> {{obj.waste.waste.name|default:""}} </div> 
+    <div class="col-2"> {% trans "Peso" %}:</div>
+    <div class="col-4"> {{obj.weight|default:""}} <br/> <img src="{{obj.image.url}}" alt="imagen peso"/></div> 
+</div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans "Cerrar" %}</button>
+</div>
+

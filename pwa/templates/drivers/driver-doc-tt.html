@@ -1,0 +1,174 @@
+{% load static %}
+
+<table class="table" cellspacing="0" border="0">
+	<tr>
+		<td class="cell" colspan="2" bgcolor="#D9D9D9"><b>
+            <font face="Arial" color="#000000">INFORMACIÓN RELATIVA AL DESTINO DEL TRASLADO</font></b></td>
+	</tr>
+	<tr>
+		<td class="cell" colspan="2" bgcolor="#F2F2F2"><b>
+            <font face="Arial" color="#000000">Información de la instalación de destino</font></b></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIF</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_nif}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Razón social/Nombre</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_name}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIMA</font></td>
+		<td class="cell" sdval="3800000171" sdnum="3082;"><font face="Arial" color="#000000">{{datas.co_nima}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Nº inscripción</font></td>
+		<td class="cell"><font face="Arial" size=1 color="#000000">{{datas.co_reg_number}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Tipo centro gestor</font></td>
+		<td class="cell"><font face="Arial" color="#000000">G04</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Dirección</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_address}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">C.P.</font></td>
+		<td class="cell" sdval="38500" sdnum="3082;"><font face="Arial" color="#000000">{{datas.co_cp}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Municipio</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_town}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Provincia</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_province}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Teléfono</font></td>
+		<td class="cell" sdval="922629732" sdnum="3082;"><font face="Arial" color="#000000">{{datas.co_phone}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Correo electrónico</font></td>
+		<td class="cell"><font face="Arial" color="#000000">{{datas.co_email}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell" colspan="2" bgcolor="#F2F2F2"><b><font face="Arial" color="#000000"> Información de la empresa autorizada para realizar 
+            operaciones de tratamiento de residuos, incluido el almacenamiento, en la instalación de destino </font></b></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIF</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_nif}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Razón social/Nombre</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" size=1 color="#000000">{{datas.cm_name}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIMA</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_nima}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Nº inscripción</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_reg_number}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Dirección</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_address}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">C.P.</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_cp}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Municipio</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_town}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Provincia</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_province}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Teléfono</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_phone}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Correo electrónico</font></td>
+		<td class="cell" sdval="0" sdnum="3082;0;;;"><font face="Arial" color="#000000">{{datas.cm_email}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell" colspan="2" bgcolor="#D9D9D9"><b>
+            <font face="Arial" color="#000000">INFORMACIÓN SOBRE EL RESIDUO QUE SE TRASLADA</font></b></td>
+	</tr>
+	<tr>
+		<td class="cell"> <font face="Arial" color="#000000">Código LER/LER- extendido</font></td>
+		<td class="cell"><font face="Arial" size=1>{{datas.res_ler}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Descripción del residuo:</font></td>
+		<td class="cell"><font color="#000000">{{datas.res_desc}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Operación de tratamiento destino (código R)</font></td>
+		<td class="cell"><font color="#000000">{{datas.res_treatment_code}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Código operación <br>tratamiento destino <br>desagregado (4 cifras)</font></td>
+		<td class="cell"><font color="#000000">{{datas.res_op_code}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Descripción operación tratamiento</font></td>
+		<td class="cell"><font color="#000000">{{datas.res_treatment_desc}}</font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Cantidad (kg netos)</font></td>
+		<td class="cell"><font color="#000000">{{datas.res_amount}}</font></td>
+	</tr>
+</table>
+<table class="table" cellspacing="0" border="0">
+	<tr>
+		<td class="cell" colspan="2" bgcolor="#D9D9D9"><b><font face="Arial" color="#000000">
+            INFORMACIÓN DEL SISTEMA DE RESPONSABILIDAD AMPLIADA DEL PRODUCTOR QUE, EN SU CASO, DECIDE LA INSTALACIÓN</font></b></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIF</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Razón social/Nombre</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">NIMA</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Nº inscripción</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Dirección</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">C.P.</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Municipio</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Provincia</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Teléfono</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+	<tr>
+		<td class="cell"><font face="Arial" color="#000000">Correo electrónico</font></td>
+		<td class="cell"><font face="Arial" color="#000000"><br></font></td>
+	</tr>
+</table>

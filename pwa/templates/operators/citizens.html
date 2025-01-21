@@ -1,0 +1,40 @@
+{% extends "pwa_base.html" %}
+{% load i18n app_tags %}
+
+{% block title %} <span class="tiny">Incidents</span> {% endblock %}
+{% block content %}
+    {% csrf_token %}
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px">
+        <div class="col-6"><small>
+            {{today|date:"Y-m-d"}}<br/>
+            Nº de entregas: {{citizen_list|length}} 
+        </small></div>
+        <div class="col-6 text-end">
+            <a class="btn btn-success btn-sm" onclick="{% ark 'pwa-operator-citizen-edit' 'div-content' %}">Nueva Entrega</a>
+        </div>
+    </div>
+    <div class="row" style="border-bottom:1px solid #aaa; margin-bottom:10px">
+        <div class="col-4 text-center">Identificación</div>
+        <div class="col-4 text-center">Matrícula</div>
+        <div class="col-4 text-center">Notificado</div>
+    </div>
+    {% for item in citizen_list %}
+        <div onclick="{% ark 'pwa-operator-citizen-edit' 'div-content' citizen_id=item.id %}">
+            <div class="row" style="font-size:0.8em">
+                <div class="col-4 text-center">{{item.identification}}</div>
+                <div class="col-4 text-center">{{item.plate}}</div>
+                <div class="col-4 text-center"></div>
+            </div>
+            <div class="row" style="font-size:0.8em"> 
+                <div class="col-12">
+                    {% for item2 in item.wastes.all %}
+                        {{item2.waste}}: {{item2.units}}{%if not forloop.last %};{%endif%}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <br/>
+    {% endfor %}
+{% endblock %}
+{% block footer %} {% include "operators/footer.html" %} {% endblock %}
+

@@ -1,0 +1,43 @@
+<div class="col-12">
+    <div class="row" style="border-bottom:1px solid #aaa; margin-bottom:10px">
+        <div class="col-4 text-center">Nº Inc</div>
+        <div class="col-3 text-center">Fecha</div>
+        <div class="col-2 text-center">Hora</div>
+        <div class="col-3 text-center">Estado</div>
+    </div>
+    <div class="row" style="font-size:0.8em">
+        <div class="col-4 text-center">{{incident.code}}</div>
+        <div class="col-3 text-center">{{incident.creation_date|date:"d-m-Y"}}</div>
+        <div class="col-2 text-center">{{incident.creation_date|date:"H:i:s"}}</div>
+        <div class="col-3 text-center">{% if incident.closed %}Cerrada{% else %}Abierta{% endif %}</div>
+    </div>
+    <div class="row my-2">
+        <form method="post" action="{% url 'pwa-operator-incident-save' %}">
+            {% csrf_token %}
+            <input type="hidden" name="incident_id" value="{{incident.pk}}">
+            <div class="col-12 text-center">Tipo</div>
+            <div class="col-12 text-center">
+                <select class="form form-control w-100 text-center" name="type">
+                    {% for item in type_list %}
+                        <option value="{{item.id}}" {%if item.id == incident.type.id%}selected{%endif%}>{{item.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 text-center">Asunto</div>
+            <div class="col-12 text-center">
+                <input class="form  form-control w-100 text-center" type="text" value="{{incident.subject}}" name="subject">
+            </div>
+            <div class="col-12 text-center">Descripción</div>
+            <div class="col-12 text-center">
+                <textarea class="form form-control w-100 text-center" name="description">{{incident.description}}</textarea>
+            </div>
+
+            <div class="row my-2"><div class="col-12">&nbsp;</div></div>
+            <div class="row my-2"><div class="col-12">&nbsp;</div></div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-success sinpromi"> <i class="fas fa-save fa-3x"></i> <br>Guardar </button>
+            </div>
+        </form>
+
+    </div>
+</div>

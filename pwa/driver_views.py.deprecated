@@ -1,0 +1,380 @@
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponse
+from datetime import datetime
+
+from gesplan.decorators import group_required_pwa
+from gesplan.commons import get_or_none, get_param, show_exc
+from gestion.models import EmployeeTruck, Truck, Facility, Waste, WasteInFacility, Route
+
+
+'''
+    DRIVERS
+'''
+@group_required_pwa("drivers")
+def driver_home(request):
+    try:
+        if request.user.employee.truck == None:
+            return redirect(reverse("pwa-driver-select-truck"))
+        return render(request, "drivers/home.html", {"now": datetime.now()})
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+'''
+    ROUTES
+'''
+@group_required_pwa("drivers")
+def driver_routes(request):
+    route = Route.objects.filter(finish=False).first()
+    now = datetime.now()
+    idate = now.replace(hour=0, minute=0)
+    edate = now.replace(hour=23, minute=59)
+    item_list = Route.objects.filter(driver=request.user.employee, finish=True, ini_date__range=(idate, edate))
+    return render(request, "drivers/routes.html", {'route': route, 'item_list': item_list})
+
+@group_required_pwa("drivers")
+def driver_routes_source(request):
+    #item_list = Facility.objects.filter(description__icontains="Punto")
+    #return render(request, "drivers/routes-source.html", {'item_list': item_list})
+    context = {'truck': request.user.employee.truck, "item_list": Facility.getPL()}
+    return render(request, "drivers/routes-source.html", context)
+
+@group_required_pwa("drivers")
+def driver_routes_waste(request):
+    source = get_or_none(Facility, get_param(request.GET, "value"))
+    #item_list = Waste.objects.all()
+    return render(request, "drivers/routes-waste.html", {'item_list': source.waste.filter(toRoute=True), 'source': source})
+
+@group_required_pwa("drivers")
+def driver_routes_confirm(request):
+    source = get_or_none(Facility, get_param(request.GET, "source"))
+    waste = get_or_none(WasteInFacility, get_param(request.GET, "value"))
+    return render(request, "drivers/routes-confirm.html", {'waste': waste, 'source': source})
+
+@group_required_pwa("drivers")
+def driver_routes_start(request, source, waste):
+    try:
+        s = get_or_none(Facility, source)
+        w = get_or_none(WasteInFacility, waste)
+        Route.objects.create(source=s, waste=w, truck=request.user.employee.truck, driver=request.user.employee, code="PL")
+        return redirect("pwa-driver-routes")
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+@group_required_pwa("drivers")
+def driver_routes_target(request, route):
+    r = get_or_none(Route, route)
+    #item_list = Facility.objects.filter(description__icontains="Punto")
+    return render(request, "drivers/routes-target.html", {'route': r, 'item_list': Facility.getTargets()})
+
+@group_required_pwa("drivers")
+def driver_routes_finish(request):
+    route = get_or_none(Route, get_param(request.POST, "route"))
+    target = get_or_none(Facility, get_param(request.POST, "target"))
+    weight = get_param(request.POST, "weight")
+    if "file" in request.FILES:
+        image = request.FILES["file"] 
+        route.image = image
+    route.target = target
+    route.weight = weight
+    route.end_date = datetime.now()
+    route.finish = True
+    route.save()
+    return redirect(reverse("pwa-driver-routes"))
+    #return render(request, "drivers/routes-finish.html", {'route': route})
+    #return render(request, "drivers/routes-finish.html", {'route': route, 'target': target, 'weight': weight})
+
+@group_required_pwa("drivers")
+def driver_routes_dir(request, route_id):
+    route = get_or_none(Route, route_id)
+    return render(request, "drivers/driver-doc.html", {'route': route, 'datas': route.jsonDoc()})
+
+
+#@group_required_pwa("drivers")
+##def driver_routes_end(request, route, target):
+#def driver_routes_end(request, route):
+#    try:
+#        r = get_or_none(Route, route)
+#        #t = get_or_none(Facility, target)
+#        #r.target = t
+#        r.end_date = datetime.now()
+#        r.finish = True
+#        r.save()
+#        return redirect(reverse("pwa-driver-routes"))
+#    except Exception as e:
+#        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+#
+
+#@login_required(login_url="/pwa/login/")
+#def driver_incidents(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        incident_list = Incident.objects.filter(owner=request.user)
+#        return render(request, "drivers/incidents.html", {'incident_list':incident_list})
+#    else:
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_incident_edit(request, incident_id=None):
+#    try:
+#        user = request.user.employment
+#        if user.is_driver:
+#            incident = Incident.objects.get(pk=incident_id) if incident_id is not None else None
+#            return render(request, "drivers/pwa-incident-form.html", {'incident': incident, 'type_list': IncidentType.objects.all()})
+#        else:
+#            return redirect(reverse('pwa-home'))
+#    except Exception as e:
+#        print (show_exc(e))
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_incident_save(request):
+#    try:
+#        if request.method == "POST":
+#            user = request.user.employment
+#            if user.is_driver:
+#                type_id = float(request.POST.get("type", ""))
+#                incident_type = IncidentType.objects.get(pk = type_id) if type_id != "" else None 
+#
+#                incident_id = request.POST.get('incident_id', None)
+#                if incident_id != None and incident_id != "":
+#                    obj = Incident.objects.get(pk=incident_id)
+#                else:
+#                    obj = Incident.objects.create(owner=request.user, code=get_incident_code(), creation_date=datetime.datetime.now())
+#                obj.subject = request.POST.get("subject", obj.subject)
+#                obj.description = request.POST.get("description", obj.description)
+#                obj.type = incident_type
+#                obj.save()
+#                return redirect(reverse('pwa-driver-incidents'))
+#        return redirect(reverse('pwa-home'))
+#    except Exception as e:
+#        print (show_exc(e))
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_trays(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        facility = Facility.objects.get(code="EXP")
+#        traytrack_list = TrayTrack.objects.filter(location__distance_lte=(facility.location, D(m=200)), valid=True).order_by("-date")
+#        return render(request, "drivers/trays.html", {'traytrack_list': traytrack_list})
+#    else:
+#        return redirect(reverse('pwa-home'))
+#
+##@login_required(login_url="/pwa/login/")
+##def driver_tray_edit(request, tray_id=None):
+##    try:
+##        user = request.user.employment
+##        if user.is_driver:
+##            tt = TrayTruck.objects.get(pk=tray_id) if tray_id is not None else None
+##            return render(request, "drivers/pwa-tray-form.html", {'traytrack': tt})
+##        else:
+##            return redirect(reverse('pwa-home'))
+##    except Exception as e:
+##        print (show_exc(e))
+##        return redirect(reverse('pwa-home'))
+##
+##@login_required(login_url="/pwa/login/")
+##def driver_tray_save(request):
+##    try:
+##        if request.method == "POST":
+##            user = request.user.employment
+##            if user.is_driver:
+##                type_id = float(request.POST.get("type", ""))
+##                incident_type = IncidentType.objects.get(pk = type_id) if type_id != "" else None 
+##
+##                incident_id = request.POST.get('incident_id', None)
+##                if incident_id != None and incident_id != "":
+##                    obj = Incident.objects.get(pk=incident_id)
+##                else:
+##                    obj = Incident.objects.create(owner=request.user, code=get_incident_code(), creation_date=datetime.datetime.now())
+##                obj.subject = request.POST.get("subject", obj.subject)
+##                obj.description = request.POST.get("description", obj.description)
+##                obj.type = incident_type
+##                obj.save()
+##                return redirect(reverse('pwa-driver-incidents'))
+##        return redirect(reverse('pwa-home'))
+##    except Exception as e:
+##        print (show_exc(e))
+##        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_routes(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        route_list = Route.objects.filter(driver__employment = request.user.employment).order_by('-date')[:10]
+#        return render(request, "drivers/routes.html", {'route_list': route_list})
+#    else:
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_route_view(request, route_id):
+#    from django.contrib.gis.geos import fromstr
+#
+#    try:
+#        user = request.user.employment
+#        if user.is_driver:
+#            route = Route.objects.get(pk=route_id) if route_id is not None else None
+#            return render(request, "drivers/pwa-route-view.html", {'route': route})
+#        else:
+#            return redirect(reverse('pwa-home'))
+#    except Exception as e:
+#        print (show_exc(e))
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_ini_route(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        try:
+#            lat = request.POST["lat"] if "lat" in request.POST else ""
+#            lon = request.POST["lon"] if "lon" in request.POST else ""
+#            route_id = request.POST["route"] if "route" in request.POST else ""
+#            route = Route.objects.get(id=route_id)
+#            route.start_location = Point(float(lat), float(lon))
+#            route.start_time = datetime.datetime.now().strftime('%H:%M:%S') 
+#            route.save()
+#            return redirect(reverse('pwa-driver-route-view', kwargs={'route_id':route.id}))
+#        except Exception as e:
+#            print(e)
+#    return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_end_route(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        try:
+#            lat = request.POST["lat"] if "lat" in request.POST else ""
+#            lon = request.POST["lon"] if "lon" in request.POST else ""
+#            route_id = request.POST["route"] if "route" in request.POST else ""
+#            route = Route.objects.get(id=route_id)
+#            route.end_location = Point(float(lat), float(lon))
+#            route.end_time = datetime.datetime.now().strftime('%H:%M:%S') 
+#            route.save()
+#            return redirect(reverse('pwa-driver-route-view', kwargs={'route_id':route.id}))
+#        except Exception as e:
+#            print(e)
+#    return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_check_point(request, point_id):
+#    user = request.user.employment
+#    if user.is_driver:
+#        try:
+#            point = PointRoute.objects.get(id=point_id)
+#            limit_date = datetime.datetime(9999, 12, 31, 23, 59)
+#            dd = point.verified_driver
+#            driver_date = datetime.datetime(dd.year, dd.month, dd.day, dd.hour, dd.minute) 
+#            if driver_date == limit_date: 
+#                point.verified_driver = tz.now()
+#                check_weight = True
+#            else:
+#                point.verified_driver = tz.datetime.max
+#                check_weight = False
+#            point.save()
+#
+#            waste_code = point.waste.code if point.waste != None else ""
+#            if point.facility.fac_type.code == "MPL" and waste_code not in ["MPLMOVE", "MPLCLEAN"] and check_weight:
+#                forms = []
+#                for waste in point.facility.waste.all():
+#                    try:
+#                        mini = MinipointAction.objects.get(wasteinfac=waste, route=point.route)
+#                    except:
+#                        mini = MinipointAction(wasteinfac=waste, weight=0, route=point.route)
+#                    form = MinipointActionForm(instance=mini)
+#                    forms.append(form)
+#                return render(request, "drivers/pwa-minipointaction-form.html", {'forms':forms, 'route':point.route})
+#            else:
+#                return redirect(reverse('pwa-driver-route-view', kwargs={'route_id':point.route.id}))
+#        except Exception as e:
+#            print(e)
+#    return redirect(reverse('pwa-home'))
+#
+#@login_required
+#def driver_minipoint_weight_save(request):
+#    try:
+#        if request.method == "POST":
+#            try:
+#                item_id = request.POST.get("minipointaction-id", None)
+#                instance = MinipointAction.objects.get(pk=item_id)
+#            except:
+#                instance = MinipointAction()
+#            form = MinipointActionForm(request.POST, instance=instance)
+#            if form.is_valid():
+#                form.save()
+#                return HttpResponse("<div class='alert alert-success save-is-ok'><i class='fas fa-check-circle'></div>")
+#            else:
+#                return HttpResponse("<div class='alert alert-danger save-is-wrong'><i class='fas fa-times-circle'></div>")
+#    except Exception as e:
+#        return (render(request, "full_error_exception.html", {'exc':show_exc(e)}))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_update_amount(request):
+#    if request.POST:
+#        try:
+#            item = PointRoute.objects.get(pk=request.POST["id"])
+#            amount = request.POST["amount"]
+#            item.weight = float(amount.replace(",", "."))
+#            item.save()
+#            return redirect(reverse('pwa-driver-route-view', kwargs={'route_id':item.route.id}))
+#        except Exception as e:
+#            print(e)
+#    return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_view_doc(request, point_id):
+#    user = request.user.employment
+#    if user.is_driver:
+#        try:
+#            point = PointRoute.objects.get(id=point_id)
+#            datas = point.jsonDoc()
+#            return render(request, "drivers/driver_doc.html", {"datas": datas})
+#            #return render(request, "drivers/driver_doc.html", {})
+#        except Exception as e:
+#            print(e)
+#    return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_exp(request):
+#    user = request.user.employment
+#    if user.is_driver:
+#        item = Facility.objects.filter(code = "EXP").first()
+#        return render(request, "drivers/exp.html", {'item': item})
+#    else:
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_wif_edit(request, waste_id):
+#    try:
+#        wif = WasteInFacility.objects.get(pk=waste_id)
+#        return render(request, "drivers/pwa-waste-edit.html", {'wif': wif, 'waste_list': Waste.objects.all()})
+#    except Exception as e:
+#        print (show_exc(e))
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_wif_save(request):
+#    try:
+#        if request.method == "POST":
+#            user = request.user.employment
+#            if user.is_driver:
+#                waste_id = float(request.POST.get("waste", ""))
+#                waste = Waste.objects.get(pk = waste_id) if waste_id != "" else None 
+#
+#                wif_id = request.POST.get('wif_id', None)
+#                obj = WasteInFacility.objects.get(pk=wif_id)
+#                obj.waste = waste
+#                obj.filling_degree = float(request.POST.get("filling_degree", "").replace(",", "."))
+#                obj.save()
+#                return redirect(reverse('pwa-driver-exp'))
+#        return redirect(reverse('pwa-home'))
+#    except Exception as e:
+#        print (show_exc(e))
+#        return redirect(reverse('pwa-home'))
+#
+#@login_required(login_url="/pwa/login/")
+#def driver_manage_routes(request):
+#    request.session["pwa_base"] = "pwa_base.html"
+#    return redirect(reverse('routes'))
+#
+

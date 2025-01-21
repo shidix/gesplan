@@ -1,0 +1,43 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+<div class="row m-0">
+    <div class="col-12 address text-center bg-white py-3 my-2" id="div-step1">
+        <i class="fas fa-warehouse"></i> {% trans "Origen" %}:<br/>
+        <span id="source-name"><strong>{{truck.base_station}}</strong></span>
+    </div>
+
+    <div class="col-12 hidde" id="pl-list" style="display:none">
+        <select class="form-control pl-list py-3" id="source" name="source">
+            <option value="">{% trans "-- Seleccione un Punto Limpio --" %}</option>
+            {% for item in item_list %}
+                <option value="{{item.id}}">{{item.description}}</option>
+            {% endfor %}
+        </select>
+    </div>
+ 
+    <div class="col-6 my-4">
+        <button id="btn-change" class="btn btn-md btn-primary w-100">
+            <strong>{% trans "Cambiar origen" %}</strong></button>
+    </div>
+    <div class="col-6 my-4">
+        <button id="btn-next" class="btn btn-md btn-primary w-100 ark" data-url="{% url "pwa-driver-routes-waste" %}" 
+            data-target="div-step2" data-value="{{truck.base_station.id}}"><strong>{% trans "Continuar" %}</strong></button>
+    </div>
+        
+    <div class="col-12 my-2" id="div-step2"> </div>
+    <div class="col-12 my-2"  id="div-step3"> </div>
+</div>
+<script>
+    $("#btn-change").click(function(){
+        $('#source-name').html('');
+        $('#pl-list').toggle();
+    });
+
+    $("#source").change(function(){
+        $("#btn-next").data("value", $(this).val());
+        $('#source-name').html($("#source option:selected").html());
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "pwa_base.html" %}
+{% load pwasim_tags %}
+
+{% block title %} <span class="tiny">Entregas</span> {% endblock %}
+{% block content %}
+    <div class="col-12">
+        {#{% for point in data.points %}#}
+        {% for point in route_list %}
+            <div class="row my-1 bg-light">
+                <div class="col-9 text-muted small">
+                    <div class="row">
+                        <div class="col-12"> <strong>{{point.route.truck.company.name}}</strong></div>
+                        <div class="col-4"><strong> {{point.route.truck.number_plate}}</strong></div>
+                        <div class="col-8">{{point.action}} {{point.waste.description}}</div>
+                    </div>
+                </div>
+                <div class="col-3 text-end table-cell">
+                    {% if point.verified_driver|verified %}
+                        {% if point.verified_operator|verified %}
+                            <a href="#" class="btn btn-success tiny w-100"> <i class="fas fa-check fa-2x"></i></a>
+                        {% else %}
+                            <a href="{% url 'pwa-operator-route-check' point.pk %}" class="btn btn-info tiny w-100 text-white"> 
+                                <i class="fas fa-truck fa-2x"></i></a>
+                        {% endif %}
+                    {% else %}
+                        <a href="#" class="btn btn-danger tiny w-100"> <i class="fas fa-times fa-2x"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block footer %} {% include "operators/footer.html" %} {% endblock %}

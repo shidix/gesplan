@@ -1,0 +1,58 @@
+{% extends "pwa_base.html" %}
+{% load i18n app_tags %}
+
+{% block title %} <span class="tiny">Sessions</span> {% endblock %}
+{% block content %} 
+    <script>
+        var options = { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 };
+        function success(pos) {
+            var crd = pos.coords;
+            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+crd.latitude+","+crd.longitude+"&key=AIzaSyC1TXaHUhQXiJs-esrEjMPiYipg2tH3Hp8"
+            $.getJSON(url, function (data) {
+                //var address = data.results[0].formatted_address;
+                var components = data.results[0].address_components;
+                var address = components[0]['long_name']+", "+components[1]['long_name']+", "+components[2]['long_name']+", "+components[3]['long_name']+", "+components[4]['long_name'];
+                $("#address").html(address);
+                $("#location").val(address);
+                $(".btn").show();
+            });
+        };
+        function error(err) { console.warn('ERROR(' + err.code + '): ' + err.message); };
+        navigator.geolocation.getCurrentPosition(success, error, options);
+    </script>
+    {% csrf_token %}
+    <p class="text-center"><strong>Sesión del día {{sessions.first.ini_date|date:"Y:m:d"}}</strong></p>
+    <p class="text-center" id="address"> <i class="fas fa-circle-notch fa-spin loader"></i> Cargando... </p>
+    <div class="text-end" style="margin-top: 10px; margin-bottom: 10px">
+        {% if not request.user.employment.workday_started %}
+            <form method="POST" action="{%url 'pwa-operator-ini-workday'%}">
+                {%csrf_token%}
+                <input type="hidden" id="location" name="location" value=""/>
+                <input type="submit" class="btn btn-success btn-sm" value="Iniciar Jornada" style="display:none"/>
+            </form>
+        {% else %}
+            <form method="POST" action="{%url 'pwa-operator-end-workday'%}">
+                {%csrf_token%}
+                <input type="hidden" id="location" name="location" value=""/>
+                <input type="submit" class="btn btn-warning btn-sm" value="Finalizar Jornada" style="display:none"/>
+            </form>
+        {% endif %}
+    </div>
+    {% for item in sessions %}
+        <div class="row" style="font-size:0.8em">
+            <div class="col-5">Hora de entrada</div>
+            <div class="col-7">{{item.ini_date|date:"H:i:s"}}</div>
+            <div class="col-5">Localización</div>
+            <div class="col-7">{{item.ini_loc}}</div>
+            {% if item.is_ended %}
+                <div class="col-5">Hora de salida</div>
+                <div class="col-7">{{item.end_date|date:"H:i:s"}}</div>
+                <div class="col-5">Localización</div>
+                <div class="col-7">{{item.end_loc}}</div>
+            {% endif %}
+        </div>
+        <br/>
+    {% endfor %}
+{% endblock %}
+{% block footer %} {% include "operators/footer.html" %} {% endblock %}
+

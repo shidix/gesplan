@@ -1,0 +1,502 @@
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models import Avg, Sum
+from django.utils.translation import gettext_lazy as _ 
+import django.utils.timezone as tz
+
+import datetime, hashlib, random, string
+
+from gestion.route_lib import route_to_json
+
+'''
+    COMPANIES
+'''
+class Company(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    register_number = models.IntegerField(verbose_name=_('Número de registro'), null=True, default=0)
+    name = models.CharField(max_length=200, verbose_name = _('Razón Social'))
+    #location = models.PointField(verbose_name = _('Dirección'), null=True)
+    nif = models.CharField(max_length=20, null=True, unique=True, verbose_name=_('NIF'))
+    phone = models.CharField(max_length=20, null=True, default = '0000000000', verbose_name = _('Teléfono de contacto'))
+    email = models.EmailField(null=True, verbose_name = _('Email de contacto'))
+
+    lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
+    lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+
+    address = models.CharField(max_length=255, verbose_name='Dirección', default="", null=True, blank=True)
+    cp = models.CharField(max_length=25, verbose_name='Postal Code', default="", null=True, blank=True)
+    town = models.CharField(max_length=255, verbose_name='Municipio', default="", null=True, blank=True)
+    province = models.CharField(max_length=255, verbose_name='Ciudad', default="", null=True, blank=True)
+
+    def toJSON(self):
+        company = { 'pk': self.pk, 'name': self.name}
+        return company
+
+    def __str__(self):
+        return "%s - %s" % (self.nif, self.name)
+
+    class Meta:
+        verbose_name = _('Empresa')
+        verbose_name_plural = _('Empresas')
+
+'''
+    WASTE
+'''
+#class Priority(models.Model):
+#    code = models.CharField(verbose_name=_('Código'), max_length=10, unique = True)
+#    description = models.CharField(verbose_name = _('Descripción'), max_length=200, null = True)
+#    weight = models.IntegerField(default=100, verbose_name= _('Peso'))
+#
+#    def toJSON(self):
+#        priority = {'pk': self.pk, 'code': self.code, 'description': self.description, 'weight': self.weight}
+#        return priority
+#
+#    class Meta:
+#        verbose_name = _('Prioridad')
+#        verbose_name_plural = _('Prioridades')
+#        ordering = ['-weight']
+#
+#    def __str__(self):
+#        return (self.code)
+
+class UnitType(models.Model):
+    code = models.CharField(verbose_name=_('Código'), max_length=10, default = 'Kg', unique = True)
+    description = models.CharField(verbose_name = _('Descripción'), max_length=200, null = True)
+
+    class Meta:
+        verbose_name = _('Tipo de unidad')
+        verbose_name_plural = _('Tipos de unidades')
+
+    def __str__(self):
+        return (self.code)
+
+class WasteTreatment(models.Model):
+    code = models.CharField(verbose_name=_('Código'), max_length=10, default='',blank=True, null=True)
+    description = models.CharField(verbose_name = _('Descripción'), max_length=900, null=True)
+
+    class Meta:
+        verbose_name = _('Tratamiento del residuo')
+        verbose_name_plural = _('Tratamientos de los residuos')
+
+    def __str__(self):
+        return (self.code)
+
+class Waste(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    alert = models.BooleanField(default = False, verbose_name=_('Alertas'));
+    dangerous = models.BooleanField(default = False, verbose_name=_('Peligroso'));
+    ler = models.BigIntegerField(verbose_name='LER', unique=False, null=True)
+    day_limit = models.FloatField(verbose_name=_('Límite diario'), blank=True, null=True, help_text=_("Límite diario de recogidas por usuario"))
+    score = models.FloatField(verbose_name="Puntuacion", blank=True, null=True, default=-1)
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+    description = models.CharField(max_length=200, verbose_name=_('Descripción'))
+    recycle_text = models.TextField(verbose_name="Texto de Reciclaje", blank=True, null=True, help_text="Texto para fomentar la reutilizacion de residuos por parte del ciudadano")
+    icon = models.ImageField(upload_to="icons/", verbose_name=_("Icono"), blank=True, null=True)
+
+    units = models.ForeignKey(UnitType, verbose_name = _('Unidades'), on_delete=models.SET_NULL, null=True)
+    #priority = models.ForeignKey(Priority, verbose_name=_('Prioridad'), on_delete=models.SET_NULL, null=False, default=1)
+    external_manager = models.ForeignKey(Company, verbose_name=_("Gestor Externo"), on_delete=models.SET_NULL, blank=True, null=True)
+    treatment = models.ForeignKey(WasteTreatment, verbose_name=_('Tratemiento'), on_delete=models.SET_NULL, null=True, blank=True)
+
+    def toJSON(self):
+        #waste = {'pk': self.id,  'ler': self.ler, 'name': self.name, 'description': self.description,
+        #       'dangerous': self.dangerous, 'alert': self.alert, 'priority': self.priority.toJSON()}
+        waste = {'pk': self.id,  'ler': self.ler, 'name': self.name, 'description': self.description,
+               'dangerous': self.dangerous, 'alert': self.alert}
+        return waste
+
+    class Meta:
+        verbose_name = 'Residuo'
+        verbose_name_plural = 'Residuos'
+        ordering = ['name']
+
+    def __str__(self):
+        return "%s [%s]" % (self.name, self.units.code)
+
+'''
+    FACILITIES
+'''
+class FacilityType(models.Model):
+    dashboard = models.BooleanField(default=True, verbose_name=_('Ver en Dashboard'))
+    order = models.IntegerField(default=1, verbose_name=_('Orden'))
+    operation_time = models.IntegerField(default=20, verbose_name=_('Tiempo de operación (min)'))
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Tipo de instalación'
+        verbose_name_plural = 'Tipos de instalación'
+        ordering = ['order']
+
+class Facility(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    #location = models.PointField(verbose_name = 'Localización')
+    default_zoom = 15
+    code = models.CharField(max_length=255, verbose_name='Código', null=True, default="")
+    nima = models.CharField(max_length=50, verbose_name='NIMA', null=True, default="")
+    description = models.CharField(max_length=255, verbose_name='Descripción', null=True, blank=True, default='')
+    address = models.CharField(max_length=255, verbose_name='Dirección', default="", null=True, blank=True)
+    town = models.CharField(max_length=255, verbose_name='Ciudad', default="", null=True, blank=True)
+    #map_bubble_text = RichTextUploadingField(verbose_name="Ficha Burbuja", blank=True, null=True);
+
+    lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
+    lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+
+    company = models.ForeignKey(Company, verbose_name='Empresa gestora', on_delete=models.SET_NULL, null=True)
+    company_owner = models.ForeignKey(Company,verbose_name='Empresa propietaria',on_delete=models.SET_NULL,null=True,related_name="facilities_owner")
+    #fac_type = models.ForeignKey(FacilityType, null=True, blank=True, verbose_name=_('Tipo'))
+    #priority = models.ForeignKey(Priority, verbose_name=_('Prioridad'), null=False, default=1)
+    #download_point = models.ForeignKey('self', verbose_name='Punto de descarga', related_name='+', null=True, blank=True)
+
+    #default_lon, default_lat = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), -101.193445, 19.702716)
+
+    def toJSON(self):
+        facility = {'pk': self.pk, 'code': self.code, 'nima': self.nima, 'description': self.description}
+        return facility
+
+    def __str__(self):
+        return self.description
+
+    @staticmethod
+    def getPL():
+        return Facility.objects.filter(description__contains="Punto")
+
+    @staticmethod
+    def getMPL():
+        return Facility.objects.filter(code__startswith="MPL-")
+
+    @staticmethod
+    def getTargets():
+        return Facility.objects.filter(description__contains="Planta")
+
+    class Meta:
+        verbose_name=_('Instalación')
+        verbose_name_plural=_('Instalaciones')
+        ordering=['description']
+
+class WasteInFacility(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    toRoute = models.BooleanField(verbose_name=_('En ruta'), default=True)
+    code = models.CharField(max_length=255, verbose_name='Código', default = "Cont.000")
+    filling_degree = models.DecimalField(verbose_name = _('Porcentaje de llenado'), max_digits=5, decimal_places=2, default=0.)
+    warning_filling_degree = models.DecimalField(verbose_name = _('Umbral de aviso'), max_digits = 5, decimal_places=2, default=45.)
+    alert_filling_degree = models.DecimalField(verbose_name = _('Umbral de alerta'), max_digits = 5, decimal_places=2, default=80.)
+    last_modification = models.DateTimeField(default=tz.now(), null=True, verbose_name=('Última modificación'), blank=True)
+
+    advise_frec = models.IntegerField(verbose_name='Advise Frecuency', default=15, blank=True)
+    emails = models.CharField(max_length=900, verbose_name='Emails', default="", blank=True)
+    subject = models.CharField(max_length=900, verbose_name='Subject', default="", blank=True)
+    body = models.TextField(verbose_name='Body', default="", blank=True)
+
+    waste = models.ForeignKey(Waste, verbose_name = _('Residuo'), related_name = "facilities", on_delete=models.SET_NULL, null=True)
+    facility = models.ForeignKey(Facility, verbose_name = _('Instalación'), related_name="waste", on_delete=models.CASCADE)
+    download_point = models.ForeignKey(Facility, verbose_name=_('Punto de descarga'), related_name="download", on_delete=models.SET_NULL, null=True, default=None, blank=True)
+    alt_download_point = models.ForeignKey(Facility, verbose_name = _('Descarga alternativo'), related_name="download_alt", on_delete=models.SET_NULL, null=True, default=None, blank=True)
+
+    def toJSON(self):
+        wif = {'pk': self.pk, 'to_route': self.toRoute, 'waste': self.waste.toJSON(), 'facility': self.facility.toJSON(),
+              'filling_degree': self.filling_degree, 'warning_filling_degree': self.warning_filling_degree,
+              'alert_filling_degree': self.alert_filling_degree}
+
+        return wif
+
+    def __str__(self):
+        try:
+            return "Contenedor de %s en %s" % (self.waste.name, self.facility.description)
+        except:
+            return self.code
+
+    class Meta:
+        verbose_name = _('Residuos en instalación')
+        #unique_together = ('waste', 'facility', 'code')
+        ordering = ['waste__code']
+
+    def google_location(self):
+        return self.facility.google_location()
+
+    @property
+    def alert(self):
+        return ((self.alert_filling_degree <= self.filling_degree))
+
+    @property
+    def warning(self):
+        return ((self.warning_filling_degree <= self.filling_degree))
+
+    def class_state(self):
+        if self.alert:
+            return "danger"
+        else:
+            if self.warning:
+                return "warning"
+            else:
+                if self.filling_degree >= 1:
+                    return "success"
+        return "info"
+
+'''
+    TRUCKS
+'''
+class TruckType(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    brand = models.CharField(max_length=90, verbose_name=_('Marca'), null=True)
+    model = models.CharField(max_length=90, verbose_name=_('Modelo'), null=True)
+    year = models.CharField(max_length=4, verbose_name=_('Año'), null=True)
+
+    def __str__(self):
+        return "%s %s %s" % (self.brand, self.model, self.year)
+
+    class Meta:
+        verbose_name=_('Tipo de camión')
+        verbose_name_plural=_('Tipos de camión')
+
+class Truck(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    #location = models.PointField(verbose_name = 'Localización', null=True)
+    available = models.BooleanField(verbose_name=_('Disponible'), default=True)
+    on_saturday = models.BooleanField(verbose_name=_('Disponible en Sábado'), default=False)
+    itv_date = models.DateField(default=datetime.datetime.today, null=True, verbose_name=('Fecha de ITV'))
+    number_plate = models.CharField(max_length=10, verbose_name = 'Matrícula')
+    observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
+
+    lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
+    lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+
+    type = models.ForeignKey(TruckType, verbose_name='Tipo de Camión', on_delete=models.SET_NULL, null=True)
+    company = models.ForeignKey(Company, verbose_name='Empresa', on_delete=models.SET_NULL, null=True)
+    base_station = models.ForeignKey(Facility, verbose_name='Estación Base', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return ("[%s] - %s" % (self.number_plate.upper(), self.type))
+
+    @property
+    def name(self):
+        print( "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate))
+        return "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate)
+
+    class Meta:
+        verbose_name = 'Camión'
+        verbose_name_plural = ('Camiones')
+        #ordering = ['base_station', 'type', 'number_plate']
+
+'''
+    EMPLOYEE
+'''
+class EmployeeType(models.Model):
+    code = models.CharField(max_length=10, null=True, verbose_name=_('Código'))
+    name = models.CharField(max_length=100, null=True, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name=_('Tipo de empleado')
+        verbose_name_plural=_('Tipos de Empleados')
+
+class Employee(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
+    active = models.BooleanField(default=True, verbose_name=_('Activo'), blank=True)
+    code = models.CharField(max_length=10, null=True, unique=True, verbose_name='Código de Empleado')
+    nif = models.CharField(max_length=10, null=True, unique=True, verbose_name=_('NIF'))
+    pin = models.CharField(max_length=10, null=True, unique=True, verbose_name=_('PIN'))
+    device_uid = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('DeviceUID'))
+    name = models.CharField(max_length=100, null=True, verbose_name=_('Nombre'))
+    cellphone = models.CharField(max_length=10, null=True, default = '0000000000', verbose_name = 'Teléfono de contacto')
+    email = models.EmailField(null=True, verbose_name = _('Email de contacto'))
+
+    user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='employee')
+    company = models.ForeignKey(Company, verbose_name='Empresa', on_delete=models.CASCADE, null=True, related_name="employees")
+    facility = models.ForeignKey(Facility, verbose_name=_('Instalación'), on_delete=models.SET_NULL, null=True, blank=True, related_name="employees")
+    rol = models.ForeignKey(EmployeeType, verbose_name=_('Tipo'), on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def is_driver(self):
+        return (self.rol != None and self.rol.code == "driver")
+
+    @property
+    def is_driver_mpl(self):
+        return (self.rol != None and self.rol.code == "driver_mpl")
+
+    @property
+    def is_operator(self):
+        return (self.rol != None and self.rol.code == "operator")
+
+    @property
+    def truck(self):
+        et = self.trucks.order_by("-date").first()
+        return et.truck if et != None else None
+
+    def generate_pin(self):
+        mypin = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        while (Employee.objects.filter(pin = mypin).exists()):
+            mypin = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        self.pin = mypin
+        self.save()
+
+    class Meta:
+        verbose_name=_('Empleado')
+        verbose_name_plural=_('Empleados')
+        ordering = ['code','name']
+
+class EmployeeTruck(models.Model):
+    date = models.DateTimeField(verbose_name=('Fecha de ITV'), null=True, default=datetime.datetime.now)
+    employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.CASCADE, null=True, related_name="trucks")
+    truck= models.ForeignKey(Truck, verbose_name='Vehículo', on_delete=models.SET_NULL, null=True, related_name="employees")
+
+    class Meta:
+        verbose_name=_('Empleado Camion')
+        verbose_name_plural=_('Empleados Camiones')
+
+class EmployeeAccessLog(models.Model):
+    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
+    date = models.DateTimeField(verbose_name=('Fecha de acceso'), null=True, default=datetime.datetime.now)
+    location = models.TextField(verbose_name=('Fecha de acceso'), null=True, default="")
+    employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.CASCADE, null=True, related_name="access")
+
+    class Meta:
+        verbose_name=_('Acceso de Empleado')
+        verbose_name_plural=_('Acceso de Empleados')
+
+
+'''
+    ROUTES
+'''
+def upload_route_image(instance, filename):
+    ascii_filename = str(filename.encode('ascii', 'ignore'))
+    instance.filename = ascii_filename
+    folder = "routes/%s" % (instance.id)
+    return '/'.join([folder, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+
+class Route(models.Model):
+    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
+    weight = models.FloatField(default=0, verbose_name= _('Peso'))
+    code = models.CharField(max_length=8, verbose_name='Código')
+    ini_date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
+    end_date = models.DateTimeField(verbose_name=('Fin'), null=True, default=tz.now)
+    image = models.ImageField(upload_to=upload_route_image, blank=True, verbose_name="Imagen", help_text="Select file to upload")
+
+    source = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="routes_source")
+    target = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Destino', null=True, related_name="routes_target")
+    waste = models.ForeignKey(WasteInFacility, on_delete=models.SET_NULL, verbose_name='Residuo', null=True)
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
+    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+    #company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name=_('Company'), null=True, blank=True, default=None)
+
+    def jsonDoc(self):
+        return route_to_json(self)
+
+    @staticmethod
+    def getCurrent(driver):
+        return Route.objects.filter(driver=driver, finish=False).first()
+
+    class Meta:
+        verbose_name=_('Ruta')
+        verbose_name_plural=_('Rutas')
+        ordering=['-ini_date']
+
+class RouteMpl(models.Model):
+    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
+    code = models.CharField(max_length=8, verbose_name='Código')
+    ini_date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
+    end_date = models.DateTimeField(verbose_name=('Fin'), null=True, default=tz.now)
+
+    #source = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="routes_mpl_source")
+    target = models.ForeignKey(Facility,on_delete=models.SET_NULL, verbose_name='Destino', null=True, related_name="routes_mpl_target")
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
+    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+
+    @staticmethod
+    def currentRoute(driver):
+        route = RouteMpl.objects.filter(driver=driver, truck=driver.truck, finish=False).first()
+        return route if route != None else RouteMpl.objects.create(driver=driver, truck=driver.truck, code="MPL")
+
+    class Meta:
+        verbose_name=_('Ruta MPL')
+        verbose_name_plural=_('Rutas MPL')
+        ordering=['-ini_date']
+
+class RouteMplPoint(models.Model):
+    weight = models.FloatField(default=0, verbose_name= _('Peso'))
+    date = models.DateTimeField(verbose_name=('Fecha'), null=True, default=tz.now)
+
+    mpl = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="routes_mpl")
+    waste = models.ForeignKey(WasteInFacility, on_delete=models.SET_NULL, verbose_name='Residuo', null=True)
+    route = models.ForeignKey(RouteMpl, on_delete=models.CASCADE, verbose_name='Ruta', null=True, related_name="points")
+
+    class Meta:
+        verbose_name=_('Punto de Ruta MPL')
+        verbose_name_plural=_('Puntos de Rutas MPL')
+        ordering=['-date']
+
+'''
+    Facility Actions
+'''
+class FacilityActionType(models.Model):
+    code = models.CharField(max_length=8, verbose_name='Código')
+    name = models.CharField(max_length=255, verbose_name='Nombre')
+
+    class Meta:
+        verbose_name=_('Otra acción')
+        verbose_name_plural=_('Otras acciones')
+
+
+class FacilityActions(models.Model):
+    date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
+
+    fa_type = models.ForeignKey(FacilityActionType, on_delete=models.SET_NULL, verbose_name='Tipo', null=True)
+    facility = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="actions")
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
+    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True, related_name="actions")
+
+    class Meta:
+        verbose_name=_('Otra acción conductor')
+        verbose_name_plural=_('Otras acciones conductores')
+        ordering=['-date']
+
+'''
+    Tray
+'''
+class Tray(models.Model):
+    number = models.CharField(max_length=100, verbose_name='Número')
+
+    def __str__(self):
+        return self.number
+
+    class Meta:
+        verbose_name=_('Bandeja')
+        verbose_name_plural=_('Bandejas')
+
+class TrayTracking(models.Model):
+    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
+    ini_date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
+    end_date = models.DateTimeField(verbose_name=('Fin'), null=True, default=tz.now)
+
+    source = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="trays_source")
+    target = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Destino', null=True, related_name="trays_target")
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
+    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+    tray = models.ForeignKey(Tray, on_delete=models.CASCADE, verbose_name='Bandeja', null=True, related_name="tracking")
+
+    @staticmethod
+    def startTracking(driver, source, tray):
+        return TrayTracking.objects.create(ini_date=tz.now(), source=source, truck=driver.truck, driver=driver, tray=tray)
+
+    @staticmethod
+    def finishTracking(driver, target):
+        tt = TrayTracking.objects.filter(driver=driver, finish=False).first()
+        if tt != None:
+            tt.target = target
+            tt.end_date = tz.now()
+            tt.save()
+
+    class Meta:
+        verbose_name=_('Localización Bandeja')
+        verbose_name_plural=_('Localización Bandejas')

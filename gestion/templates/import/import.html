@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block central_content %}
+    <form action="{% url 'import-db' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-4"><input type="file" class="form-control" name="file"/></div>
+            <div class="col-4"><select class="form-control" name="db">
+                <option value="comp">Company</option>
+                <option value="fac">Facility</option>
+                <option value="trucktype">Truck Type</option>
+                <option value="truck">Truck</option>
+                <option value="employee">Employee</option>
+                <option value="waste">Waste</option>
+                <option value="wasteinfacility">Waste In Facility</option>
+            </select></div>
+            <div class="col-4"><input type="submit" class="form-control" value="Importar"/></div>
+        </div>
+    </form>
+{% endblock central_content %}

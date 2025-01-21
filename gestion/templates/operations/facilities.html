@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="internal"> <div class="container" id="facilities-mpl">
+    <div id="div-pl"> {% include "operations/facilities-pl.html" %}</div>
+</div> </div>
+
+{%comment%}
+<ul class="nav nav-tabs sub d-flex justify-content-center pt-3 b-none">
+    <li class="nav-item"> <a class="nav-link sub {%if not current_tab or current_tab == ""%}active{%endif%}" 
+        data-bs-toggle="tab" href="#facilities-pl"> {% trans "Puntos limpios" %}</a> </li>
+    <li class="nav-item"> <a class="nav-link sub {%if current_tab == "mpl"%}active{%endif%}" data-bs-toggle="tab" 
+        href="#facilities-mpl"> {%trans "Mini puntos limpios"%}</a> </li>
+</ul>
+
+
+<div class="tab-content internal">
+    {# -------------------------- PUNTOS LIMPIOS ------------------------#}
+    <div class="tab-pane container {%if not current_tab or current_tab == ""%}active{%endif%}" id="facilities-pl">
+        <div id="div-pl"> {% include "operations/facilities-pl.html" %}</div></div>
+
+    {# -------------------------- MINI PUNTOS LIMPIOS ------------------------#}
+    <div class="tab-pane container {%if current_tab == "mpl"%}active{%endif%}" id="facilities-mpl">
+        <div id="div-mpl"> {% include "operations/facilities-mpl.html" %}</div></div>
+</div>
+{%endcomment%}
+ 

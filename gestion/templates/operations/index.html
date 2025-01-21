@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block central_content %}
+    <ul class="nav nav-tabs mx-2 pl-2 pr-2 pt-2">
+        <li class="nav-item"> <a class="nav-link {%if not current_tab or current_tab == ""%}active{%endif%}" 
+            data-bs-toggle="tab" href="#facilities"> {% trans "Estado de los contenedores" %}</a> </li>
+        <li class="nav-item"> <a class="nav-link {%if current_tab == "routes"%}active{%endif%}" data-bs-toggle="tab" href="#routes">
+            {%trans "Rutas"%}</a> </li>
+    </ul>
+    <div class="tab-content internal mx-2 p-0">
+        {# -------------------------- FACILITIES ------------------------#}
+        <div class="tab-pane container {%if not current_tab or current_tab == ""%}active{%endif%} m-0" id="facilities">
+            <div id="div-facilities"> {% include "operations/facilities.html" %}</div></div>
+
+        {# -------------------------- ROUTES ------------------------#}
+        <div class="tab-pane container {%if current_tab == "routes"%}active{%endif%} m-0" id="routes"><div id="div-routes">
+            {% include "operations/routes.html" %}</div></div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}

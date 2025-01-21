@@ -1,0 +1,18 @@
+{% extends "pwa-base-driver.html" %}
+{% load i18n %}
+
+{% block content%}
+    <h3 class="mt-5">{% trans "Seleccione una acción" %}</h3>
+    <form action="{% url 'pwa-driver-save-action' %}" method="post" id="frmSelectAction" class="m-0">
+        {% csrf_token %}
+        <select class="form-control" id="facility" name="facility">
+            <option value="">{% trans "-- Seleccione una instalación --" %}</option>
+            {% for fac in fac_list %} <option value="{{fac.id}}">{{fac.description}}</option> {% endfor %}
+        </select>
+        <select class="form-control" id="action" name="action">
+            <option value="">{% trans "-- Seleccione una acción --" %}</option>
+            {% for action in action_list %} <option value="{{action.id}}">{{action.name}}</option> {% endfor %}
+        </select>
+        <div class="text-center mt-3"><input type="submit" class="btn btn-info" value="{% trans "Enviar" %}"/></div>
+    </form>
+{% endblock %}

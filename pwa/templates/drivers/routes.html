@@ -1,0 +1,52 @@
+{% extends "pwa-base-driver.html" %}
+{% load i18n %}
+
+{% block content%}
+    <script> getLocation("address", "btn-log", ""); </script>
+    <button id="btn-log" class="ark" style="display:none" 
+        data-url="{% url "pwa-access-log" %}" data-target="" data-location="" data-finish="False"></button>
+
+    <div class="row m-0">
+        <div class="col-4 text-start date my-2">{{now|date:"d-m-Y"}}</div>
+        <div class="col-4 offset-4 time text-end my-2">{{now|date:"H:i"}}</div>
+        <div class="col-12 text-center address my-2 small"><i class='fas fa-map-marker-alt'></i> <span id="address"><i class="fa fa-spinner"></i></span></div>
+    </div>
+
+    <div class="row mx-0 my-3">
+        {% if route == None%}
+            <div class="col-12 p-0"> <a class="btn btn-md btn-primary w-100" href="{% url "pwa-driver-routes-source" %}">
+                <strong>{% trans "CARGAR" %}</strong></a> </div>
+        {% else %}
+            <h3>{% trans "Ruta actual" %}</h3>
+            <div class="route-item active p-2 mt-1">
+                <p><i class="fa fa-clock orange"></i> <strong>{% trans "Inicio:" %}</strong> {{route.ini_date|date:"d-m-Y H:i"}}</p>
+                <p><i class='fas fa-map-marker-alt orange'></i> <strong>{% trans "Origen:" %}</strong> {{route.source.description}}</p>
+                <p><i class="fa fa-trash orange"></i> <strong>{% trans "Residuo:" %}</strong> {{route.waste.waste.name}}</p>
+                <p><i class='fas fa-weight-hanging orange'></i> <strong>{% trans "Peso:" %}</strong> {{route.weight}}</p>
+                <p><i class='fas fa-print orange'></i> <a href="{% url "pwa-driver-routes-dir" route.id %}" target="_blank">
+                    {% trans "Documento de identificación de residuos"%}</a> </p>
+            </div>
+            <a class="btn btn-md btn-danger my-2" href="{% url "pwa-driver-routes-target" route.id %}"> 
+                <strong>{% trans "DESCARGAR" %}</strong></a> 
+        {% endif %}
+        {% for item in item_list %}
+            <div class="route-item py-2 my-1">
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Residuo" %}</strong>: {{item.waste.name}}</p>
+                <p><strong><i class='fas fa-weight-hanging orange'></i> {%trans "Peso" %}</strong>: {{item.weight}}</p>
+                <p><strong><i class='fas fa-map-marker-alt orange'></i> {%trans "Origen" %}</strong>: {{item.source.description}}</p>
+                <p><strong><i class='fas fa-flag-checkered orange'></i> {%trans "Destino" %}</strong>: {{item.target.description}}</p>
+                <p><strong><i class="fa fa-clock orange"></i> {%trans "Inicio" %}</strong>: {{item.ini_date|date:"d-m-Y H:i"}}</p>
+                <p><strong><i class="fa fa-hourglass-end orange"></i> {%trans "Fin" %}</strong>: {{item.end_date|date:"d-m-Y H:i"}}</p>
+            </div>
+        {% endfor %}
+        {% for item in action_list %}
+            <div class="route-item py-2 my-1">
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Acción" %}</strong>: {{item.fa_type.name}}</p>
+                <p><strong>
+                    <i class='fas fa-map-marker-alt orange'></i> {%trans "Instalación" %}</strong>: {{item.facility.description}}</p>
+                <p><strong><i class="fa fa-clock orange"></i> {%trans "Fecha" %}</strong>: {{item.date|date:"d-m-Y H:i"}}</p>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

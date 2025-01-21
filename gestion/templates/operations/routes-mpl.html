@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<div class="row toolbar-search p-2 m-0">
+    <div class="col-lg-1 col-1 b-search"><i class="fas fa-search pt-2"></i></div>
+    <div class="col-lg-11 col-11 p-0">
+        <input type="text" class="autosearch form-control form-control-dark w-100" name="s-name" id="s-name" 
+           placeholder="{% trans 'Nombre' %}" data-url="{% url "routes-search" %}" data-target="route-list" data-related="s-name" />
+    </div>
+</div>
+
+{% with items=routes_mpl %}
+    <div class="content mt-1">
+        <div class="toolbar-content p-3">
+            {%comment%}
+            <h2 class="pathway b-right">{%trans 'Rutas'%} 
+                <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
+            {%endcomment%}
+            {%comment%}
+            <button type="button" class="btn btn-sm ark new" data-url="{%url "routes-form"%}" data-target-modal="common-modal"> 
+                <i class="fas fa-plus"></i> {% trans 'Crear Ruta' %}</button> 
+            {%endcomment%}
+        </div>
+        <div id="route-list" class="ml-list">{% include "routes/routes-mpl-list.html" %}</div>
+    </div>
+{% endwith %}

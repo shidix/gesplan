@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block central_content %}
+    {#<h1 class="pathway">Inicio</h1>#}
+    <div class="row div-home m-0 w-100">
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+	            <h3 class="pb-3">Administración</h3>
+        	    <img src="{% static "images/administration.png" %}" alt="Administracón" />
+        	</div>	
+        </div>	
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+	            <a href="{% url 'operation-index' %}">
+                	<h3 class="pb-3">Operaciones</h3>
+        	        <img src="{% static "images/operations.png" %}" alt="Operaciones" />
+	            </a>
+        	</div>
+        </div>
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+        	    <h3 class="pb-3">Personal</h3>
+	            <img src="{% static "images/staff.png" %}" alt="Personal" />
+        	</div>
+        </div>
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+        	    <h3 class="pb-3">Materiales</h3>
+	            <img src="{% static "images/materials.png" %}" alt="Materiales" />	
+        	</div>
+        </div>
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+	            <a href="{% url 'facilities' %}">
+                	<h3 class="pb-3">Instalaciones</h3>
+        	        <img src="{% static "images/instalations.png" %}" alt="Instalaciones" />
+	            </a>
+        	</div>
+        </div>
+        <div class="col-lg-4 col-12 text-center btn">
+        	<div class="module m-2 py-5">
+        	    <a href="{% url 'trucks' %}">
+	                <h3 class="pb-3">Vehículos</h3>
+                	<img src="{% static "images/vehicles.png" %}" alt="Vehículos" />
+        	    </a>
+	        </div>
+        </div>
+    </div>
+{% endblock central_content %}

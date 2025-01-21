@@ -1,0 +1,48 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    {% if route and route != None %}
+        <div class="mx-0 my-2">
+            <h3>{% trans "Ruta actual" %}</h3>
+            <div class="route-item py-2">
+                <p><i class="fa fa-clock orange"></i> <strong>{% trans "Inicio:" %}</strong> {{route.ini_date|date:"d-m-Y H:i"}}</p>
+                {% for item in route.points.all %}
+                    <p><i class='fas fa-map-marker-alt orange'></i> 
+                        <strong>{%trans "Minipunto:"%}</strong> {{item.mpl.description}}</p>
+                {% endfor %}
+                {%comment%}
+                <p><i class='fas fa-map-marker-alt orange'></i> <strong>{% trans "Origen:" %}</strong> {{route.source.description}}</p>
+                <p><i class="fa fa-trash orange"></i> <strong>{% trans "Residuo:" %}</strong> {{route.waste.waste.name}}</p>
+                <p><i class='fas fa-weight-hanging orange'></i> <strong>{% trans "Peso:" %}</strong> {{route.weight}}</p>
+                {%endcomment%}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6"> <a class="btn btn-md btn-primary w-100" href="{% url "pwa-driver-mpl-routes-source" %}"> 
+                <strong>{% trans "CARGAR" %}</strong></a> </div>
+            <div class="col-6"><a class="btn btn-md btn-danger w-100" href="{% url "pwa-driver-mpl-routes-target" route.id %}"> 
+                <strong>{% trans "DESCARGAR" %}</strong></a> </div>
+        </div>
+    {% else %}
+        <div class="col-12 p-0"> <a class="btn btn-md btn-primary w-100" href="{% url "pwa-driver-mpl-routes-source" %}"> 
+            <strong>{% trans "CARGAR" %}</strong></a> </div>
+    {% endif %}
+
+    {% for item in item_list %}
+        <div class="row route-item my-2 mx-0 py-2">
+            {% for point in item.points.all %}
+                <div class="col-5"><strong><i class='fas fa-map-marker-alt orange'></i> {%trans "Minipunto" %}</strong>: </div> 
+                <div class="col-7">{{point.mpl.description}}</div>
+            {% endfor %}
+ 
+            <div class="col-5"><strong><i class='fas fa-flag-checkered orange'></i> {%trans "Destino" %}</strong>: </div>
+            <div class="col-7">{{item.target.description}}</div>
+            <div class="col-5"><strong><i class="fa fa-clock orange"></i> {%trans "Inicio" %}</strong>: </div> 
+            <div class="col-7">{{item.ini_date|date:"d-m-Y H:i"}}</div>
+            <div class="col-5"><strong><i class="fa fa-hourglass-end orange"></i> {%trans "Fin" %}</strong>: </div> 
+            <div class="col-7">{{item.end_date|date:"d-m-Y H:i"}}</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

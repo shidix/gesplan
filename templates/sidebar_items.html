@@ -1,0 +1,27 @@
+{% load i18n gestion_tags %}
+
+{#{% if user.is_authenticated %}#}
+{% if user|in_group:"admins" %}
+
+    <div class="nav-item w-100 {%current 'home'%}"><a class="nav-link" aria-current="page" href="{% url 'index' %}">
+	<i class='fas fa-home'></i><span class="px-3">{%trans 'Inicio'%}</span></a></div>
+    <div class="nav-item w-100 {%current 'companies'%}"><a class="nav-link" aria-current="page" href="{% url 'companies' %}">
+        <i class='fas fa-building'></i><span class="px-3">{%trans 'Compañias'%}</span></a></div>
+    <div class="nav-item w-100 {%current 'facilities'%}"><a class="nav-link" aria-current="page" href="{% url 'facilities' %}">
+        <i class='fas fa-warehouse'></i><span class="px-3">{%trans 'Instalaciones'%}</span></a></div>
+    <div class="nav-item w-100 {%current 'trucks'%}"><a class="nav-link" aria-current="page" href="{% url 'trucks' %}">
+        <i class='fas fa-truck'></i><span class="px-3">{%trans 'Vehículos'%}</span></a></div>
+    <div class="nav-item w-100 {%current 'routes'%}"><a class="nav-link" aria-current="page" href="{% url 'routes' %}">
+        <i class='fas fa-route'></i><span class="px-3">{%trans 'Rutas'%}</span></a></div>
+    <div class="nav-item w-100 {%current 'employees'%}"><a class="nav-link" aria-current="page" href="{% url 'employees' %}">
+        <i class='fas fa-user'></i><span class="px-3">{%trans 'Empleados'%}</span></a></div>
+{%comment%}
+{% elif user|in_group:"professionals" %}
+    <div class="nav-item"> <a class="nav-link {% current 'tests-instances-professional' %}" href="{% url 'tests-to-fill-professional' %}">
+        <i class='fas fa-eye'></i>{% trans 'Mostrar tests' %}</a> </div>
+    {%endcomment%}
+{% else %}
+    <div class="nav-item"> <a class="nav-link {% current '' %}" href="{% url 'auth_login'  %}"> 
+        <i class="fas fa-sign-in-alt"></i> {% trans "Log in" %}</a> </div>
+{% endif %}
+

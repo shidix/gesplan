@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-12 my-4">
+        <a class="btn btn-md btn-danger w-100" href="{% url "pwa-driver-routes-end" route.id %}">
+            <strong>{% trans "DESCARGAR" %}</strong></a>
+        {#<a class="btn btn-success" href="{% url "pwa-driver-routes-end" route.id target.id %}">{% trans "Finalizar" %}</a>#}
+    </div>
+</div>

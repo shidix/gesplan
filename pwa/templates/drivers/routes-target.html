@@ -1,0 +1,77 @@
+{% extends "pwa-base-driver.html" %}
+{% load i18n %}
+
+{% block content%}
+    <form action="{% url "pwa-driver-routes-finish" %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="route" value="{{route.id}}" /> 
+        <div class="col-12 address text-center bg-white py-3 my-2">
+            <select class="form-control" id="target" name="target">
+                <option value="">{% trans "-- Seleccione un punto de descarga --" %}</option>
+                {% for item in item_list %} 
+                    <option value="{{item.id}}" {%if item == route.waste.download_point%}selected{%endif%}>
+                        {{item.description}}</option> 
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <input type="text" class="form-control" id="weight" name="weight" placeholder="{% trans "Introduzca el peso" %}"/>
+            <span class="text-alert orange"><small>{% trans "* Este campo es obligatorio" %}</small></span>
+        </div>
+        <div class="col-12">
+            <label for="image" class="btn">{% trans "Imágen del peso" %}</label>
+            <input type="file" class="form-control" id="image" name="file"/>
+        </div>
+        <br/>
+        <div class="col-12"><input type="submit" class="btn btn-md btn-primary form-control" value="Descargar"/></div>
+    </form>
+
+    {%comment%}
+    <div class="row m-0">
+        <div class="col-12 address text-center bg-white py-3 my-2" id="div-step1">
+            <i class='fas fa-truck-loading'></i> {% trans "Descarga" %}:<br/>
+            <span id="target-name"><strong>
+                {% if route.waste.download_point != None %} 
+                    {{route.waste.download_point.description}} 
+                {% else %} 
+                    {% trans "No hay destino por defecto" %}
+                {% endif %}</strong>
+            </span>
+            <br/>
+            <div class="hidde" id="pl-list" style="display:none">
+                <select class="form-control" id="target" name="target">
+                    <option value="">{% trans "-- Seleccione un punto de descarga --" %}</option>
+                    {% for item in item_list %} <option value="{{item.id}}">{{item.description}}</option> {% endfor %}
+                </select>
+                <br/>
+            </div>
+        </div>
+        <div class="col-12">
+            <input type="text" class="form-control" id="weight" name="weight" placeholder="{% trans "Introduzca el peso" %}"/>
+            <span class="text-alert orange"><small>{% trans "* Este campo es obligatorio" %}</small></span>
+        </div>
+        <div class="col-6 my-4">
+            <button class="btn btn-md btn-primary w-100" onclick="$('#pl-list').toggle()">
+                <strong>{% trans "Cambiar destino" %}</strong></button>
+        </div>
+        <div class="col-6 my-4">
+            <button class="btn btn-md btn-primary w-100 ark" id="btn-send" data-url="{% url "pwa-driver-routes-finish" %}" 
+                data-target="div-step2" data-route="{{route.id}}" data-value="{{route.waste.download_point.id}}" data-weight="0" 
+                disabled> <strong>{% trans "Continuar" %}</strong></button>
+            <br/> <br/>
+        </div>
+    </div>
+    <div id="div-step2"> </div>
+</div>
+<script>
+    $("#weight").change(function(){
+        $('#btn-send').data('weight', $(this).val());
+        $('#btn-send').prop('disabled', '');
+    });
+    $("#target").change(function(){ 
+        $('#btn-send').data('value', $(this).val()); 
+        $('#target-name').html($("#target option:selected").html());
+    });
+</script>
+{%endcomment%}
+{% endblock %}
