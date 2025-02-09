@@ -330,6 +330,10 @@ class Employee(models.Model):
         return (self.rol != None and self.rol.code == "operator")
 
     @property
+    def is_external(self):
+        return (self.rol != None and self.rol.code == "external")
+
+    @property
     def truck(self):
         et = self.trucks.order_by("-date").first()
         return et.truck if et != None else None
@@ -436,6 +440,22 @@ class RouteMplPoint(models.Model):
         verbose_name_plural=_('Puntos de Rutas MPL')
         ordering=['-date']
 
+class RouteExt(models.Model):
+    weight = models.FloatField(default=0, verbose_name= _('Peso'))
+    date = models.DateTimeField(verbose_name=('Fecha'), null=True, default=tz.now)
+    get_date = models.DateTimeField(verbose_name=('Fecha de recogida'), null=True, default=tz.now)
+
+    waste = models.ForeignKey(WasteInFacility, on_delete=models.SET_NULL, verbose_name='Residuo', null=True)
+    facility = models.ForeignKey(Facility,on_delete=models.SET_NULL,verbose_name='Destino',null=True,related_name="routes_ext")
+    manager = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+    external_manager = models.ForeignKey(Company, verbose_name=_("Gestor Externo"), on_delete=models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        verbose_name=_('Ruta Externa')
+        verbose_name_plural=_('Rutas Externas')
+        ordering=['-date']
+
+
 '''
     Facility Actions
 '''
@@ -500,3 +520,68 @@ class TrayTracking(models.Model):
     class Meta:
         verbose_name=_('Localización Bandeja')
         verbose_name_plural=_('Localización Bandejas')
+
+'''
+    Items
+'''
+class Item(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Nombre', default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name=_('Material')
+        verbose_name_plural=_('Materiales')
+
+class EmployeeItem(models.Model):
+    date = models.DateTimeField(verbose_name=('Fecha de ITV'), null=True, default=datetime.datetime.now)
+    action = models.CharField(max_length=255, verbose_name='Acción', default="")
+    amount = models.IntegerField(verbose_name='Cantidad', default=0)
+    desc = models.TextField(verbose_name='Descripción', default="")
+    employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.CASCADE, null=True, related_name="items")
+    item = models.ForeignKey(Item, verbose_name='Material', on_delete=models.SET_NULL, null=True, related_name="employees")
+
+    class Meta:
+        verbose_name=_('Empleado Material')
+        verbose_name_plural=_('Empleados Materiales')
+
+'''
+    Contract
+'''
+class AgreementType(models.Model):
+    code = models.CharField(max_length=20, verbose_name='Código', default="")
+    name = models.CharField(max_length=255, verbose_name='Nombre', default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name=_('Tipo de convenio')
+        verbose_name_plural=_('Tipos de convenio')
+
+class ContractType(models.Model):
+    code = models.CharField(max_length=20, verbose_name='Código', default="")
+    name = models.CharField(max_length=255, verbose_name='Nombre', default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name=_('Tipo de contrato')
+        verbose_name_plural=_('Tipos de contrato')
+
+class EmployeeContract(models.Model):
+    ini_date = models.DateTimeField(verbose_name=('Fecha de inicio'), null=True, default=datetime.datetime.now)
+    end_date = models.DateTimeField(verbose_name=('Fecha de fin'), null=True, default=datetime.datetime.now)
+    timetable = models.TextField(verbose_name='Horario', default="")
+
+    employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.CASCADE, null=True, related_name="contracts")
+    contract_type = models.ForeignKey(ContractType, verbose_name='Tipo de contrato', on_delete=models.SET_NULL, null=True, related_name="employees")
+    agreement_type = models.ForeignKey(AgreementType, verbose_name='Tipo de convenio', on_delete=models.SET_NULL, null=True, related_name="employees")
+
+    class Meta:
+        verbose_name=_('Empleado Material')
+        verbose_name_plural=_('Empleados Materiales')
+
+

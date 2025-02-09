@@ -3,8 +3,14 @@ from django.contrib import admin
 from .models import *
 
 
+class AgreementTypeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name',)
+
+class ContractTypeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name',)
+
 class EmployeeAdmin(admin.ModelAdmin):
-    #list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')
+    list_display = ('name', 'rol', 'company')
     list_filter = ('rol',)
 
 class EmployeeAccessLogAdmin(admin.ModelAdmin):
@@ -18,6 +24,9 @@ class FacilityActionsAdmin(admin.ModelAdmin):
 
 class FacilityActionTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name')
+
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('name',)
 
 #class PriorityAdmin(admin.ModelAdmin):
 #    list_display = ('code', 'weight', 'description')
@@ -35,24 +44,28 @@ class WasteInFacilityAdmin(admin.ModelAdmin):
     list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')
     list_filter = ('facility',)
 
+admin.site.register(AgreementType, AgreementTypeAdmin)
+admin.site.register(ContractType, ContractTypeAdmin)
 admin.site.register(Company)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(EmployeeAccessLog, EmployeeAccessLogAdmin)
 admin.site.register(EmployeeType)
 admin.site.register(EmployeeTruck)
 admin.site.register(Facility)
-admin.site.register(Truck)
-admin.site.register(Route)
-admin.site.register(RouteMpl)
-admin.site.register(RouteMplPoint)
-admin.site.register(UnitType)
-admin.site.register(Waste)
 admin.site.register(FacilityType, FacilityTypeAdmin)
 admin.site.register(FacilityActions, FacilityActionsAdmin)
 admin.site.register(FacilityActionType, FacilityActionTypeAdmin)
-#admin.site.register(Priority, PriorityAdmin)
+admin.site.register(Item, ItemAdmin)
+admin.site.register(Route)
+admin.site.register(RouteMpl)
+admin.site.register(RouteMplPoint)
+admin.site.register(RouteExt)
 admin.site.register(Tray, TrayAdmin)
 admin.site.register(TrayTracking, TrayTrackingAdmin)
+admin.site.register(Truck)
 admin.site.register(TruckType, TruckTypeAdmin)
+admin.site.register(UnitType)
+admin.site.register(Waste)
+#admin.site.register(Priority, PriorityAdmin)
 admin.site.register(WasteInFacility, WasteInFacilityAdmin)
 

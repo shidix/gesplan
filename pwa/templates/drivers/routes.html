@@ -1,4 +1,4 @@
-{% extends "pwa-base-driver.html" %}
+{% extends "pwa-base.html" %}
 {% load i18n %}
 
 {% block content%}
@@ -31,12 +31,14 @@
         {% endif %}
         {% for item in item_list %}
             <div class="route-item py-2 my-1">
-                <p><strong><i class="fa fa-trash orange"></i> {%trans "Residuo" %}</strong>: {{item.waste.name}}</p>
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Residuo" %}</strong>: {{item.waste.waste.name}}</p>
                 <p><strong><i class='fas fa-weight-hanging orange'></i> {%trans "Peso" %}</strong>: {{item.weight}}</p>
                 <p><strong><i class='fas fa-map-marker-alt orange'></i> {%trans "Origen" %}</strong>: {{item.source.description}}</p>
                 <p><strong><i class='fas fa-flag-checkered orange'></i> {%trans "Destino" %}</strong>: {{item.target.description}}</p>
                 <p><strong><i class="fa fa-clock orange"></i> {%trans "Inicio" %}</strong>: {{item.ini_date|date:"d-m-Y H:i"}}</p>
                 <p><strong><i class="fa fa-hourglass-end orange"></i> {%trans "Fin" %}</strong>: {{item.end_date|date:"d-m-Y H:i"}}</p>
+                <p><i class='fas fa-print orange'></i> <a href="{% url "pwa-driver-routes-dir" item.id %}" target="_blank">
+                    {% trans "Documento de identificación de residuos"%}</a> </p>
             </div>
         {% endfor %}
         {% for item in action_list %}
@@ -47,6 +49,5 @@
                 <p><strong><i class="fa fa-clock orange"></i> {%trans "Fecha" %}</strong>: {{item.date|date:"d-m-Y H:i"}}</p>
             </div>
         {% endfor %}
-
     </div>
 {% endblock %}

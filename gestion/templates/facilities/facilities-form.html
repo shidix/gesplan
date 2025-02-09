@@ -12,7 +12,7 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-6">
+    <div class="col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Código" %}
             <input type="text" class="form-control autosave" id="code" name="code" value="{{obj.code|default:""}}" 
@@ -20,7 +20,7 @@
                 data-target="div-notification" placeholder="Número de registro..." /> <span id="code__msg"></span>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Nima" %}
             <input type="text" class="form-control autosave" id="nima" name="nima" value="{{obj.nima|default:""}}" 
@@ -28,7 +28,7 @@
                 data-target="div-notification" placeholder="NIF..." /> <span id="nima__msg"></span>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Descripción" %}
             <input type="text" class="form-control autosave" id="description" description="description" value="{{obj.description|default:""}}" 
@@ -36,7 +36,7 @@
                 data-target="div-notification" placeholder="Nombre..." /> <span id="description__msg"></span>
         </div>
     </div>
-   <div class="col-12">
+   <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Dirección" %}
             <input type="text" class="form-control autosave" id="address" name="address" value="{{obj.address|default:""}}" 
@@ -44,7 +44,7 @@
                 data-target="div-notification" placeholder="Teléfono..." /> <span id="address__msg"></span>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Ciudad" %}
             <input type="text" class="form-control autosave" id="town" name="town" value="{{obj.town|default:""}}" 

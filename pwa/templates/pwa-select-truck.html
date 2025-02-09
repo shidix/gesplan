@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% block content%}
-    <h3 class="mt-5">{% trans "Seleccione un vehículo" %}</h3>
+    <h1 class="h1-pwa mt-3">{% trans "Seleccione un vehículo" %}</h1>
     <form action="{% url 'pwa-save-truck' %}" method="post" id="frmSelectTruck" class="m-0">
         {% csrf_token %}
-        <select class="form-control" id="truck" name="truck">
+        <select class="form-control orange-sel mt-3" id="truck" name="truck">
             <option value="">{% trans "-- Seleccione un vehículo --" %}</option>
             {% for truck in truck_list %}
                 <option value="{{truck.id}}" {%if request.user.employee.truck.id == truck.id%}selected{%endif%}>{{truck.name}}</option>
             {% endfor %}
         </select>
-        <div class="text-center mt-3"><input type="submit" class="btn btn-info" value="{% trans "Enviar" %}"/></div>
+        <div class="text-center mt-3"><input type="submit" class="btn btn-primary w-100" value="{% trans "ENVIAR" %}"/></div>
     </form>
 {% endblock %}

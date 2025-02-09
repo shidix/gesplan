@@ -13,7 +13,7 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-3">
+    <div class="col-lg-3 col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Matrícula" %}
             <input type="text" class="form-control autosave" id="number_plate" name="number_plate" 
@@ -22,7 +22,7 @@
                 placeholder="Matrícula..." /> <span id="number_plate__msg"></span>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-lg-3 col-6 mt-3">
         <div class="greybox-sm p-1">
             {% trans "ITV" %}
             <input type="date" class="form-control autosave" id="itv_date" name="itv_date" value="{{obj.itv_date|date:"d-m-Y"}}" 
@@ -30,7 +30,7 @@
                 data-target="div-notification" placeholder="ITV..." /> <span id="itv_date__msg"></span>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-lg-3 col-4 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Disponible" %}
             <input type="checkbox" class="autosave" id="available" name="available" data-model-name="gestion.truck" 
@@ -39,7 +39,7 @@
             <span id="available__msg"></span>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-lg-3 offset-lg-0 col-7 offset-1 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Disponible en sábado" %}
             <input type="checkbox" class="autosave" id="on_saturday" name="on_saturday" data-model-name="gestion.truck" 
@@ -49,7 +49,7 @@
         </div>
     </div>
  
-    <div class="col-12">
+    <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Observaciones" %}
             <select id="base_station" name="base_station" class="form-control autosave" data-model-name="gestion.truck" 
@@ -62,7 +62,7 @@
         </div>
     </div>
 
-    <div class="col-12">
+    <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Observaciones" %}
             <input type="text" class="form-control autosave" id="observations" name="observations" 
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="col-6">
+    <div class="col-lg-6 col-4 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Teléfono" %}
             <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:""}}" 
@@ -80,7 +80,7 @@
                 data-target="div-notification" placeholder="Teléfono..." /> <span id="phone__msg"></span>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-lg-6 col-8 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Correo electrónico" %}
             <input type="text" class="form-control autosave" id="email" name="email" value="{{obj.email|default:""}}" 
@@ -88,7 +88,7 @@
                 data-target="div-notification" placeholder="Correo electrónico..." /> <span id="email__msg"></span>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Dirección" %}
             <input type="text" class="form-control autosave" id="address" name="address" value="{{obj.address|default:""}}" 
@@ -96,7 +96,7 @@
                 data-target="div-notification" placeholder="Dirección..." /> <span id="address__msg"></span>
         </div>
     </div>
-    <div class="col-4">
+    <div class="col-lg-4 col-5 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Código postal" %}
             <input type="text" class="form-control autosave" id="cp" name="cp" value="{{obj.cp|default:""}}" 
@@ -104,7 +104,7 @@
                 data-target="div-notification" placeholder="Código postal..." /> <span id="cp__msg"></span>
         </div>
     </div>
-    <div class="col-4">
+    <div class="col-lg-4 col-7 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Ciudad" %}
             <input type="text" class="form-control autosave" id="town" name="town" value="{{obj.town|default:""}}" 
@@ -112,7 +112,7 @@
                 data-target="div-notification" placeholder="Ciudad..." /> <span id="town__msg"></span>
         </div>
     </div>
-    <div class="col-4">
+    <div class="col-lg-4 col-12 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Provincia" %}
             <input type="text" class="form-control autosave" id="province" name="province" value="{{obj.province|default:""}}" 

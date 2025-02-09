@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gestion',
     'pwa',
+    'incidents',
+    'citizens',
 ]
 
 MIDDLEWARE = [

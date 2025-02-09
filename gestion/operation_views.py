@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
-from .models import Facility, Route
+from .models import Facility, Route, RouteExt
 from .views import get_facilities, get_routes
 
 
@@ -16,7 +16,8 @@ def index(request):
     facilities_mpl = Facility.getMPL()
     routes = get_routes(request)
     routes_mpl = get_routes(request, "MPL")
-    context = {"facilities": facilities, "facilities_mpl": facilities_mpl, "routes": routes, "routes_mpl": routes_mpl}
+    routes_ext = RouteExt.objects.all()
+    context = {"facilities":facilities,"facilities_mpl":facilities_mpl,"routes":routes,"routes_mpl":routes_mpl,"routes_ext":routes_ext}
     return render(request, "operations/index.html", context)
 
 @group_required("admins",)

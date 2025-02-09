@@ -901,6 +901,7 @@ a.dropdown-toggle { font-size: 1.6rem !important; }
 
 .tab-content.internal {
     background-color: #fff;
+    border:1px solid transparent;
 }
     .nav-tabs.sub {
       display: grid;

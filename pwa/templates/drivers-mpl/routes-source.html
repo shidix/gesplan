@@ -4,7 +4,7 @@
 {% block content%}
 <div class="row m-0">
     <div class="col-12" id="pl-list">
-        <select class="form-control pl-list py-3" id="source" name="source">
+        <select class="form-control orange-sel py-3" id="source" name="source">
             <option value="">{% trans "-- Seleccione un Mini Punto Limpio --" %}</option>
             {% for item in item_list %} <option value="{{item.id}}">{{item.description}}</option> {% endfor %}
         </select>

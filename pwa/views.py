@@ -11,7 +11,7 @@ from gesplan.commons import user_in_group, get_or_none, get_param, show_exc
 from gestion.models import Employee, EmployeeAccessLog, EmployeeTruck, Truck
 
 
-@group_required_pwa("drivers", "drivers_mpl", "operators")
+@group_required_pwa("drivers", "drivers_mpl", "operators", "external")
 def index(request):
     try:
         if user_in_group(request.user, "operators"):
@@ -20,6 +20,8 @@ def index(request):
             return redirect(reverse('pwa-driver'))
         if user_in_group(request.user, "drivers_mpl"):
             return redirect(reverse('pwa-driver-mpl'))
+        if user_in_group(request.user, "external"):
+            return redirect(reverse('pwa-external'))
     except:
         return redirect(reverse('pwa-login'))
 
@@ -58,6 +60,8 @@ def pin_login(request):
                         return redirect(reverse('pwa-driver'))
                     if emp.is_driver_mpl:
                         return redirect(reverse('pwa-driver-mpl'))
+                    if emp.is_external:
+                        return redirect(reverse('pwa-external'))
 
                     return HttpResponse("OK {}".format(emp.name))
                 except Exception as e:

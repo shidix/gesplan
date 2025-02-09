@@ -1,4 +1,4 @@
-{% extends "pwa-base-driver.html" %}
+{% extends "pwa-base.html" %}
 {% load i18n %}
 
 {% block content%}
@@ -14,8 +14,8 @@
         </div>
         {%endcomment%}
 
-        <div class="col-12" id="pl-list">
-            <select class="form-control pl-list py-3" id="source" name="source">
+        <div class="col-12 mt-3" id="pl-list">
+            <select class="form-control orange-sel py-3" id="source" name="source">
                 <option value="">{% trans "-- Seleccione un Punto Limpio --" %}</option>
                 {% for item in item_list %}
                     <option value="{{item.id}}" {%if item == truck.base_station %}selected{%endif%}>{{item.description}}</option>
@@ -23,17 +23,17 @@
             </select>
         </div>
         <br/>
-        <div class="col-12" id="pl-list">
-            <select class="form-control pl-list py-3" id="tray" name="tray">
+        <div class="col-12 mt-3" id="pl-list">
+            <select class="form-control orange-sel py-3" id="tray" name="tray">
                 <option value="">{% trans "-- Seleccione una Bandeja --" %}</option>
                 {% for item in tray_list %} <option value="{{item.id}}">{{item.number}}</option> {% endfor %}
             </select>
         </div>
      
-        <div class="col-6 my-4">
-            <button id="btn-next" class="btn btn-md btn-primary w-100 ark" data-url="{% url "pwa-driver-routes-waste" %}" 
+        <div class="col-12 my-4">
+            <button id="btn-next" class="btn btn-primary w-100 ark" data-url="{% url "pwa-driver-routes-waste" %}" 
                 data-target="div-step2" data-value="{{truck.base_station.id}}" data-tray="">
-                <strong>{% trans "Continuar" %}</strong></button>
+                <strong>{% trans "CONTINUAR" %}</strong></button>
         </div>
             
         <div class="col-12 my-2" id="div-step2"> </div>

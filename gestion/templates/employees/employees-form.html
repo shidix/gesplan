@@ -13,7 +13,7 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-5">
+    <div class="col-6">
         <div class="greybox-sm p-1">
             {% trans "Nombre" %}
             <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name|default:""}}" 
@@ -21,7 +21,7 @@
                 data-target="div-notification" placeholder="Nombre..." /> <span id="name__msg"></span>
         </div>
     </div>
-    <div class="col-5">
+    <div class="col-4">
         <div class="greybox-sm p-1">
             {% trans "Tipo" %}
             <select class="form-control autosave" id="rol" name="rol" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" 
@@ -42,7 +42,7 @@
                 {%if obj.active%}checked{%endif%}/> <span id="active__msg"></span>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-lg-3 col-6 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Código" %}
             <input type="text" class="form-control autosave" id="code" name="code" value="{{obj.code|default:""}}" 
@@ -50,7 +50,7 @@
                 data-target="div-notification" placeholder="Código..." /> <span id="code__msg"></span>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-lg-3 col-6 mt-3">
         <div class="greybox-sm p-1">
             {% trans "NIF" %}
             <input type="text" class="form-control autosave" id="nif" name="nif" value="{{obj.nif|default:""}}" 
@@ -58,7 +58,7 @@
                 data-target="div-notification" placeholder="NIF..." /> <span id="nif__msg"></span>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-lg-3 col-6 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Teléfono" %}
             <input type="text" class="form-control autosave" id="cellphone" name="cellphone" value="{{obj.cellphone|default:""}}" 
@@ -67,15 +67,7 @@
             <span id="cellphone__msg"></span>
         </div>
     </div>
-    <div class="col-6">
-        <div class="greybox-sm p-1">
-            {% trans "Correo electrónico" %}
-            <input type="text" class="form-control autosave" id="email" name="email" value="{{obj.email|default:""}}" 
-                title="{{obj.email}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
-                data-target="div-notification" placeholder="Correo electrónico..." /> <span id="email__msg"></span>
-        </div>
-    </div>
-    <div class="col-12">
+    <div class="col-lg-3 col-6 mt-3">
         <div class="greybox-sm p-1">
             {% trans "Uid dispositivo" %}
             <input type="text" class="form-control autosave" id="device_uid" name="device_uid" value="{{obj.device_uid|default:""}}" 
@@ -84,6 +76,15 @@
             <span id="device_uid__msg"></span>
         </div>
     </div>
+    <div class="col-12 mt-3">
+        <div class="greybox-sm p-1">
+            {% trans "Correo electrónico" %}
+            <input type="text" class="form-control autosave" id="email" name="email" value="{{obj.email|default:""}}" 
+                title="{{obj.email}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Correo electrónico..." /> <span id="email__msg"></span>
+        </div>
+    </div>
+
 
 </div>
 

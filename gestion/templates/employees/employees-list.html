@@ -2,7 +2,7 @@
 
 
 <div class="row main-th py-3 m-0">
-    <div class="col-2"> {% trans 'Código' %} </div>
+    <div class="col-1"> {% trans 'Código' %} </div>
     <div class="col-3"> {% trans 'Nombre' %} </div>
     <div class="col-2"> {% trans 'NIF' %} </div>
     <div class="col-1"> {% trans 'Teléfono' %} </div>
@@ -12,12 +12,18 @@
 
 {% for item in items %}
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-2">{{ item.code|default:"" }}</div>
+        <div class="col-1">{{ item.code|default:"" }}</div>
         <div class="col-3">{{ item.name|default:"---" }}</div>
         <div class="col-2">{{ item.nif|default:"" }}</div>
         <div class="col-1">{{ item.phone|default:"" }}</div>
         <div class="col-2">{{ item.email|default:"" }}</div>
-        <div class="col-2 text-right">
+        <div class="col-3 text-right">
+            <a class="btn btn-xs ark" data-url="{%url "employees-contracts"%}" data-target-modal="common-modal" 
+                data-obj_id="{{item.id}}" title="{% trans 'Contratos' %}"><i class="fas fa-book"></i></a> 
+            <a class="btn btn-xs ark_" data-url="" data-target-modal="common-modal" 
+                data-obj_id="{{item.id}}" title="{% trans 'Turnos' %}"><i class="fas fa-clock"></i></a> 
+            <a class="btn btn-xs ark" data-url="{%url "employees-items"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+                title="{% trans 'Materiales' %}"><i class="fas fa-list"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "employees-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 

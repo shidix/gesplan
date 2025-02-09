@@ -20,14 +20,18 @@
         </div>
         <div class="col-lg-4 col-12 text-center btn">
         	<div class="module m-2 py-5">
-        	    <h3 class="pb-3">Personal</h3>
-	            <img src="{% static "images/staff.png" %}" alt="Personal" />
+	            <a href="{% url 'employees' %}">
+        	        <h3 class="pb-3">Personal</h3>
+	                <img src="{% static "images/staff.png" %}" alt="Personal" />
+                </a>
         	</div>
         </div>
         <div class="col-lg-4 col-12 text-center btn">
         	<div class="module m-2 py-5">
-        	    <h3 class="pb-3">Materiales</h3>
-	            <img src="{% static "images/materials.png" %}" alt="Materiales" />	
+	            <a href="{% url 'items' %}">
+        	        <h3 class="pb-3">Materiales</h3>
+	                <img src="{% static "images/materials.png" %}" alt="Materiales" />
+                </a>
         	</div>
         </div>
         <div class="col-lg-4 col-12 text-center btn">

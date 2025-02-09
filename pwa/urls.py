@@ -1,5 +1,5 @@
 from django.urls import path
-from pwa import views, driver_views, driver_mpl_views
+from pwa import views, driver_views, driver_mpl_views, incidents_views, operator_views, actions_views, external_views
 
 
 urlpatterns = [
@@ -24,8 +24,8 @@ urlpatterns = [
     path('driver/routes/finish/', driver_views.driver_routes_finish, name="pwa-driver-routes-finish"),
     path('driver/routes/dir/<int:route_id>', driver_views.driver_routes_dir, name="pwa-driver-routes-dir"),
 
-    path('driver/actions/', driver_views.actions, name="pwa-driver-actions"),
-    path('driver/save-action/', driver_views.save_action, name="pwa-driver-save-action"),
+    #path('driver/actions/', driver_views.actions, name="pwa-driver-actions"),
+    #path('driver/save-action/', driver_views.save_action, name="pwa-driver-save-action"),
     #path('driver/routes/end/<int:route>/', driver_views.driver_routes_end, name="pwa-driver-routes-end"),
     #path('driver/routes/end/<int:route>/<int:target>/', driver_views.driver_routes_end, name="pwa-driver-routes-end"),
 
@@ -39,6 +39,29 @@ urlpatterns = [
     path('driver-mpl/routes/finish/', driver_mpl_views.driver_routes_finish, name="pwa-driver-mpl-routes-finish"),
     path('driver-mpl/routes/end/<int:route>/', driver_mpl_views.driver_routes_end, name="pwa-driver-mpl-routes-end"),
 
+    # INCIDENTS 
+    path('incidents/incidents', incidents_views.incidents, name="pwa-incidents"),
+    path('incidents/incidents/add', incidents_views.incidents_add, name="pwa-incidents-add"),
+    path('incidents/incidents/save', incidents_views.incidents_save, name="pwa-incidents-save"),
+
+    # OPERATOR
+    path('operator/', operator_views.operator_home, name="pwa-operator"),
+    path('operator/wastes/', operator_views.operator_wastes, name="pwa-operator-wastes"),
+    path('operator/wastes/form/', operator_views.operator_wastes_form, name="pwa-operator-wastes-form"),
+    path('operator/wastes/save/', operator_views.operator_wastes_save, name="pwa-operator-wastes-save"),
+    path('operator/citizens/', operator_views.operator_citizens, name="pwa-operator-citizens"),
+    path('operator/citizens/form/', operator_views.operator_citizens_form, name="pwa-operator-citizens-form"),
+    path('operator/citizens/remove/<int:obj_id>', operator_views.operator_citizens_remove, name="pwa-operator-citizens-remove"),
+
+    # EXTERNAL
+    path('external/', external_views.external_home, name="pwa-external"),
+    path('external/routes', external_views.external_routes, name="pwa-external-routes"),
+    path('external/routes/form/', external_views.external_routes_form, name="pwa-external-routes-form"),
+    path('external/routes/save/', external_views.external_routes_save, name="pwa-external-routes-save"),
+
+    # ACTIONS
+    path('actions/actions/', actions_views.actions, name="pwa-actions"),
+    path('actions/save-action/', actions_views.save_action, name="pwa-actions-save"),
 
     #path('manager/', views.manager_home, name="pwa-manager"),
 

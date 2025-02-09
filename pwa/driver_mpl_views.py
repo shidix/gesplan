@@ -5,7 +5,7 @@ from datetime import datetime
 
 from gesplan.decorators import group_required_pwa
 from gesplan.commons import get_or_none, get_param, show_exc
-from gestion.models import Facility, Waste, WasteInFacility, RouteMpl, RouteMplPoint
+from gestion.models import Facility, Waste, WasteInFacility, RouteMpl, RouteMplPoint, FacilityActions
 
 
 '''
@@ -16,7 +16,8 @@ def driver_home(request):
     try:
         #if request.user.employee.truck == None:
         #    return redirect(reverse("pwa-driver-select-truck"))
-        return render(request, "drivers-mpl/home.html", {"now": datetime.now()})
+        return redirect(reverse("pwa-driver-mpl-routes"))
+        #return render(request, "drivers-mpl/home.html", {"now": datetime.now()})
     except Exception as e:
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))
 
@@ -30,7 +31,8 @@ def driver_routes(request):
     idate = now.replace(hour=0, minute=0)
     edate = now.replace(hour=23, minute=59)
     item_list = RouteMpl.objects.filter(driver=request.user.employee, finish=True, ini_date__range=(idate, edate))
-    return render(request, "drivers-mpl/routes.html", {'route': route, 'item_list': item_list})
+    action_list = FacilityActions.objects.filter(driver=request.user.employee, date__range=(idate, edate))
+    return render(request, "drivers-mpl/routes.html", {'route': route, 'item_list': item_list, 'action_list': action_list, 'now': now})
 
 @group_required_pwa("drivers_mpl")
 def driver_routes_source(request):

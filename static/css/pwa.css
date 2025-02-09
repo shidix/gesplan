@@ -2,6 +2,9 @@
 .text-white {
     color: #ffffff; 
 }
+.text-success {
+    color: #82bc00 !important; 
+}
 .orange {
     color: #f2902d !important;
 }
@@ -35,6 +38,12 @@ p {
     color: #000;
 }
 
+.h1-pwa, 
+h1.h1-pwa {
+    color: #666;
+    font-size: 0.95em;
+}
+
 h3 {
     color: #333333;
     font-size: 1.2rem;
@@ -47,24 +56,54 @@ input.pin {
     font-size: 1.2rem;;
 }
 
-
 .date, .time {
     color: #f2902d;
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0px;
 }
-
+.list-hd {
+    border-bottom: 1px solid #f2902d;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0px;
+}
 .address {
     color: #333;
     font-size: 0.9rem;
     letter-spacing: 0px;
 }
 
-select.pl-list,
-select.wt-list {
+select.orange-sel, 
+input.orange-inp {
     border:1px solid #f2902d;
     font-size: 0.9rem;
+}
+
+.box-cont,
+.box-wastes {
+    background-color: white;
+    border:1px solid #ccc; 
+    border-radius:0.5rem; 
+    background: white;
+    color:#000;
+
+}
+
+.card.op-wastes {
+    border: none !important; 
+    background:none !important; 
+    padding-left: 5% !important;
+}
+.waste-circle {
+    font-size: 1.2rem;
+    border: none; 
+    line-height: 1.1;
+    height: 100px; 
+    width: 100px; 
+    border-radius: 50%;
+    padding: 25px 0 15px 0;
 }
 
 /*********** END UTILS *************/
@@ -160,6 +199,7 @@ img.logo {
     font-size: 0.7rem;
     color: #999;
     text-transform: Capitalize;
+    line-height: 1;
 }
 
 .truck {
@@ -200,6 +240,9 @@ a.gesplan {
 .route-item p,
 .route-item.active p {
     line-height: 1;
+}
+.route-item a {
+    text-decoration: none;
 }
 
 /*********** END CONTENT *************/

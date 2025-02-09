@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n gestion_tags %}
 
 <html lang="es">
 	<head>
@@ -42,24 +42,32 @@
                            <i class="fas fa-power-off"></i></a></strong>
                     </div>
                 </div>
-                <div class="row m-0">
-                    {#<div class="col-3 welcome py-3"><strong>{% trans "Bienvenid@" %}</strong></div>#}
-                    <div class="col-6 offset-3 truck p-1 text-center"><i class="fas fa-truck"></i> 
-                        <strong>{{request.user.employee.truck.name}} </strong> 
+                {% if not request.user|in_group:"operators" and not request.user|in_group:"external"%}
+                    <div class="row m-0">
+                        {#<div class="col-3 welcome py-3"><strong>{% trans "Bienvenid@" %}</strong></div>#}
+                        <div class="col-6 offset-3 truck p-1 text-center"><i class="fas fa-truck"></i> 
+                            <strong>{{request.user.employee.truck.name}} </strong> 
+                            {%comment%}
+                            <a class="" href="{%url 'pwa-select-truck'%}">
+                                <strong>{{request.user.employee.truck.name}} </strong> </a>
+                            {%endcomment%}
+                        </div>
                         {%comment%}
-                        <a class="" href="{%url 'pwa-select-truck'%}">
-                            <strong>{{request.user.employee.truck.name}} </strong> </a>
+                        <div class="col-3 text-end"><a class="btn gesplan w-100" href="{%url 'pwa-driver-incidents'%}">Inc</a></div>
                         {%endcomment%}
                     </div>
-                    {%comment%}
-                    <div class="col-3 text-end"><a class="btn gesplan w-100" href="{#{%url 'pwa-driver-incidents'%}#}">Inc</a></div>
-                    {%endcomment%}
-                </div>
+                {% endif %}
             </div>
 
-            <div class="row content align-middle m-0" id="div-content">
-                {% block content %} {% endblock %}
-            </div>
+            <div class="row content align-middle m-0" id="div-content"> {% block content %} {% endblock %} </div>
+
+            {% if request.user|in_group:"drivers" %}
+                {% include "drivers/menu-footer.html" %}
+            {% elif request.user|in_group:"drivers_mpl" %}
+                {% include "drivers-mpl/menu-footer.html" %}
+            {% elif request.user|in_group:"operators" %}
+                {% include "operator/menu-footer.html" %}
+            {% endif%}
         </div>
         <script>
             function checkOnlineStatus() 

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<select class="form-control ark_change wt-list py-3" id="waste" name="waste" 
+<select class="form-control ark_change orange-sel py-3" id="waste" name="waste" 
     data-url="{% url "pwa-driver-routes-confirm" %}" data-target="div-step3" data-source="{{source.id}}">
     <option value="">{% trans "-- Seleccione un Residuo --" %}</option>
     {% for item in item_list %}

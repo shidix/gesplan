@@ -7,6 +7,9 @@ from gesplan.decorators import group_required_pwa
 from gesplan.commons import get_or_none, get_param, show_exc
 from gestion.models import EmployeeTruck, Truck, Facility, Waste, WasteInFacility, Route, FacilityActions, FacilityActionType
 from gestion.models import Tray, TrayTracking
+from incidents.models import Incident, IncidentType
+
+import random, string
 
 
 '''
@@ -34,7 +37,7 @@ def driver_routes(request):
     edate = now.replace(hour=23, minute=59)
     item_list = Route.objects.filter(driver=request.user.employee, finish=True, ini_date__range=(idate, edate))
     action_list = FacilityActions.objects.filter(driver=request.user.employee, date__range=(idate, edate))
-    return render(request, "drivers/routes.html", {'route': route, 'item_list': item_list, 'action_list': action_list})
+    return render(request, "drivers/routes.html", {'route': route, 'item_list': item_list, 'action_list': action_list, 'now': now})
 
 @group_required_pwa("drivers")
 def driver_routes_source(request):
@@ -97,31 +100,58 @@ def driver_routes_dir(request, route_id):
     return render(request, "drivers/driver-doc.html", {'route': route, 'datas': route.jsonDoc()})
 
 
-'''
-    ACTIONS
-'''
-@group_required_pwa("drivers")
-def actions(request):
-    #now = datetime.now()
-    #idate = now.replace(hour=0, minutes=0)
-    #edate = now.replace(hour=23, minutes=59)
-    fac_list = Facility.getPL()
-    action_list = FacilityActionType.objects.all()
-    #fa_list = FacilityActions.objects.filter(driver=request.user.driver, date__range=(idate, edate))
-    return render(request, "drivers/actions.html", {'action_list': action_list, 'fac_list': fac_list})
-
-@group_required_pwa("drivers", "drivers_mpl")
-def save_action(request):
-    try:
-        fac = get_or_none(Facility, get_param(request.POST, "facility"))
-        action = get_or_none(FacilityActionType, get_param(request.POST, "action"))
-        if fac != "" and action != "":
-            emp = request.user.employee
-            fa = FacilityActions.objects.create(facility=fac, fa_type=action, driver=emp, truck=emp.truck)
-            return redirect("pwa-home")
-        else:
-            return (render(request, "error_exception.html", {'exc': 'Facility or Action not found!'}))
-    except Exception as e:
-        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
-
-
+#'''
+#    ACTIONS
+#'''
+#@group_required_pwa("drivers")
+#def actions(request):
+#    #now = datetime.now()
+#    #idate = now.replace(hour=0, minutes=0)
+#    #edate = now.replace(hour=23, minutes=59)
+#    fac_list = Facility.getPL()
+#    action_list = FacilityActionType.objects.all()
+#    #fa_list = FacilityActions.objects.filter(driver=request.user.driver, date__range=(idate, edate))
+#    return render(request, "drivers/actions.html", {'action_list': action_list, 'fac_list': fac_list})
+#
+#@group_required_pwa("drivers", "drivers_mpl")
+#def save_action(request):
+#    try:
+#        fac = get_or_none(Facility, get_param(request.POST, "facility"))
+#        action = get_or_none(FacilityActionType, get_param(request.POST, "action"))
+#        if fac != "" and action != "":
+#            emp = request.user.employee
+#            fa = FacilityActions.objects.create(facility=fac, fa_type=action, driver=emp, truck=emp.truck)
+#            return redirect("pwa-home")
+#        else:
+#            return (render(request, "error_exception.html", {'exc': 'Facility or Action not found!'}))
+#    except Exception as e:
+#        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+#
+#'''
+#    INCIDENTS
+#'''
+#@group_required_pwa("drivers")
+#def driver_incidents(request):
+#    now = datetime.now()
+#    idate = now.replace(hour=0, minute=0)
+#    edate = now.replace(hour=23, minute=59)
+#    item_list = Incident.objects.filter(owner=request.user, creation_date__range=(idate, edate))
+#    return render(request, "drivers/incidents.html", {'item_list': item_list})
+#
+#@group_required_pwa("drivers")
+#def driver_incidents_add(request):
+#    return render(request, "drivers/incidents-form.html", {"type_list": IncidentType.objects.filter(driver=True)})
+#
+#@group_required_pwa("drivers")
+#def driver_incidents_save(request):
+#    try:
+#        code =''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(9))
+#        subject = get_param(request.POST, "subject")
+#        description = get_param(request.POST, "description")
+#        itype = get_or_none(IncidentType, get_param(request.POST, "type"))
+#        Incident.objects.create(code=code, subject=subject, description=description, owner=request.user, type=itype)
+#        return redirect("pwa-driver-incidents")
+#    except Exception as e:
+#        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+#
+#

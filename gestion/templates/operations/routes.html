@@ -5,6 +5,8 @@
         data-bs-toggle="tab" href="#routes-pl"> {% trans "Puntos limpios" %}</a> </li>
     <li class="nav-item"> <a class="nav-link sub {%if current_tab == "mpl"%}active{%endif%}" data-bs-toggle="tab" 
         href="#routes-mpl"> {%trans "Mini puntos limpios"%}</a> </li>
+    <li class="nav-item"> <a class="nav-link sub {%if current_tab == "ext"%}active{%endif%}" data-bs-toggle="tab" 
+        href="#routes-ext"> {%trans "Gestores externos"%}</a> </li>
 </ul>
 <div class="tab-content internal mt-3">
     {# -------------------------- PUNTOS LIMPIOS ------------------------#}
@@ -14,5 +16,9 @@
     {# -------------------------- MINI PUNTOS LIMPIOS ------------------------#}
     <div class="tab-pane container {%if current_tab == "mpl"%}active{%endif%}" id="routes-mpl">
         <div id="div-routes-mpl"> {% include "operations/routes-mpl.html" %}</div></div>
+
+    {# -------------------------- GESTORES EXTERNOS ------------------------#}
+    <div class="tab-pane container {%if current_tab == "ext"%}active{%endif%}" id="routes-ext">
+        <div id="div-routes-ext"> {% include "operations/routes-ext.html" %}</div></div>
 </div>
  
