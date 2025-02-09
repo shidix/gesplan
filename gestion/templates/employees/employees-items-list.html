@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="row main-th py-3 m-0">
+    <div class="col-2"> {% trans 'Fecha' %} </div>
+    <div class="col-6"> {% trans 'Material' %} </div>
+    <div class="col-2"> {% trans 'Acción' %} </div>
+    <div class="col-2"></div>
+</div>
+
+{% for item in obj.items.all %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-2">{{ item.date|date:"d-m-Y H:i" }}</div>
+        <div class="col-4">{{ item.item.name|default:"" }}</div>
+        <div class="col-2">{{ item.amount|default:0 }}</div>
+        <div class="col-2">{{ item.action|default:"" }}</div>
+        <div class="col-2 text-right">
+            <a class="btn btn-xs ark" data-url="{% url "employees-items-remove" %}" data-target="div-emp-items" 
+                data-obj_id="{{item.id}}" title="{% trans 'Borrar' %}" data-confirm="{%trans "Are you sure to remove this element?"%}">
+                <i class="fas fa-trash"></i></a> 
+        </div>
+        <div class="col-12">{{ item.desc|default:"" }}</div>
+    </div>
+{% endfor %}
+

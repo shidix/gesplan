@@ -1,0 +1,15 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row my-3 mx-0">
+        <div class="col-6 date">{{today|date:"Y-m-d"}}</div>
+        <div class="col-6 text-end">
+            <a class="btn btn-primary btn-sm ark" data-url="{% url "pwa-operator-citizens-form" %}" data-target="div-content">
+                <strong>NUEVA ENTREGA</strong></a>
+        </div>
+        <div class="col-6 h1-pwa"> Nº de entregas: <span class="orange"><strong>{{citizen_list|length}}</strong></span> </div>
+    </div>
+    <div id="div-content">{% include "operator/citizens-list.html" %}</div>
+{% endblock %}
+

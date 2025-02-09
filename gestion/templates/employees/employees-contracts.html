@@ -1,0 +1,47 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="far fa-building"></i>&nbsp; {% trans 'Contratos' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> 
+            <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
+            <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+<form action="{% url 'employees-contracts-add' %}" method="post" id="frmEmpItems" class="mt-4">
+    {% csrf_token %}
+    <input type="hidden" id="employee" name="employee" value="{{obj.id}}" />
+    <div class="row m-0">
+        <div class="col-10">
+            <div class="row m-0">
+                <div class="col-6">
+                    <select class="form-control" id="contract_type" name="contract_type">
+                        <option value="">{% trans "--Seleccione un tipo de contrato--" %}</option>
+                        {% for item in contract_list %} <option value="{{item.id}}">{{item.name}}</option> {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="agreement_type" name="agreement_type">
+                        <option value="">{% trans "--Seleccione un tipo de acuerdo--" %}</option>
+                        {% for item in agreement_list %} <option value="{{item.id}}">{{item.name}}</option> {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6"> <input type="date" class="form-control" id="ini_date" name="ini_date"/> </div>
+                <div class="col-6"> <input type="date" class="form-control" id="end_date" name="end_date"/> </div>
+                <div class="col-12"> 
+                    <textarea class="form-control" id="timetable" name="timetable" placeholder="Horario"></textarea> </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary saveform w-100" data-form="frmEmpItems" data-target="div-emp-contracts"
+                onclick="setTimeout(()=>{$('.form-control').val('');}, '500');">{%trans "Añadir"%}</button></div>
+        </div>
+    </div>
+</form>
+<div id="div-emp-contracts"> {% include "employees/employees-contracts-list.html" %} </div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans "Cerrar" %}</button>
+</div>
+

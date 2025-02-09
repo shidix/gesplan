@@ -1,0 +1,58 @@
+{% load i18n %}
+
+<h3 class="orange text-center mt-2">Formulario de Recogida</h3>
+<p class="text-center"><strong>Fecha: </strong>{{today|date:"Y-m-d H:i:s"}}</p>
+<div class="col-12">
+    <div class="row my-2">
+        <div class="h1-pwa col-12">Término Municipal</div>
+        <div class="col-12">
+            <select class="form form-control w-100 orange-sel autosave" id="town" name="town" data-model-name="citizens.citizen" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification">
+                {% for item in town_list %}
+                    <option value="{{item.id}}" {%if item.id == obj.type.id%}selected{%endif%}>{{item.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="h1-pwa col-12 mt-3">Identificación</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp autosave" type="text" value="{{obj.identification}}" 
+                id="identification" name="identification" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" 
+                data-url="{%url "autosave_field"%}" data-target="div-notification">
+        </div>
+        <div class="h1-pwa col-12 mt-3">Teléfono</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp autosave" type="text" value="{{obj.phone}}" id="phone" name="phone"
+                data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification">
+        </div>
+        <div class="h1-pwa col-12 mt-3">Matrícula</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp autosave" type="text" value="{{obj.plate}}" id="plate" name="plate"
+                data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification">
+        </div>
+        <div class="h1-pwa col-12 mt-3">Dirección</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp autosave" type="text" value="{{obj.address}}" id="address" 
+                name="address" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification">
+        </div>
+        <div class="h1-pwa col-12 mt-3">Código Postal</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp autosave" type="text" value="{{obj.observations}}" 
+                id="observations" name="observations" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" 
+                data-url="{%url "autosave_field"%}" data-target="div-notification">
+        </div>
+
+        <div class="row m-0 mt-5">
+            <div class="col-6 text-center"> 
+                <a href="{% url "pwa-operator-citizens" %}" class="btn btn-primary w-100"><strong>GUARDAR</strong></a> 
+            </div>
+            <div class="col-6 text-center"> 
+                <a href="{% url "pwa-operator-citizens-remove" obj.id %}" class="btn btn-danger w-100" 
+                    {#onclick="return confirm('Esta seguro/a de que desea borrar este elemento?');"#}><strong>ELIMINAR</strong></a> 
+            </div>
+        </div>
+    </div>
+</div>
+

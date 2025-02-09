@@ -1,0 +1,47 @@
+{% load i18n %}
+
+{%comment%}
+<div class="row toolbar-search p-2 m-0">
+    <div class="col-lg-1 col-1 b-search"><i class="fas fa-search pt-2"></i></div>
+    <div class="col-lg-11 col-11 p-0">
+        <input type="text" class="autosearch form-control form-control-dark w-100" name="s-name" id="s-name" 
+           placeholder="{% trans 'Nombre' %}" data-url="{% url "routes-search" %}" data-target="route-list" data-related="s-name" />
+    </div>
+</div>
+{%endcomment%}
+
+{% with items=routes_ext %}
+    <div class="content mt-1"> <div id="route-ext-list" class="ml-list">
+        {#{% include "routes/routes-ext-list.html" %}#}
+        <div class="row main-th py-3 m-0">
+            <div class="col-1"> {% trans 'Fecha' %} </div>
+            <div class="col-2"> {% trans 'Residuo' %} </div>
+            <div class="col-2"> {% trans 'Peso' %} </div>
+            <div class="col-2"> {% trans 'Instalación' %} </div>
+            <div class="col-2"> {% trans 'Gestor externo' %} </div>
+            <div class="col-2"> {% trans 'Operario' %} </div>
+            <div class="col-1"></div>
+        </div>
+
+        {% for item in items %}
+            <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+                <div class="col-1">{{ item.date|date:"d-m-Y H:i" }}</div>
+                <div class="col-2">{{ item.waste.waste.name }}</div>
+                <div class="col-2">{{ item.weight }}</div>
+                <div class="col-2">{{ item.facility.description }}</div>
+                <div class="col-2">{{ item.external_manager.name }}</div>
+                <div class="col-2">{{ item.manager.name }}</div>
+                <div class="col-1 text-right">
+                    {%comment%}
+                    <a class="btn btn-xs ark" data-url="{% url "routes-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+                        title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
+                    <a class="btn btn-xs ark" data-url="{% url "routes-remove" %}" data-target="route-list" data-obj_id="{{item.id}}" 
+                        title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                        <i class="fas fa-trash"></i></a> 
+                    {%endcomment%}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div> </div>
+{% endwith %}

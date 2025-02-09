@@ -1,0 +1,27 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <div class="row mx-0 my-3">
+        {% for item in item_list %}
+            <div class="route-item py-2 my-1">
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Residuo" %}</strong>: {{item.waste.waste.name}}</p>
+                {% if item.weight == 0 %}
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Estado actual" %}</strong>: {{item.waste.filling_degree}} %</p>
+                {% endif %}
+                <p><strong><i class='fas fa-weight-hanging orange'></i> {%trans "Peso" %}</strong>: {{item.weight}}</p>
+                <p><strong><i class='fas fa-map-marker-alt orange'></i> 
+                    {%trans "Instalación" %}</strong>: {{item.facility.description}}</p>
+                <p><strong><i class="fa fa-clock orange"></i> {%trans "Fecha" %}</strong>: {{item.date|date:"d-m-Y H:i"}}</p>
+                <p><strong><i class="fa fa-clock orange"></i> 
+                    {%trans "Fecha de recogida" %}</strong>: {{item.get_date|date:"d-m-Y H:i"}}</p>
+                <div class="text-center">
+                    {% if item.weight == 0 %}
+                        <button class="btn btn-info ark" data-url="{%url "pwa-external-routes-form"%}" data-target="div-content" 
+                            data-obj_id="{{item.id}}">{% trans "Recoger" %}</button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

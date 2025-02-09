@@ -1,0 +1,18 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <h1 class="h1-pwa mt-3">{% trans "Seleccione una acción" %}</h1>
+    <form action="{% url 'pwa-actions-save' %}" method="post" id="frmSelectAction" class="m-0">
+        {% csrf_token %}
+        <select class="form-control orange-sel mt-3" id="facility" name="facility">
+            <option value="">{% trans "-- Seleccione una instalación --" %}</option>
+            {% for fac in fac_list %} <option value="{{fac.id}}">{{fac.description}}</option> {% endfor %}
+        </select>
+        <select class="form-control orange-sel mt-3" id="action" name="action">
+            <option value="">{% trans "-- Seleccione una acción --" %}</option>
+            {% for action in action_list %} <option value="{{action.id}}">{{action.name}}</option> {% endfor %}
+        </select>
+        <div class="text-center mt-3"><input type="submit" class="btn btn-primary w-100" value="{% trans "Enviar" %}"/></div>
+    </form>
+{% endblock %}

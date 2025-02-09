@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="row main-th py-3 m-0">
+    <div class="col-2"> {% trans 'Tipo de contrato' %} </div>
+    <div class="col-2"> {% trans 'Tipo de acuerdo' %} </div>
+    <div class="col-2"> {% trans 'Fecha de inicio' %} </div>
+    <div class="col-2"> {% trans 'Fecha de fin' %} </div>
+    <div class="col-2"> {% trans 'Horario' %} </div>
+    <div class="col-2"></div>
+</div>
+
+{% for item in obj.contracts.all %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-2">{{ item.contract_type.name|default:"" }}</div>
+        <div class="col-2">{{ item.agreement_type.name|default:"" }}</div>
+        <div class="col-2">{{ item.ini_date|date:"d-m-Y H:i" }}</div>
+        <div class="col-2">{{ item.end_date|date:"d-m-Y H:i" }}</div>
+        <div class="col-2">{{ item.timetable|default:"" }}</div>
+        <div class="col-2 text-right">
+            <a class="btn btn-xs ark" data-url="{% url "employees-contracts-remove" %}" data-target="div-emp-contracts" 
+                data-obj_id="{{item.id}}" title="{% trans 'Borrar' %}" data-confirm="{%trans "Are you sure to remove this element?"%}">
+                <i class="fas fa-trash"></i></a> 
+        </div>
+    </div>
+{% endfor %}
+

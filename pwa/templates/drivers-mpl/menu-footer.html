@@ -1,0 +1,21 @@
+{% load i18n static %}
+
+<div class="row mv p-0">
+    <div class="col-3 text-center nav-item nav-tabs tab-1 active p-1">
+        <a class="nav-link" href="{%url 'pwa-driver-mpl-routes'%}">
+            <img src="{% static 'images/operations.png' %}" height="30px"><br />Rutas</a>
+    </div>
+    <div class="col-3 text-center nav-item nav-tabs tab-2 p-1">
+        <a class="nav-link" href="{%url 'pwa-select-truck'%}">
+            <img src="{% static 'images/vehicles.png' %}" height="30px"><br />Cambiar vehículo</a>
+    </div>
+    <div class="col-3 text-center nav-item nav-tabs tab-3 p-1">
+        <a class="nav-link" href="{%url 'pwa-incidents'%}">
+            <img src="{% static 'images/incident.png' %}" height="30px"><br />Incidencias</a>
+    </div>
+    <div class="col-3 text-center nav-item nav-tabs tab-4 p-1">
+        <a class="nav-link" href="{%url 'pwa-actions'%}">
+            <img src="{% static 'images/more-actions.png' %}" height="30px"><br />Otras acciones</a>
+    </div>
+</div>
+

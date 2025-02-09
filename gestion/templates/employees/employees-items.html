@@ -1,0 +1,46 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="far fa-building"></i>&nbsp; {% trans 'Materiales' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> 
+            <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
+            <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+<form action="{% url 'employees-items-add' %}" method="post" id="frmEmpItems" class="mt-4">
+    {% csrf_token %}
+    <input type="hidden" id="employee" name="employee" value="{{obj.id}}" />
+    <div class="row m-0">
+        <div class="col-10">
+            <div class="row m-0">
+                <div class="col-5">
+                    <select class="form-control" id="item" name="item">
+                        <option value="">{% trans "--Seleccione un material--" %}</option>
+                        {% for item in item_list %} <option value="{{item.id}}">{{item.name}}</option> {% endfor %}
+                    </select>
+                </div>
+                <div class="col-5">
+                    <select class="form-control" id="action" name="action">
+                        <option value="">{% trans "--Seleccione una acción--" %}</option>
+                        <option value="Entrega">{% trans "Entrega" %}</option>
+                        <option value="Devolución">{% trans "Devolución" %}</option>
+                    </select>
+                </div>
+                <div class="col-2"> <input type="text" class="form-control" id="amount" name="amount" placeholder="Cantidad"/> </div>
+                <div class="col-12"> <textarea class="form-control" id="desc" name="desc" placeholder="Descripción"></textarea> </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-secondary saveform w-100" data-form="frmEmpItems" data-target="div-emp-items"
+                onclick="setTimeout((){$('.form-control').val('');}, '500');">{%trans "Añadir"%}</button></div>
+        </div>
+    </div>
+</form>
+<div id="div-emp-items"> {% include "employees/employees-items-list.html" %} </div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans "Cerrar" %}</button>
+</div>
+

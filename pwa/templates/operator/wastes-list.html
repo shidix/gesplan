@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div class="row my-3 py-3 m-0 box-wastes">
+    {% for waste in item_list %}
+        <div class="col-4 text-white p-1 text-center">
+            <div class="card op-wastes ark" data-url="{%url "pwa-operator-wastes-form"%}" data-target="div-content" data-obj_id="{{waste.id}}">
+                <div class="card-body bg-{{waste.class_state}} gesplan waste-circle">
+                    <div><strong>{{waste.filling_degree|floatformat:0}}%</strong></div>
+                    <div class="tiny py-auto text-white  pt-1">{{waste.waste.name}}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+

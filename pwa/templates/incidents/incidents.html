@@ -1,0 +1,19 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <div class="row mx-0 my-3">
+        <div class="col-12 p-0"> <a class="btn btn-md btn-primary w-100" href="{% url "pwa-incidents-add" %}">
+            <strong>{% trans "CREAR INCIDENCIA" %}</strong></a> </div>
+        {% for item in item_list %}
+            <div class="route-item py-2 my-1 mt-3">
+                <p><strong><i class="fa fa-trash orange"></i> {%trans "Código" %}</strong>: {{item.code}}</p>
+                <p><strong><i class='fas fa-weight-hanging orange'></i> {%trans "Fecha" %}</strong>: 
+                    {{item.creation_date|date:"d-m-Y H:i"}}</p>
+                <p><strong><i class='fas fa-map-marker-alt orange'></i> {%trans "Asunto" %}</strong>: {{item.subject}}</p>
+                <p><strong><i class='fas fa-flag-checkered orange'></i> {%trans "Estado" %}</strong>: 
+                    {%if item.closed%}<i class="fas fa-check"></i>{%else%}<i class="fas fa-times"></i>{%endif%}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <form action="{% url 'pwa-incidents-save' %}" method="post" id="frmSelectAction" class="m-0">
+        {% csrf_token %}
+        <h1 class="h1-pwa mt-3">{% trans "Tipo" %}</h1>
+        <select class="form-control orange-sel" id="type" name="type">
+            <option value="">{% trans "-- Seleccione un tipo --" %}</option>
+            {% for item in type_list %} <option value="{{item.id}}">{{item.name}}</option> {% endfor %}
+        </select>
+        <h1 class="h1-pwa mt-3">{% trans "Asunto" %}</h1>
+        <input type="text" class="form-control orange-inp" id="subject" name="subject" value="" />
+        <h1 class="h1-pwa mt-3">{% trans "Descripción" %}</h1>
+        <input type="text" class="form-control orange-inp" id="description" name="description" value="" />
+        <div class="text-center mt-3"><input type="submit" class="btn btn-primary w-100" value="{% trans "GUARDAR" %}"/></div>
+    </form>
+{% endblock %}

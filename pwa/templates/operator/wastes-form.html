@@ -1,0 +1,37 @@
+{% load i18n %}
+
+
+<div class="row m-0">
+    <div class="col-12 p-0">
+        <div class="row my-2 px-3">
+            <div class="col-12 my-2 bg-light text-center text-success"><strong>{{obj.waste.name}}</strong></div>
+            <div class="col-6 px-2 my-2 text-end"><h1 class="h1-pwa">Umbral alerta:</h1></div>
+            <div class="col-6 px-2 my-2 text-start text-danger"><strong>{{obj.alert_filling_degree|floatformat:0}}%</strong></div>
+            <div class="col-6 px-2 my-2 text-end"><h1 class="h1-pwa">Umbral aviso:</h1></div>
+            <div class="col-6 px-2 my-2 text-start text-warning"><strong>{{obj.warning_filling_degree|floatformat:0}}%</strong></div>
+        </div>
+        <div class="row m-0"><div class="col-12">&nbsp;</div></div>
+        <form action="{% url 'pwa-operator-wastes-save' %}" method="post" id="frmWaste" class="m-0">
+            {% csrf_token %}
+            <input class="orange-inp" type="hidden" id="obj_id" name="obj_id" value="{{obj.id}}"/>
+            <div class="row my-2">
+                <div class="col-12"> <div class="greybox-sm p-1">
+                    <h1 class="h1-pwa">{% trans "Indique porcentaje de llenado (%)" %}</h1>
+                    <input type="text" class="form-control orange-inp" id="filling_degree" name="filling_degree" 
+                        value="{{obj.filling_degree|default:"0"}}" placeholder="Porcentaje de llenado..." /> 
+                    {%comment%}
+                    <input type="text" class="form-control autosave" id="filling_degree" name="filling_degree" 
+                        value="{{obj.filling_degree|default:"0"}}" data-model-name="gestion.wasteinfacility" data-obj-id="{{obj.id}}" 
+                        data-url="{%url "autosave_field"%}" data-target="div-notification" placeholder="Porcentaje de llenado..." /> 
+                    {%endcomment%}
+                </div></div>
+                <div class="col-12 my-4 text-center">
+                    <input type="submit" class="btn btn-primary w-100" value="{% trans "Guardar" %}"/> </div>
+                    {#<a class="btn btn-md btn-primary w-100" href="{%url "pwa-operator"%}"><strong>{%trans "Guardar"%}</strong></a>#}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
