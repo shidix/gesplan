@@ -5,7 +5,7 @@
     <div class="row toolbar-search p-2 m-0">
         <div class="col-lg-1 col-1 b-search"><i class="fas fa-search pt-2"></i></div>
         <div class="col-lg-11 col-11 p-0">
-            <input type="text" class="autosearch form-control form-control-dark w-100" name="s-emp-name" id="s-emp-name" 
+            <input type="text" class="autosearch form-control form-control-dark w-100" name="s_emp_name" id="s_emp_name" 
                placeholder="{%trans 'Nombre'%}" data-url="{%url "employees-search"%}" data-target="emp-list" 
                data-related="s-emp-name" />
         </div>
@@ -17,7 +17,14 @@
             <button type="button" class="btn btn-sm ark new" data-url="{%url "employees-form"%}" data-target-modal="common-modal"> 
                 <i class="fas fa-plus"></i> {% trans 'Crear Empleado' %}</button> 
         </div>
+        <ul class="nav nav-tabs mx-2 pl-2 pr-2 pt-2">
+            {% for rol in rol_list %}
+                <li class="nav-item"> <a class="nav-link {%if rol.code == request.session.s_emp_rol%}active{%endif%} ark pointer" 
+                    data-url="{%url "employees-list"%}" data-target="emp-list" data-rol="{{rol.code}}">{{rol.name}}</a> </li>
+            {% endfor %}
+        </ul>
         <div id="emp-list" class="ml-list">{% include "employees/employees-list.html" %}</div>
     </div>
     {% include "common-modal.html" %}
+    <script>$(".nav-link").click(function(){$(".nav-link").removeClass("active");$(this).addClass("active")})</script>
 {% endblock central_content %}

@@ -18,10 +18,13 @@
         <div class="col-2">{{ item.company|default:"" }}</div>
         <div class="col-2">{{ item.company_owner|default:"" }}</div>
         <div class="col-2 text-right">
-            <a class="btn btn-xs ark" data-url="{% url "facilities-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+            <a class="btn btn-xs ark" data-url="{%url "facilities-items"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+                title="{% trans 'Materiales' %}"> <i class="fas fa-list"></i> </li>
+            <a class="btn btn-xs ark" data-url="{%url "facilities-form"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "facilities-remove" %}" data-target="fac-list" data-obj_id="{{item.id}}" 
-                title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+                title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                <i class="fas fa-trash"></i></a> 
         </div>
     </div>
 {% endfor %}

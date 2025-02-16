@@ -55,6 +55,7 @@ urlpatterns = [
 
     # EXTERNAL
     path('external/', external_views.external_home, name="pwa-external"),
+    path('external/wastes/', external_views.external_wastes, name="pwa-external-wastes"),
     path('external/routes', external_views.external_routes, name="pwa-external-routes"),
     path('external/routes/form/', external_views.external_routes_form, name="pwa-external-routes-form"),
     path('external/routes/save/', external_views.external_routes_save, name="pwa-external-routes-save"),

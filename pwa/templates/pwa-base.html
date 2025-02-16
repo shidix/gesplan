@@ -38,8 +38,13 @@
                         <span class="driver-name">{{request.user.employee.name}}</span>
                     </div>
                     <div class="col-1 offset-2 pt-3">
-                       <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout'%}">
-                           <i class="fas fa-power-off"></i></a></strong>
+                        {% if request.user|in_group:"external" %}
+                            <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout-confirm'%}">
+                                <i class="fas fa-power-off"></i></a></strong>
+                        {% else %}
+                            <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout'%}">
+                                <i class="fas fa-power-off"></i></a></strong>
+                        {% endif %}
                     </div>
                 </div>
                 {% if not request.user|in_group:"operators" and not request.user|in_group:"external"%}
@@ -67,6 +72,8 @@
                 {% include "drivers-mpl/menu-footer.html" %}
             {% elif request.user|in_group:"operators" %}
                 {% include "operator/menu-footer.html" %}
+            {% elif request.user|in_group:"external" %}
+                {% include "external/menu-footer.html" %}
             {% endif%}
         </div>
         <script>

@@ -211,14 +211,17 @@ a.btn.btn-primary:hover, a.btn.btn-secondary:hover, a.btn.btn-primary.ark:hover,
 	color: white !important;
 }
 
+.btn.btn-sm.new, 
 .btn.btn-sm.ark.new {
 	border: 1px solid #7fb927;
 	border-radius: 5px;
 	color: #7fb927;
 }
+.btn.btn-sm.new i, 
 .btn.btn-sm.ark.new i {
 	color: #7fb927;
 }
+.btn.btn-sm.new:hover, 
 .btn.btn-sm.ark.new:hover {
 	background-color: #e7f2d8;
 }

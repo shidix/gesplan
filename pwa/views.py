@@ -78,7 +78,7 @@ def pin_login(request):
 def pin_logout(request):
     return render(request, "pwa-logout.html", {'now': datetime.now()})
 
-@group_required_pwa("drivers", "drivers_mpl", "operators")
+@group_required_pwa("drivers", "drivers_mpl", "operators", "external")
 def pin_logout_confirm(request):
     logout(request)
     return redirect(reverse('pwa-login'))

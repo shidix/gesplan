@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Avg, Sum
@@ -35,7 +35,10 @@ class Company(models.Model):
         return company
 
     def __str__(self):
-        return "%s - %s" % (self.nif, self.name)
+        try:
+            return "%s - %s" % (self.nif, self.name)
+        except:
+            return ""
 
     class Meta:
         verbose_name = _('Empresa')
@@ -145,8 +148,8 @@ class Facility(models.Model):
     town = models.CharField(max_length=255, verbose_name='Ciudad', default="", null=True, blank=True)
     #map_bubble_text = RichTextUploadingField(verbose_name="Ficha Burbuja", blank=True, null=True);
 
-    lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True)
-    lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True)
+    lat = models.CharField(max_length=50, verbose_name=_("Lat"), default="", null=True, blank=True)
+    lon = models.CharField(max_length=50, verbose_name=_("Lon"), default="", null=True, blank=True)
 
     company = models.ForeignKey(Company, verbose_name='Empresa gestora', on_delete=models.SET_NULL, null=True)
     company_owner = models.ForeignKey(Company,verbose_name='Empresa propietaria',on_delete=models.SET_NULL,null=True,related_name="facilities_owner")
@@ -306,6 +309,7 @@ class Employee(models.Model):
     pin = models.CharField(max_length=10, null=True, unique=True, verbose_name=_('PIN'))
     device_uid = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('DeviceUID'))
     name = models.CharField(max_length=100, null=True, verbose_name=_('Nombre'))
+    surname = models.CharField(max_length=100, null=True, verbose_name=_('Apellidos'))
     cellphone = models.CharField(max_length=10, null=True, default = '0000000000', verbose_name = 'Teléfono de contacto')
     email = models.EmailField(null=True, verbose_name = _('Email de contacto'))
 
@@ -314,8 +318,8 @@ class Employee(models.Model):
     facility = models.ForeignKey(Facility, verbose_name=_('Instalación'), on_delete=models.SET_NULL, null=True, blank=True, related_name="employees")
     rol = models.ForeignKey(EmployeeType, verbose_name=_('Tipo'), on_delete=models.SET_NULL, null=True, blank=True)
 
-    def __str__(self):
-        return self.name
+    #def __str__(self):
+    #    return self.name
 
     @property
     def is_driver(self):
@@ -344,6 +348,28 @@ class Employee(models.Model):
             mypin = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
         self.pin = mypin
         self.save()
+
+    def save_user(self):
+        if self.user == None:
+            self.user = User.objects.create_user(username=self.email, email=self.email)
+            self.user.first_name = self.name
+            self.user.last_name = self.surname
+            self.save()
+            group = Group.objects.get(name='operators')
+            group.user_set.add(self.user)
+        else:
+            self.user.username = self.email
+            self.user.first_name = self.name
+            self.user.last_name = self.surname
+            self.user.save()
+
+    @staticmethod
+    def getOperators():
+        return Employee.objects.filter(rol__code = "operator")
+
+    @staticmethod
+    def getOperatorsUser():
+        return [item.user for item in Employee.objects.filter(rol__code = "operator")]
 
     class Meta:
         verbose_name=_('Empleado')
@@ -535,8 +561,10 @@ class Item(models.Model):
         verbose_name_plural=_('Materiales')
 
 class EmployeeItem(models.Model):
-    date = models.DateTimeField(verbose_name=('Fecha de ITV'), null=True, default=datetime.datetime.now)
-    action = models.CharField(max_length=255, verbose_name='Acción', default="")
+    returned = models.BooleanField(default = False, verbose_name=_('Devuelto'));
+    date = models.DateTimeField(verbose_name=('Fecha de prestamo'), null=True, default=datetime.datetime.now)
+    return_date = models.DateTimeField(verbose_name=('Fecha de devolución'), null=True, default=datetime.datetime.now)
+    #action = models.CharField(max_length=255, verbose_name='Acción', default="")
     amount = models.IntegerField(verbose_name='Cantidad', default=0)
     desc = models.TextField(verbose_name='Descripción', default="")
     employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.CASCADE, null=True, related_name="items")
@@ -545,6 +573,19 @@ class EmployeeItem(models.Model):
     class Meta:
         verbose_name=_('Empleado Material')
         verbose_name_plural=_('Empleados Materiales')
+
+class FacilityItem(models.Model):
+    returned = models.BooleanField(default = False, verbose_name=_('Devuelto'));
+    date = models.DateTimeField(verbose_name=('Fecha de prestamo'), null=True, default=datetime.datetime.now)
+    return_date = models.DateTimeField(verbose_name=('Fecha de devolución'), null=True, default=datetime.datetime.now)
+    amount = models.IntegerField(verbose_name='Cantidad', default=0)
+    desc = models.TextField(verbose_name='Descripción', default="")
+    facility = models.ForeignKey(Facility, verbose_name='Instalación', on_delete=models.CASCADE, null=True, related_name="items")
+    item = models.ForeignKey(Item, verbose_name='Material', on_delete=models.SET_NULL, null=True, related_name="facilities")
+
+    class Meta:
+        verbose_name=_('Instalación Material')
+        verbose_name_plural=_('Instalaciones Materiales')
 
 '''
     Contract

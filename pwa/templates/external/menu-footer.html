@@ -1,0 +1,13 @@
+{% load i18n static %}
+
+<div class="row mv p-0">
+    <div class="col-6 text-center nav-item nav-tabs tab-1 active p-1">
+        <a class="nav-link" href="{% url 'pwa-external-wastes' %}">
+            <img src="{% static 'images/operations.png' %}" height="30px"><br />Contenedores</a>
+    </div>
+    <div class="col-6 text-center nav-item nav-tabs tab-2 p-1">
+        <a class="nav-link" href="{%url 'pwa-external-routes'%}">
+            <img src="{% static 'images/vehicles.png' %}" height="30px"><br />Recogidas</a>
+    </div>
+</div>
+

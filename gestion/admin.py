@@ -16,6 +16,9 @@ class EmployeeAdmin(admin.ModelAdmin):
 class EmployeeAccessLogAdmin(admin.ModelAdmin):
     list_display = ('employee', 'date', 'location', 'finish')
 
+class EmployeeTypeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name',)
+
 class FacilityTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'order', 'operation_time', 'dashboard')
 
@@ -40,6 +43,9 @@ class TrayTrackingAdmin(admin.ModelAdmin):
 class TruckTypeAdmin(admin.ModelAdmin):
     list_display = ('brand', 'model', 'year')
 
+class WasteAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'external_manager')
+
 class WasteInFacilityAdmin(admin.ModelAdmin):
     list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')
     list_filter = ('facility',)
@@ -49,7 +55,7 @@ admin.site.register(ContractType, ContractTypeAdmin)
 admin.site.register(Company)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(EmployeeAccessLog, EmployeeAccessLogAdmin)
-admin.site.register(EmployeeType)
+admin.site.register(EmployeeType, EmployeeTypeAdmin)
 admin.site.register(EmployeeTruck)
 admin.site.register(Facility)
 admin.site.register(FacilityType, FacilityTypeAdmin)
@@ -65,7 +71,7 @@ admin.site.register(TrayTracking, TrayTrackingAdmin)
 admin.site.register(Truck)
 admin.site.register(TruckType, TruckTypeAdmin)
 admin.site.register(UnitType)
-admin.site.register(Waste)
+admin.site.register(Waste, WasteAdmin)
 #admin.site.register(Priority, PriorityAdmin)
 admin.site.register(WasteInFacility, WasteInFacilityAdmin)
 

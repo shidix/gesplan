@@ -20,6 +20,11 @@ urlpatterns = [
     path('facilities/form', views.facilities_form, name='facilities-form'),
     path('facilities/remove', views.facilities_remove, name='facilities-remove'),
 
+    path('facilities/items', views.facilities_items, name='facilities-items'),
+    path('facilities/items-add', views.facilities_items_add, name='facilities-items-add'),
+    path('facilities/items-return', views.facilities_items_return, name='facilities-items-return'),
+    path('facilities/items-remove', views.facilities_items_remove, name='facilities-items-remove'),
+
     #---------------------- TRUCKS -----------------------
     path('trucks', views.trucks, name='trucks'),
     path('trucks/list', views.trucks_list, name='trucks-list'),
@@ -40,9 +45,11 @@ urlpatterns = [
     path('employees/list', views.employees_list, name='employees-list'),
     path('employees/search', views.employees_search, name='employees-search'),
     path('employees/form', views.employees_form, name='employees-form'),
+    path('employees/save', views.employees_save, name='employees-save'),
     path('employees/remove', views.employees_remove, name='employees-remove'),
     path('employees/items', views.employees_items, name='employees-items'),
     path('employees/items-add', views.employees_items_add, name='employees-items-add'),
+    path('employees/items-return', views.employees_items_return, name='employees-items-return'),
     path('employees/items-remove', views.employees_items_remove, name='employees-items-remove'),
     path('employees/contracts', views.employees_contracts, name='employees-contracts'),
     path('employees/contracts-add', views.employees_contracts_add, name='employees-contracts-add'),

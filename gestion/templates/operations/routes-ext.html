@@ -14,9 +14,10 @@
     <div class="content mt-1"> <div id="route-ext-list" class="ml-list">
         {#{% include "routes/routes-ext-list.html" %}#}
         <div class="row main-th py-3 m-0">
-            <div class="col-1"> {% trans 'Fecha' %} </div>
+            <div class="col-1"> {% trans 'Fecha de llenado' %} </div>
+            <div class="col-1"> {% trans 'Fecha de recogida' %} </div>
             <div class="col-2"> {% trans 'Residuo' %} </div>
-            <div class="col-2"> {% trans 'Peso' %} </div>
+            <div class="col-1"> {% trans 'Peso' %} </div>
             <div class="col-2"> {% trans 'Instalación' %} </div>
             <div class="col-2"> {% trans 'Gestor externo' %} </div>
             <div class="col-2"> {% trans 'Operario' %} </div>
@@ -26,8 +27,9 @@
         {% for item in items %}
             <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
                 <div class="col-1">{{ item.date|date:"d-m-Y H:i" }}</div>
+                <div class="col-1">{{ item.get_date|date:"d-m-Y H:i" }}</div>
                 <div class="col-2">{{ item.waste.waste.name }}</div>
-                <div class="col-2">{{ item.weight }}</div>
+                <div class="col-1">{{ item.weight }}</div>
                 <div class="col-2">{{ item.facility.description }}</div>
                 <div class="col-2">{{ item.external_manager.name }}</div>
                 <div class="col-2">{{ item.manager.name }}</div>

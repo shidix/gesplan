@@ -1,0 +1,20 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <div id="div-content">
+        <div class="row my-3 py-3 m-0 box-wastes">
+            {% for waste in item_list %}
+                <div class="col-4 text-white p-1 text-center">
+                    <div class="card op-wastes">
+                        <div class="card-body bg-{{waste.class_state}} gesplan waste-circle">
+                            <div><strong>{{waste.filling_degree|floatformat:0}}%</strong></div>
+                            <div class="tiny py-auto text-white pt-1">{{waste.waste.name}}</div>
+                        </div>
+                        <div class="py-auto pt-1" style="color:#000"><small>{{waste.facility.description}}</small></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from gesplan.decorators import group_required_pwa
 from gesplan.commons import get_or_none, get_param, show_exc, get_float
-from gestion.models import RouteExt
+from gestion.models import RouteExt, WasteInFacility
 
 
 '''
@@ -14,9 +14,21 @@ from gestion.models import RouteExt
 @group_required_pwa("external")
 def external_home(request):
     try:
-        return redirect(reverse("pwa-external-routes"))
+        return redirect(reverse("pwa-external-wastes"))
+        #return redirect(reverse("pwa-external-routes"))
     except Exception as e:
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+'''
+    WASTES
+'''
+@group_required_pwa("external")
+def external_wastes(request):
+    print(request.user.employee)
+    print(request.user.employee.company)
+    item_list = WasteInFacility.objects.filter(waste__external_manager=request.user.employee.company, toRoute=False)
+    print(item_list)
+    return render(request, "external/wastes.html", {'item_list': item_list,})
 
 '''
     ROUTES

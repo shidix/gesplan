@@ -13,8 +13,8 @@
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
         <div class="col-2">{{ item.contract_type.name|default:"" }}</div>
         <div class="col-2">{{ item.agreement_type.name|default:"" }}</div>
-        <div class="col-2">{{ item.ini_date|date:"d-m-Y H:i" }}</div>
-        <div class="col-2">{{ item.end_date|date:"d-m-Y H:i" }}</div>
+        <div class="col-2">{{ item.ini_date|date:"d-m-Y" }}</div>
+        <div class="col-2">{{ item.end_date|date:"d-m-Y" }}</div>
         <div class="col-2">{{ item.timetable|default:"" }}</div>
         <div class="col-2 text-right">
             <a class="btn btn-xs ark" data-url="{% url "employees-contracts-remove" %}" data-target="div-emp-contracts" 

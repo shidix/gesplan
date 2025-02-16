@@ -738,6 +738,26 @@ $(document).ready(()=>{
             $("."+class_name).prop("disabled", false);
     });
 
+    $("body").on("click", ".toggle-edit", function(e){
+        var obj = $(this);
+        var class_name = obj.data("class-name");
+        var text = obj.data("text");
+        var textAlt = obj.data("text-alt");
+
+        if (obj.html() == textAlt)
+        {
+            obj.html(text);
+            $("."+class_name).prop("disabled", "disabled");
+            $("."+class_name).addClass("view");
+        }
+        else
+        {
+            obj.html(textAlt);
+            $("."+class_name).prop("disabled", "");
+            $("."+class_name).removeClass("view");
+        }
+    });
+
     $("body").on("click", ".copy-to-clipboard", function(e){
         var answer = $("#"+$(this).data("answer"));
         $("#"+$(this).data("src")).select();

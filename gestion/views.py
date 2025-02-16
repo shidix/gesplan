@@ -2,10 +2,12 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from datetime import datetime
+
 from gesplan.decorators import group_required
 from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc
 from .models import Company, Facility, Truck, Employee, EmployeeType, Route, Item, EmployeeItem
-from .models import EmployeeContract, ContractType, AgreementType
+from .models import EmployeeContract, ContractType, AgreementType, FacilityItem
 
 
 @group_required("admins",)
@@ -94,6 +96,40 @@ def facilities_remove(request):
     if obj != None:
         obj.delete()
     return render(request, "facilities/facilities-list.html", {"items": get_facilities(request)})
+
+'''
+    FACILITIES ITEMS
+'''
+@group_required("admins",)
+def facilities_items(request):
+    obj = get_or_none(Facility, request.GET["obj_id"])
+    return render(request, "facilities/facilities-items.html", {"obj": obj, "item_list": Item.objects.all()})
+
+@group_required("admins",)
+def facilities_items_add(request):
+    obj = get_or_none(Facility, get_param(request.POST, "facility"))
+    item = get_or_none(Item, get_param(request.POST, "item"))
+    amount = get_int(get_param(request.POST, "amount"))
+    desc = get_param(request.POST, "desc")
+    FacilityItem.objects.create(facility=obj, item=item, amount=amount, desc=desc)
+    return render(request, "facilities/facilities-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
+
+@group_required("admins",)
+def facilities_items_return(request):
+    obj = get_or_none(FacilityItem, get_param(request.GET, "obj_id"))
+    obj.return_date = datetime.now()
+    obj.returned = True
+    obj.save()
+    return render(request, "facilities/facilities-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
+
+@group_required("admins",)
+def facilities_items_remove(request):
+    obj = get_or_none(FacilityItem, get_param(request.GET, "obj_id"))
+    fac = None
+    if obj != None:
+        fac = obj.employee
+        obj.delete()
+    return render(request, "facilities/facilities-items-list.html", {"obj": fac, "item_list": Item.objects.all()})
 
 '''
     TRUCKS
@@ -189,40 +225,64 @@ def routes_remove(request):
     EMPLOYEES
 '''
 def get_employees(request):
-    search_value = get_session(request, "s-emp-name")
+    search_value = get_session(request, "s_emp_name")
+    rol = get_session(request, "s_emp_rol", "operator")
     filters_to_search = ["name__icontains",]
     full_query = Q()
     if search_value != "":
         for myfilter in filters_to_search:
             full_query |= Q(**{myfilter: search_value})
-    return Employee.objects.filter(full_query)
+    return Employee.objects.filter(full_query).filter(rol__code=rol)
 
 @group_required("admins",)
 def employees(request):
-    return render(request, "employees/employees.html", {"items": get_employees(request)})
+    return render(request, "employees/employees.html", {"items": get_employees(request), 'rol_list': EmployeeType.objects.all()})
 
 @group_required("admins",)
 def employees_list(request):
+    if "rol" in request.GET:
+        set_session(request, "s_emp_rol", get_param(request.GET, "rol"))
     return render(request, "employees/employees-list.html", {"items": get_employees(request)})
 
 @group_required("admins",)
 def employees_search(request):
-    search_value = get_param(request.GET, "s-emp-name")
-    set_session(request, "s-emp-name", search_value)
+    search_value = get_param(request.GET, "s_emp_name")
+    set_session(request, "s_emp_name", search_value)
     return render(request, "employees/employees-list.html", {"items": get_employees(request)})
 
 @group_required("admins",)
 def employees_form(request):
     obj_id = get_param(request.GET, "obj_id")
     obj = get_or_none(Employee, obj_id)
+    #if obj == None:
+    #    obj = Employee.objects.create()
+    return render(request, "employees/employees-form.html", {'obj': obj, 'rol_list': EmployeeType.objects.all()})
+
+@group_required("admins",)
+def employees_save(request):
+    obj_id = get_param(request.POST, "obj_id")
+    obj = get_or_none(Employee, obj_id)
     if obj == None:
         obj = Employee.objects.create()
-    return render(request, "employees/employees-form.html", {'obj': obj, 'rol_list': EmployeeType.objects.all()})
+    obj.name = get_param(request.POST, "name")
+    obj.surname = get_param(request.POST, "surname")
+    obj.rol = get_or_none(EmployeeType, get_param(request.POST, "rol"))
+    obj.active = True if get_param(request.POST, "active") != "" else False
+    obj.code = get_param(request.POST, "code")
+    obj.nif = get_param(request.POST, "nif")
+    obj.cellphone = get_param(request.POST, "cellphone")
+    obj.device_uid = get_param(request.POST, "device_uid")
+    obj.email = get_param(request.POST, "email")
+    obj.save()
+    obj.save_user()
+    return render(request, "employees/employees-list.html", {"items": get_employees(request)})
 
 @group_required("admins",)
 def employees_remove(request):
     obj = get_or_none(Employee, request.GET["obj_id"]) if "obj_id" in request.GET else None
     if obj != None:
+        if obj.user != None:
+            obj.user.delete()
         obj.delete()
     return render(request, "employees/employees-list.html", {"items": get_employees(request)})
 
@@ -238,10 +298,17 @@ def employees_items(request):
 def employees_items_add(request):
     obj = get_or_none(Employee, get_param(request.POST, "employee"))
     item = get_or_none(Item, get_param(request.POST, "item"))
-    action = get_param(request.POST, "action")
     amount = get_int(get_param(request.POST, "amount"))
     desc = get_param(request.POST, "desc")
-    EmployeeItem.objects.create(action=action, employee=obj, item=item, amount=amount, desc=desc)
+    EmployeeItem.objects.create(employee=obj, item=item, amount=amount, desc=desc)
+    return render(request, "employees/employees-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
+
+@group_required("admins",)
+def employees_items_return(request):
+    obj = get_or_none(EmployeeItem, get_param(request.GET, "obj_id"))
+    obj.return_date = datetime.now()
+    obj.returned = True
+    obj.save()
     return render(request, "employees/employees-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
 
 @group_required("admins",)

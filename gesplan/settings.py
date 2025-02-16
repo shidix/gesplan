@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'pwa',
     'incidents',
     'citizens',
+    'shifts',
 ]
 
 MIDDLEWARE = [
