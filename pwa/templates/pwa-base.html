@@ -47,7 +47,8 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if not request.user|in_group:"operators" and not request.user|in_group:"external"%}
+                {#{% if not request.user|in_group:"operators" and not request.user|in_group:"external"%}#}
+                {% if request.user|in_group:"drivers" and request.user|in_group:"drivers_mpl" %}
                     <div class="row m-0">
                         {#<div class="col-3 welcome py-3"><strong>{% trans "Bienvenid@" %}</strong></div>#}
                         <div class="col-6 offset-3 truck p-1 text-center"><i class="fas fa-truck"></i> 
@@ -60,6 +61,11 @@
                         {%comment%}
                         <div class="col-3 text-end"><a class="btn gesplan w-100" href="{%url 'pwa-driver-incidents'%}">Inc</a></div>
                         {%endcomment%}
+                    </div>
+                {% endif %}
+                {% if request.user|in_group:"operators" %}
+                    <div class="col-6 offset-3 truck p-1 text-center"><i class="fas fa-globe"></i> 
+                        <strong>{{request.user.employee.facility.description}} </strong> 
                     </div>
                 {% endif %}
             </div>

@@ -15,9 +15,11 @@
         <div class="col-2">{{ item.amount|default:0 }}</div>
         <div class="col-2">{%if item.returned%}{{item.return_date|date:"d-m-Y H:i"}}{%else%}<i class="fas fa-times"></i>{%endif%}</div>
         <div class="col-2 text-right">
-            <a class="btn btn-xs ark" data-url="{% url "employees-items-return" %}" data-target="div-emp-items" 
-                data-obj_id="{{item.id}}" title="{% trans 'Devolver' %}" 
-                data-confirm="{%trans "Confirma que va a devolver este elemento?"%}"> <i class="fas fa-arrow-left"></i></a> 
+            {% if not item.returned %}
+                <a class="btn btn-xs ark" data-url="{% url "employees-items-return" %}" data-target="div-emp-items" 
+                    data-obj_id="{{item.id}}" title="{% trans 'Devolver' %}" 
+                    data-confirm="{%trans "Confirma que va a devolver este elemento?"%}"> <i class="fas fa-arrow-left"></i></a> 
+            {% endif %}
             <a class="btn btn-xs ark" data-url="{% url "employees-items-remove" %}" data-target="div-emp-items" 
                 data-obj_id="{{item.id}}" title="{% trans 'Borrar' %}" data-confirm="{%trans "Are you sure to remove this element?"%}">
                 <i class="fas fa-trash"></i></a> 

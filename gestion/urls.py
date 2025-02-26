@@ -61,6 +61,7 @@ urlpatterns = [
     path('items/search', views.items_search, name='items-search'),
     path('items/form', views.items_form, name='items-form'),
     path('items/remove', views.items_remove, name='items-remove'),
+    path('items/location', views.items_location, name='items-location'),
 
     #---------------------- OPERATION -----------------------
     path('operation/index', operation_views.index, name='operation-index'),

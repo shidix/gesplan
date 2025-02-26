@@ -369,7 +369,11 @@ class Employee(models.Model):
 
     @staticmethod
     def getOperatorsUser():
-        return [item.user for item in Employee.objects.filter(rol__code = "operator")]
+        return [item for item in Employee.objects.filter(rol__code = "operator")]
+
+    @staticmethod
+    def getOperatorsUserByFacility(fac_id):
+        return [item for item in Employee.objects.filter(rol__code = "operator", facility__id=fac_id)]
 
     class Meta:
         verbose_name=_('Empleado')

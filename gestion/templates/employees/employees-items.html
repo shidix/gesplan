@@ -15,7 +15,7 @@
     <div class="row m-0">
         <div class="col-10 mt-3"> {% trans "Material" %}:
             <select class="form-control" id="item" name="item">
-                <option value="">{% trans "--Seleccione un material--" %}</option>
+                {#<option value="">{% trans "--Seleccione un material--" %}</option>#}
                 {% for item in item_list %} <option value="{{item.id}}">{{item.name}}</option> {% endfor %}
             </select>
         </div>

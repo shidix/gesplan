@@ -27,8 +27,8 @@ class Shift(models.Model):
 
     @property
     def employee_list(self):
-        #emp_list = [item.first_name for item in self.employees.all()]
-        emp_list = [item.username for item in self.employees.all()]
+        emp_list = [item.first_name for item in self.employees.all()]
+        #emp_list = [item.username for item in self.employees.all()]
         return "{}".format("|".join(emp_list))
 
     def date_split(self):

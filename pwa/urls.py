@@ -52,6 +52,8 @@ urlpatterns = [
     path('operator/citizens/', operator_views.operator_citizens, name="pwa-operator-citizens"),
     path('operator/citizens/form/', operator_views.operator_citizens_form, name="pwa-operator-citizens-form"),
     path('operator/citizens/remove/<int:obj_id>', operator_views.operator_citizens_remove, name="pwa-operator-citizens-remove"),
+    path('operator/facility/select/', operator_views.facility_select, name="pwa-operator-facility-select"),
+    path('operator/facility/save/', operator_views.facility_save, name="pwa-operator-facility-save"),
 
     # EXTERNAL
     path('external/', external_views.external_home, name="pwa-external"),

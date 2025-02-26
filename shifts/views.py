@@ -6,11 +6,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
-from gesplan.commons import get_or_none, show_exc, user_in_group
+from gesplan.commons import get_or_none, show_exc, user_in_group, get_session, set_session, get_param
 from gesplan.decorators import group_required
 from gestion.models import Employee
 from .common_lib import get_month_shifts, get_journeys_hours
 from .models import Shift, Journey 
+from gestion.models import Facility
 
 import logging
 logger = logging.getLogger(__name__)
@@ -36,10 +37,12 @@ def get_perms(user, groups):
 #    else:
 #        return {"clone_shifts": False, "create_shifts": False}
 
-def get_shift_context(user, year=None, month=None):
+def get_shift_context(request, year=None, month=None):
+    user = request.user
+    fac_id = get_session(request, "shifts_fac")
     groups = user.groups.all().values_list('name', flat=True)
     perms = get_perms(user, groups)
-    today, s_list = get_month_shifts(year,month,user) if "managers" in groups or "admins" in groups else get_month_shifts(year,month,None,user)
+    today, s_list = get_month_shifts(year,month,user,None,fac_id) if "managers" in groups or "admins" in groups else get_month_shifts(year,month,None,user,fac_id)
     shift_list = []
     for shift in s_list:
         shift_list += shift.date_split()
@@ -48,6 +51,8 @@ def get_shift_context(user, year=None, month=None):
         'today': today, 
         'current_year': datetime.today().year, 
         'next_year': (datetime.today().year + 1),
+        'fac_list': Facility.getPL(),
+        'current_fac': fac_id,
         'perms': perms
     }
 #    if hasattr(request, "employee"):
@@ -71,12 +76,13 @@ def get_date(values):
     return datetime.now()
 
 @group_required("admins","managers","employee")
-def index(request):
-    return render(request, "shifts/index.html", get_shift_context(request.user))
+def index(request, fac_id=""):
+    set_session(request, "shifts_fac", fac_id)
+    return render(request, "shifts/index.html", get_shift_context(request))
 
 @group_required("admins","managers","employee")
 def shift_calendar(request):
-    return render(request, "shifts/shift-calendar.html", get_shift_context(request.user))
+    return render(request, "shifts/shift-calendar.html", get_shift_context(request))
 
 @group_required("admins","managers","employee")
 def calendar(request):
@@ -87,7 +93,7 @@ def calendar(request):
     else:
         year = request.GET["year"] if "year" in request.GET else None
         month = request.GET["month"] if "month" in request.GET else None
-    return render(request, "shifts/load-shifts.html", get_shift_context(request.user, year, month))
+    return render(request, "shifts/load-shifts.html", get_shift_context(request, year, month))
 
 @group_required("admins","managers","employee")
 def get_shift(request, shift_id=None):
@@ -109,7 +115,9 @@ def get_shift(request, shift_id=None):
             #obj = Shift.objects.create(name="---", ini_date=date, end_date=date)
             #obj.employees.set(emp_list)
             context["obj"] = obj
-        context["emp_list"] = Employee.getOperatorsUser()
+        fac_id = get_session(request, "shifts_fac")
+        context["emp_list"] = Employee.getOperatorsUserByFacility(fac_id)
+        context["facility"] = get_or_none(Facility, fac_id)
         template = "shifts/shift-form.html"
     return render(request, template, context)
 

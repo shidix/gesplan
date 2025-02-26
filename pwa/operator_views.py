@@ -94,3 +94,27 @@ def operator_citizens_remove(request, obj_id):
         obj.delete()
     return redirect(reverse("pwa-operator-citizens"))
 
+'''
+    FACILITIES
+'''
+@group_required_pwa("operators")
+def facility_select(request):
+    return render(request, "operator/facility-select.html", {'fac_list': Facility.getPL()})
+
+@group_required_pwa("operators")
+def facility_save(request):
+    try:
+        fac = get_or_none(Facility, get_param(request.POST, "facility"))
+        if fac != None:
+            #Asignamos la instalación al operador
+            emp = request.user.employee
+            emp.facility = fac
+            emp.save()
+            return redirect(reverse('pwa-operator'))
+        else:
+            return (render(request, "error_exception.html", {'exc': 'Instalación no encontrada!'}))
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+
+

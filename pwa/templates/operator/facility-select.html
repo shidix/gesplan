@@ -1,0 +1,17 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <h1 class="h1-pwa mt-3">{% trans "Seleccione una instalación" %}</h1>
+    <form action="{% url 'pwa-operator-facility-save' %}" method="post" id="frmSelectFac" class="m-0">
+        {% csrf_token %}
+        <select class="form-control orange-sel mt-3" id="facility" name="facility">
+            <option value="">{% trans "-- Seleccione una instalación --" %}</option>
+            {% for fac in fac_list %}
+                <option value="{{fac.id}}" {%if request.user.employee.facility.id == fac.id%}selected{%endif%}>
+                    {{fac.description}}</option>
+            {% endfor %}
+        </select>
+        <div class="text-center mt-3"><input type="submit" class="btn btn-primary w-100" value="{% trans "ENVIAR" %}"/></div>
+    </form>
+{% endblock %}

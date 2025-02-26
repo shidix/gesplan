@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     path('shifts/index/', views.index, name="shifts-index"),
-    path('shifts/index/<int:user_id>/', views.index, name="shifts-index"),
+    path('shifts/index/<int:fac_id>/', views.index, name="shifts-index"),
+    #path('shifts/index/<int:user_id>/', views.index, name="shifts-index"),
     path('shifts/shift_calendar/', views.shift_calendar, name="shifts-shift-calendar"),
     path('shifts/calendar/', views.calendar, name="shifts-calendar"),
     path('shifts/get-shift/', views.get_shift, name="shifts-get-shift"),
