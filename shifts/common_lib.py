@@ -27,8 +27,8 @@ def get_month_shifts(year=None, month=None, user=None, employee=None, fac_id=Non
     if employee != None:
         kwargs["employees__in"] = [employee]
 
-    shift_list = Shift.objects.filter(**kwargs)
-    #print(shift_list)
+    shift_list = Shift.objects.filter(**kwargs).distinct()
+    print(shift_list)
     return today, shift_list
 
 def get_journeys_hours(user, ini_date, end_date):

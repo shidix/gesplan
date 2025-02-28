@@ -38,20 +38,31 @@ def get_perms(user, groups):
 #        return {"clone_shifts": False, "create_shifts": False}
 
 def get_shift_context(request, year=None, month=None):
-    user = request.user
     fac_id = get_session(request, "shifts_fac")
+    fac_list = Facility.getPL()
+    if fac_id == "":
+        fac_id = fac_list[0].id
+        set_session(request, "shifts_fac", fac_id)
+
+    user = request.user
     groups = user.groups.all().values_list('name', flat=True)
     perms = get_perms(user, groups)
-    today, s_list = get_month_shifts(year,month,user,None,fac_id) if "managers" in groups or "admins" in groups else get_month_shifts(year,month,None,user,fac_id)
+
+    if "managers" in groups or "admins" in groups:
+        today, s_list = get_month_shifts(year, month, user, None, fac_id)
+    else: 
+        today, s_list = get_month_shifts(year, month, None, user, fac_id)
+
     shift_list = []
     for shift in s_list:
         shift_list += shift.date_split()
+
     return {
         'shift_list': shift_list,
         'today': today, 
         'current_year': datetime.today().year, 
         'next_year': (datetime.today().year + 1),
-        'fac_list': Facility.getPL(),
+        'fac_list': fac_list,
         'current_fac': fac_id,
         'perms': perms
     }
@@ -157,14 +168,23 @@ def remove_shift(request, shift_id):
     #return render(request, "shifts/shift-calendar.html", get_shift_context(request))
 
 @group_required("admins","managers","employee")
+def clone_shifts_modal(request):
+    return render(request, "shifts/shift-clone-modal.html", {})
+ 
+@group_required("admins","managers","employee")
 def clone_shifts(request):
     try:
-        ini_year = request.POST["ini_year"]
-        end_year = request.POST["end_year"]
-        ini_shifts = Event.objects.filter(ini_date__year = ini_year)
+        ini_date = get_param(request.POST, "ini_date")
+        end_date = get_param(request.POST, "end_date")
+        new_date = datetime.strptime(get_param(request.POST, "new_date"), "%Y-%m-%d")
+        ini_shifts = Shift.objects.filter(ini_date__range = (ini_date, end_date))
         for ev in ini_shifts:
-            new_ev = Event.objects.create(ini_date=ev.ini_date.replace(year=int(end_year)), end_date=ev.end_date.replace(year=int(end_year)), name=ev.name, desc=ev.desc)
-        return render(request, "shifts/load-shifts.html", get_shift_context())
+            diff = new_date + (ev.end_date - ev.ini_date)
+            sh = Shift.objects.create(ini_date=new_date, end_date=diff, name=ev.name, desc=ev.desc, user=ev.user)
+            for emp in ev.employees.all():
+                sh.employees.add(emp)
+            sh.save()
+        return redirect(reverse('shifts-index', kwargs={'fac_id': get_session(request, "shifts_fac")}))
     except Exception as e:
         logger.error("[cam-clone_shifts]" + str(e))
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))

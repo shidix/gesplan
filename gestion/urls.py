@@ -25,12 +25,28 @@ urlpatterns = [
     path('facilities/items-return', views.facilities_items_return, name='facilities-items-return'),
     path('facilities/items-remove', views.facilities_items_remove, name='facilities-items-remove'),
 
+    path('facilities/manteinances/<int:fac_id>', views.facilities_manteinances, name='facilities-manteinances'),
+    path('facilities/manteinances/list', views.facilities_manteinances_list, name='facilities-manteinances-list'),
+    path('facilities/manteinances/form', views.facilities_manteinances_form, name='facilities-manteinances-form'),
+    path('facilities/manteinances/remove', views.facilities_manteinances_remove, name='facilities-manteinances-remove'),
+    path('facilities/manteinances/upload', views.facilities_manteinances_upload, name='facilities-manteinances-upload'),
+    path('facilities/manteinances/img-remove', views.facilities_manteinances_img_remove, name='facilities-manteinances-img-remove'),
+
+
     #---------------------- TRUCKS -----------------------
     path('trucks', views.trucks, name='trucks'),
     path('trucks/list', views.trucks_list, name='trucks-list'),
     path('trucks/search', views.trucks_search, name='trucks-search'),
     path('trucks/form', views.trucks_form, name='trucks-form'),
     path('trucks/remove', views.trucks_remove, name='trucks-remove'),
+
+    path('trucks/manteinances/<int:truck_id>', views.trucks_manteinances, name='trucks-manteinances'),
+    path('trucks/manteinances/list', views.trucks_manteinances_list, name='trucks-manteinances-list'),
+    path('trucks/manteinances/form', views.trucks_manteinances_form, name='trucks-manteinances-form'),
+    path('trucks/manteinances/remove', views.trucks_manteinances_remove, name='trucks-manteinances-remove'),
+    path('trucks/manteinances/upload', views.trucks_manteinances_upload, name='trucks-manteinances-upload'),
+    path('trucks/manteinances/img-remove', views.trucks_manteinances_img_remove, name='trucks-manteinances-img-remove'),
+
 
     #---------------------- ROUTES -----------------------
     path('routes', views.routes, name='routes'),

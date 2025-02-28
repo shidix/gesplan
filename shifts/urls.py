@@ -13,6 +13,7 @@ urlpatterns = [
     path('shifts/add-employee/', views.add_employee, name="shifts-add-employee"),
     path('shifts/remove-shift/<int:shift_id>/', views.remove_shift, name="shifts-remove-shift"),
     path('shifts/clone-shifts/', views.clone_shifts, name="shifts-clone-shifts"),
+    path('shifts/clone-shifts-modal/', views.clone_shifts_modal, name="shifts-clone-modal"),
 
     path('shifts/check-updates/', views.check_updates, name="shifts-check-updates"),
     path('shifts/check-log/', views.check_log, name="shifts-check-log"),

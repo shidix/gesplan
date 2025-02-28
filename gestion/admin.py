@@ -28,6 +28,9 @@ class FacilityActionsAdmin(admin.ModelAdmin):
 class FacilityActionTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name')
 
+class FacilityManteinanceConceptAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name')
+
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
@@ -42,6 +45,9 @@ class TrayTrackingAdmin(admin.ModelAdmin):
 
 class TruckTypeAdmin(admin.ModelAdmin):
     list_display = ('brand', 'model', 'year')
+
+class TruckManteinanceConceptAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name')
 
 class WasteAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'external_manager')
@@ -61,6 +67,8 @@ admin.site.register(Facility)
 admin.site.register(FacilityType, FacilityTypeAdmin)
 admin.site.register(FacilityActions, FacilityActionsAdmin)
 admin.site.register(FacilityActionType, FacilityActionTypeAdmin)
+admin.site.register(FacilityManteinanceConcept, FacilityManteinanceConceptAdmin)
+admin.site.register(FacilityManteinanceImage)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Route)
 admin.site.register(RouteMpl)
@@ -70,6 +78,7 @@ admin.site.register(Tray, TrayAdmin)
 admin.site.register(TrayTracking, TrayTrackingAdmin)
 admin.site.register(Truck)
 admin.site.register(TruckType, TruckTypeAdmin)
+admin.site.register(TruckManteinanceConcept, TruckManteinanceConceptAdmin)
 admin.site.register(UnitType)
 admin.site.register(Waste, WasteAdmin)
 #admin.site.register(Priority, PriorityAdmin)

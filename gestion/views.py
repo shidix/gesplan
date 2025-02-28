@@ -8,6 +8,8 @@ from gesplan.decorators import group_required
 from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc
 from .models import Company, Facility, Truck, Employee, EmployeeType, Route, Item, EmployeeItem
 from .models import EmployeeContract, ContractType, AgreementType, FacilityItem
+from .models import FacilityManteinance, FacilityManteinanceConcept, FacilityManteinanceImage
+from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceImage
 
 
 @group_required("admins",)
@@ -60,13 +62,14 @@ def companies_remove(request):
     FACILITIES
 '''
 def get_facilities(request):
-    search_value = get_session(request, "s-facility-name")
-    filters_to_search = ["name__icontains",]
-    full_query = Q()
-    if search_value != "":
-        for myfilter in filters_to_search:
-            full_query |= Q(**{myfilter: search_value})
-    return Facility.objects.filter(full_query)
+#    search_value = get_session(request, "s_facility_name")
+#    filters_to_search = ["name__icontains",]
+#    full_query = Q()
+#    if search_value != "":
+#        for myfilter in filters_to_search:
+#            full_query |= Q(**{myfilter: search_value})
+    val = get_session(request, "s_facility_name")
+    return Facility.objects.filter(description__icontains=val).filter(Q(description__contains="Punto") | Q(code__startswith="MPL-"))
 
 @group_required("admins",)
 def facilities(request):
@@ -78,8 +81,7 @@ def facilities_list(request):
 
 @group_required("admins",)
 def facilities_search(request):
-    search_value = get_param(request.GET, "s-name")
-    set_session(request, "s-facility-name", search_value)
+    set_session(request, "s_facility_name", get_param(request.GET, "s_facility_name"))
     return render(request, "facilities/facilities-list.html", {"items": get_facilities(request)})
 
 @group_required("admins",)
@@ -132,6 +134,65 @@ def facilities_items_remove(request):
     return render(request, "facilities/facilities-items-list.html", {"obj": fac, "item_list": Item.objects.all()})
 
 '''
+    FACILITIES MANTEINANCES
+'''
+def get_facilities_manteinances_context(facility):
+    #val = get_session(request, "s_facility_name")
+    #return Facility.objects.filter(description__icontains=val).filter(Q(description__contains="Punto") | Q(code__startswith="MPL-"))
+    context = {
+        "items": FacilityManteinance.objects.filter(facility=facility),
+        "facility": facility
+    }
+    return context
+
+@group_required("admins",)
+def facilities_manteinances(request, fac_id):
+    facility = get_or_none(Facility, fac_id)
+    return render(request, "facilities/manteinances/manteinances.html", get_facilities_manteinances_context(facility))
+
+@group_required("admins",)
+def facilities_manteinances_list(request):
+    facility = get_or_none(Facility, get_param(request.GET, "obj_id"))
+    return render(request, "facilities/manteinances/manteinances-list.html", get_facilities_manteinances_context(facility))
+
+@group_required("admins",)
+def facilities_manteinances_form(request):
+    obj_id = get_param(request.GET, "obj_id")
+    obj = get_or_none(FacilityManteinance, obj_id)
+    if obj == None:
+        facility = get_or_none(Facility, get_param(request.GET, "facility"))
+        obj = FacilityManteinance.objects.create(facility=facility)
+        
+    context = {'obj': obj, "concept_list": FacilityManteinanceConcept.objects.all()}
+    return render(request, "facilities/manteinances/manteinances-form.html", context)
+
+@group_required("admins",)
+def facilities_manteinances_remove(request):
+    obj = get_or_none(FacilityManteinance, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    facility = obj.facility
+    if obj != None:
+        obj.delete()
+    return render(request, "facilities/manteinances/manteinances-list.html", get_facilities_manteinances_context(facility))
+
+@group_required("admins",)
+def facilities_manteinances_upload(request):
+    fac_man = get_or_none(FacilityManteinance, get_param(request.POST, "obj_id"))
+    file_list = request.FILES.getlist('file')
+    for f in file_list:
+        FacilityManteinanceImage.objects.create(fac_man=fac_man, image=f)
+    return render(request, "facilities/manteinances/manteinances-images.html", {"obj": fac_man})
+
+@group_required("admins",)
+def facilities_manteinances_img_remove(request):
+    obj = get_or_none(FacilityManteinanceImage, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    fac_man = obj.fac_man
+    if obj != None:
+        obj.image.delete(save=True)
+        obj.delete()
+    return render(request, "facilities/manteinances/manteinances-images.html", {"obj": fac_man})
+
+
+'''
     TRUCKS
 '''
 def get_trucks(request):
@@ -171,6 +232,63 @@ def trucks_remove(request):
     if obj != None:
         obj.delete()
     return render(request, "trucks/trucks-list.html", {"items": get_trucks(request)})
+
+'''
+    TRUCKS MANTEINANCES
+'''
+def get_trucks_manteinances_context(truck):
+    context = {
+        "items": TruckManteinance.objects.filter(truck=truck),
+        "truck": truck
+    }
+    return context
+
+@group_required("admins",)
+def trucks_manteinances(request, truck_id):
+    truck = get_or_none(Truck, truck_id)
+    return render(request, "trucks/manteinances/manteinances.html", get_trucks_manteinances_context(truck))
+
+@group_required("admins",)
+def trucks_manteinances_list(request):
+    truck = get_or_none(Truck, get_param(request.GET, "obj_id"))
+    return render(request, "trucks/manteinances/manteinances-list.html", get_trucks_manteinances_context(truck))
+
+@group_required("admins",)
+def trucks_manteinances_form(request):
+    obj_id = get_param(request.GET, "obj_id")
+    obj = get_or_none(TruckManteinance, obj_id)
+    if obj == None:
+        truck = get_or_none(Truck, get_param(request.GET, "truck"))
+        obj = TruckManteinance.objects.create(truck=truck)
+        
+    context = {'obj': obj, "concept_list": TruckManteinanceConcept.objects.all()}
+    return render(request, "trucks/manteinances/manteinances-form.html", context)
+
+@group_required("admins",)
+def trucks_manteinances_remove(request):
+    obj = get_or_none(TruckManteinance, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    truck = obj.truck
+    if obj != None:
+        obj.delete()
+    return render(request, "trucks/manteinances/manteinances-list.html", get_trucks_manteinances_context(truck))
+
+@group_required("admins",)
+def trucks_manteinances_upload(request):
+    truck_man = get_or_none(TruckManteinance, get_param(request.POST, "obj_id"))
+    file_list = request.FILES.getlist('file')
+    for f in file_list:
+        TruckManteinanceImage.objects.create(truck_man=truck_man, image=f)
+    return render(request, "trucks/manteinances/manteinances-images.html", {"obj": truck_man})
+
+@group_required("admins",)
+def trucks_manteinances_img_remove(request):
+    obj = get_or_none(TruckManteinanceImage, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    truck_man = obj.truck_man
+    if obj != None:
+        obj.image.delete(save=True)
+        obj.delete()
+    return render(request, "trucks/manteinances/manteinances-images.html", {"obj": truck_man})
+
 
 '''
     ROUTES

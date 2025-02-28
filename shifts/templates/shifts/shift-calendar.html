@@ -9,8 +9,12 @@
                 <i class="fas fa-list"></i></a>
         </h2>
         {% if perms.clone_shifts %}
+            <a class="btn btn-sm new ark" data-url="{%url "shifts-clone-modal"%}" data-target-modal="common-modal">
+                <i class="fas fa-clone"></i>{% trans "Clonar turnos" %}</a>
+            {%comment%}
             <a class="btn btn-sm new" data-target="#shift-clone-modal" data-toggle="modal"> 
                 <i class="fas fa-clone"></i>{% trans "Clonar turnos" %} </a>
+            {%endcomment%}
         {% endif %}
         {% if perms.create_shifts %}
             <a class="btn btn-sm ark new" data-url="{% url "shifts-get-shift" %}" data-target="div-shifts"> 
@@ -32,4 +36,4 @@
 
 {% include "common-modal.html" %}
 {#{% include "cam/event-modal.html" %}#}
-{% include "shifts/shift-clone-modal.html" %}
+{#{% include "shifts/shift-clone-modal.html" %}#}

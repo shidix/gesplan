@@ -16,7 +16,8 @@
             {% endif %}
 	    </div>
         <div class="col-1 text-end">
-	        <a class="btn btn-sm new" href="{% url "shifts-index" %}"> <i class="fas fa-arrow-left"></i> {% trans "Volver" %}</a> 
+	        <a class="btn btn-sm new" href="{% url "shifts-index" request.session.shifts_fac %}"> 
+                <i class="fas fa-arrow-left"></i> {% trans "Volver" %}</a> 
         </div>
     </div>
 </div>

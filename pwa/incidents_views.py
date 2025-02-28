@@ -5,6 +5,7 @@ from datetime import datetime
 
 from gesplan.decorators import group_required_pwa
 from gesplan.commons import get_or_none, get_param, show_exc
+from gestion.models import Employee, FacilityManteinance
 from incidents.models import Incident, IncidentType
 
 import random, string
@@ -32,9 +33,15 @@ def incidents_save(request):
         subject = get_param(request.POST, "subject")
         description = get_param(request.POST, "description")
         itype = get_or_none(IncidentType, get_param(request.POST, "type"))
-        Incident.objects.create(code=code, subject=subject, description=description, owner=request.user, type=itype)
+        incident = Incident.objects.create(code=code, subject=subject, description=description, owner=request.user, type=itype)
+        set_manteinance(incident)
         return redirect("pwa-incidents")
     except Exception as e:
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))
 
+def set_manteinance(incident):
+    emp = Employee.objects.filter(user = incident.owner).first()
+    if incident.type.name == "Mantenimiento" and emp != None and emp.rol != None and  emp.rol.code == "operator":
+        observations = "{} <br/> {}".format(incident.subject, incident.description)
+        FacilityManteinance.objects.create(facility = emp.facility, observations = observations)
 

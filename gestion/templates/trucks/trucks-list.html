@@ -2,26 +2,37 @@
 
 
 <div class="row main-th py-3 m-0">
-    <div class="col-2"> {% trans 'Matrícula' %} </div>
-    <div class="col-3"> {% trans 'Observaciones' %} </div>
+    <div class="col-4"> {% trans 'Matrícula' %} </div>
+    <div class="col-4"> {% trans 'Modelo' %} </div>
     <div class="col-2"> {% trans 'ITV' %} </div>
+    {%comment%}
+    <div class="col-3"> {% trans 'Observaciones' %} </div>
     <div class="col-1"> {% trans 'Disponible' %} </div>
     <div class="col-2"> {% trans 'Disp. en sábado' %} </div>
+    {%endcomment%}
     <div class="col-2"></div>
 </div>
 
 {% for item in items %}
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-2">{{ item.number_plate|default:"---" }}</div>
-        <div class="col-3">{{ item.observations|default:"" }}</div>
+        <div class="col-4">{{ item.number_plate|default:"---" }}</div>
+        <div class="col-4">{{ item.type|default:"---" }}</div>
         <div class="col-2">{{ item.itv_date }}</div>
-        <div class="col-1 text-center">{% if item.available %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}</div>
-        <div class="col-2 text-center">{% if item.on_saturday %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}</div>
+        {%comment%}
+        <div class="col-3">{{ item.observations|default:"" }}</div>
+        <div class="col-1 text-center">
+            {% if item.available %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}</div>
+        <div class="col-2 text-center">
+            {% if item.on_saturday %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}</div>
+        {%endcomment%}
         <div class="col-2 text-right">
+            <a class="btn btn-xs" href="{%url "trucks-manteinances" item.id%}" title="{% trans 'Mantenimiento' %}"> 
+                <i class="fas fa-cog"></i> </li>
             <a class="btn btn-xs ark" data-url="{% url "trucks-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "trucks-remove" %}" data-target="truck-list" data-obj_id="{{item.id}}" 
-                title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+                title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                <i class="fas fa-trash"></i></a> 
         </div>
     </div>
 {% endfor %}

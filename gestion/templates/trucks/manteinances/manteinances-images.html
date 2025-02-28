@@ -1,0 +1,14 @@
+{% load i18n %}
+
+
+<div class="row list-item pt-2 pb-2 m-0">
+    {% for item in obj.images.all %}
+        <div class="col-4">
+            <img src="{{item.image.url}}" alt="image {{item.id}}" /> <br/>
+            <a class="btn btn-xs ark" data-url="{% url "trucks-manteinances-img-remove" %}" data-target="div-images" 
+                data-obj_id="{{item.id}}" title="{%trans 'Borrar'%}" data-confirm="{%trans "Are you sure to remove this element?"%}">
+                <i class="fas fa-trash"></i></a> 
+        </div>
+    {% endfor %}
+</div>
+

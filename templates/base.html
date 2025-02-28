@@ -35,19 +35,22 @@
         <div id="main-layout-container">
             {% if request.user.is_authenticated %}
 	            <div id="main" class="w-100">
-                    	<div class="row header sticky-top bg-white m-0">
-                        	<div class="col-lg-1 col-1 text-center divbars-menu"><a href="#" class="menu-btn"><i class="fas fa-bars"></i></a></div> 
-                            <div class="col-lg-1 col-3 text-center"><a href="https://gesplan.shidix.es"><img src="{% static '/images/logo-gesplan.png'%}" width="100%" /></a></div>	
-        	                <div class="col-lg-3 offset-lg-6 col-6 text-right p-0"> 
-					{% trans "Hola" %}, {{user.name}}Admin
-				</div>
-        	                <div class="col-lg-1 col-1 text-right"> 
-                	            <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">
-                        	        {% csrf_token %}
-                                	<a class="pointer" onclick="$('#frmLogout').submit();"><i class="fas fa-sign-out-alt"></i></a>
-	                            </form> 
-				</div>
-                        </div>
+                    <div class="row header sticky-top bg-white m-0">
+                        <div class="col-lg-1 col-1 text-center divbars-menu">
+                            <a href="#" class="menu-btn"><i class="fas fa-bars"></i></a></div> 
+                        <div class="col-lg-1 col-3 text-center">
+                            <a href="https://gesplan.shidix.es"><img src="{% static '/images/logo-gesplan.png'%}" width="100%"></a>
+                        </div>	
+        	            <div class="col-lg-3 offset-lg-6 col-6 text-right p-0"> 
+					        {% trans "Hola" %}, {{user.name}}Admin
+				        </div>
+        	            <div class="col-lg-1 col-1 text-right"> 
+                	        <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">
+                        	    {% csrf_token %}
+                                <a class="pointer" onclick="$('#frmLogout').submit();"><i class="fas fa-sign-out-alt"></i></a>
+	                        </form> 
+				        </div>
+                    </div>
 	            </div>
             {% endif %}
 

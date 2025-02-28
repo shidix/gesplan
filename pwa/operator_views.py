@@ -84,8 +84,25 @@ def operator_citizens(request):
 def operator_citizens_form(request):
     emp = request.user.employee
     obj = get_or_none(Citizen, get_param(request.GET, "obj_id"))
-    obj = obj if obj != None and obj != "" else Citizen.objects.create(employee=emp, facility=emp.facility)
+    #obj = obj if obj != None and obj != "" else Citizen.objects.create(employee=emp, facility=emp.facility)
     return render(request, "operator/citizens-form.html", {'obj': obj, 'town_list': Town.objects.all()})
+
+@group_required_pwa("operators")
+def operator_citizens_save(request):
+    emp = request.user.employee
+    obj = get_or_none(Citizen, get_param(request.POST, "obj_id"))
+    if obj == None:
+        obj = Citizen.objects.create(employee=emp, facility=emp.facility)
+    obj.town = get_or_none(Town, get_param(request.POST, "town"))
+    obj.identification = get_param(request.POST, "identification")
+    obj.phone = get_param(request.POST, "phone")
+    obj.plate = get_param(request.POST, "plate")
+    obj.address = get_param(request.POST, "address")
+    obj.observations = get_param(request.POST, "observations")
+    obj.save()
+    return redirect(reverse("pwa-operator-citizens"))
+    return render(request, "operator/citizens-form.html", {'obj': obj, 'town_list': Town.objects.all()})
+
 
 @group_required_pwa("operators")
 def operator_citizens_remove(request, obj_id):

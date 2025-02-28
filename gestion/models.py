@@ -242,6 +242,41 @@ class WasteInFacility(models.Model):
                     return "success"
         return "info"
 
+class FacilityManteinanceConcept(models.Model):
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Concepto de mantenimiento'
+
+class FacilityManteinance(models.Model):
+    date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
+    observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
+
+    concept = models.ForeignKey(FacilityManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+    facility = models.ForeignKey(Facility, verbose_name=_('Instalación'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+
+    class Meta:
+        verbose_name = _('Mantenimiento en instalación')
+        ordering = ['-date']
+
+def upload_fac_man_image(instance, filename):
+    ascii_filename = str(filename.encode('ascii', 'ignore'))
+    instance.filename = ascii_filename
+    folder = "facilities/manteinance/"
+    return '/'.join([folder, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+
+class FacilityManteinanceImage(models.Model):
+    image = models.ImageField(upload_to=upload_fac_man_image, blank=True, verbose_name="Imagen", help_text="Select file to upload")
+    fac_man = models.ForeignKey(FacilityManteinance, verbose_name=_('Mantenimiento'), on_delete=models.SET_NULL, null=True, blank=True, related_name="images")
+
+    class Meta:
+        verbose_name = _('Imágenes de mantenimiento')
+
+
 '''
     TRUCKS
 '''
@@ -252,7 +287,7 @@ class TruckType(models.Model):
     year = models.CharField(max_length=4, verbose_name=_('Año'), null=True)
 
     def __str__(self):
-        return "%s %s %s" % (self.brand, self.model, self.year)
+        return "%s %s (%s)" % (self.brand, self.model, self.year)
 
     class Meta:
         verbose_name=_('Tipo de camión')
@@ -286,6 +321,41 @@ class Truck(models.Model):
         verbose_name = 'Camión'
         verbose_name_plural = ('Camiones')
         #ordering = ['base_station', 'type', 'number_plate']
+
+class TruckManteinanceConcept(models.Model):
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Concepto de mantenimiento camiones'
+
+class TruckManteinance(models.Model):
+    date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
+    observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
+
+    concept = models.ForeignKey(TruckManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+    truck = models.ForeignKey(Truck, verbose_name=_('Camión'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+
+    class Meta:
+        verbose_name = _('Mantenimiento camiones')
+        ordering = ['-date']
+
+def upload_truck_man_image(instance, filename):
+    ascii_filename = str(filename.encode('ascii', 'ignore'))
+    instance.filename = ascii_filename
+    folder = "trucks/manteinance/"
+    return '/'.join([folder, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+
+class TruckManteinanceImage(models.Model):
+    image = models.ImageField(upload_to=upload_fac_man_image, blank=True, verbose_name="Imagen", help_text="Select file to upload")
+    truck_man = models.ForeignKey(TruckManteinance, verbose_name=_('Mantenimiento'), on_delete=models.SET_NULL, null=True, blank=True, related_name="images")
+
+    class Meta:
+        verbose_name = _('Imágenes de mantenimiento camiones')
+
 
 '''
     EMPLOYEE
