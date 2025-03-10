@@ -1,9 +1,11 @@
 #from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _ 
 from django.utils import timezone as tz
+from datetime import datetime
 
-from gestion.models import Facility, Employee
+from gestion.models import Facility, Employee, Waste
 
 
 class Island(models.Model):
@@ -45,6 +47,7 @@ class Citizen(models.Model):
     address = models.CharField(max_length=255, verbose_name=_('Domicilio Social'), blank=True)
     plate = models.CharField(max_length=255, verbose_name=_('Matrícula'), blank=True)
     phone = models.CharField(max_length=12, null=True, default = '000000000', verbose_name = _('Teléfono'), blank=True)
+    email = models.CharField(max_length=255, verbose_name=_('Correo eletrónico'), blank=True, default="")
     date = models.DateTimeField(verbose_name='Fecha y hora', default=tz.now)
     observations = models.TextField(verbose_name=_('Observaciones'), blank=True)
 
@@ -59,7 +62,32 @@ class Citizen(models.Model):
         #    out += " %s"%(self.citizen_user)
         return out
 
+    def total_by_waste(self, waste):
+        now = datetime.now()
+        idate = now.replace(hour=0, minute=0, second=0)
+        edate = now.replace(hour=23, minute=59, second=59)
+        units = WasteCitizen.objects.filter(citizen__plate=self.plate, waste=waste, citizen__date__range=(idate,edate)).aggregate(Sum('units'))["units__sum"]
+        return 0 if units == None else units
+
     class Meta:
         verbose_name = _('Ciudadano')
         verbose_name_plural = _('Ciudadano')
+
+class WasteCitizen(models.Model):
+    units = models.FloatField(verbose_name=_('Cantidad'), blank=False, null=False)
+
+    waste = models.ForeignKey(Waste, verbose_name = _('Residuo'), on_delete=models.SET_NULL, null=True)
+    citizen = models.ForeignKey(Citizen, verbose_name=_('Ciudadano'), on_delete=models.CASCADE, null=True, related_name='wastes')
+
+    class Meta:
+        verbose_name = _('Residuo depositado')
+        verbose_name = _('Residuos depositados')
+
+    def __str__(self):
+        return ("[%s] %s ha dejado %d de %s en la fecha %s" % (self.citizen.facility, self.citizen.identification, self.units, self.waste.name, self.citizen.date))
+
+#    def save(self, *args, **kwargs):
+#        super(WasteCitizen, self).save(*args, **kwargs)
+#        if self.citizen.citizen_user != None:
+#            calculate_score(self.citizen.citizen_user)
 

@@ -252,11 +252,22 @@ class FacilityManteinanceConcept(models.Model):
     class Meta:
         verbose_name = 'Concepto de mantenimiento'
 
+class FacilityManteinanceStatus(models.Model):
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Estado de mantenimiento'
+
 class FacilityManteinance(models.Model):
     date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
 
     concept = models.ForeignKey(FacilityManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+    status = models.ForeignKey(FacilityManteinanceStatus, verbose_name=_('Estado'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
     facility = models.ForeignKey(Facility, verbose_name=_('Instalación'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
 
     class Meta:
@@ -332,11 +343,22 @@ class TruckManteinanceConcept(models.Model):
     class Meta:
         verbose_name = 'Concepto de mantenimiento camiones'
 
+class TruckManteinanceStatus(models.Model):
+    code = models.CharField(max_length=10, verbose_name='Código')
+    name = models.CharField(max_length=200, verbose_name=_('Nombre'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Estado de mantenimiento del camión'
+
 class TruckManteinance(models.Model):
     date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
 
     concept = models.ForeignKey(TruckManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
+    status = models.ForeignKey(TruckManteinanceStatus, verbose_name=_('Estado'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
     truck = models.ForeignKey(Truck, verbose_name=_('Camión'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
 
     class Meta:

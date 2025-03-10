@@ -8,7 +8,7 @@ from gesplan.commons import get_or_none, get_param, show_exc, get_float
 from gestion.models import EmployeeTruck, Truck, Facility, Waste, WasteInFacility, Route, FacilityActions, FacilityActionType
 from gestion.models import Tray, TrayTracking, RouteExt
 from incidents.models import Incident, IncidentType
-from citizens.models import Citizen, Town
+from citizens.models import Citizen, Town, WasteCitizen
 
 import random, string
 
@@ -96,13 +96,35 @@ def operator_citizens_save(request):
     obj.town = get_or_none(Town, get_param(request.POST, "town"))
     obj.identification = get_param(request.POST, "identification")
     obj.phone = get_param(request.POST, "phone")
+    obj.email = get_param(request.POST, "email")
     obj.plate = get_param(request.POST, "plate")
     obj.address = get_param(request.POST, "address")
     obj.observations = get_param(request.POST, "observations")
     obj.save()
-    return redirect(reverse("pwa-operator-citizens"))
-    return render(request, "operator/citizens-form.html", {'obj': obj, 'town_list': Town.objects.all()})
+    return render(request, "operator/citizens-waste-form.html", {'obj': obj, 'waste_list': Waste.objects.all()})
+    #return redirect(reverse("pwa-operator-citizens"))
 
+@group_required_pwa("operators")
+def operator_citizens_waste_save(request):
+    obj = get_or_none(Citizen, get_param(request.POST, "obj_id"))
+    waste = get_or_none(Waste, get_param(request.POST, "waste"))
+    units = get_float(get_param(request.POST, "units"))
+    total = obj.total_by_waste(waste)
+    if (total + units) > waste.day_limit:
+        msg = "Se ha superado el límite diario!"
+        context = {'obj': obj, 'waste_list': Waste.objects.all(), 'waste_id': waste.id, 'units': units, 'msg': msg}
+        return render(request, "operator/citizens-waste-form.html", context)
+
+    WasteCitizen.objects.create(citizen=obj, waste=waste, units=units)
+    return render(request, "operator/citizens-waste-form.html", {'obj': obj, 'waste_list': Waste.objects.all()})
+
+@group_required_pwa("operators")
+def operator_citizens_waste_force(request):
+    obj = get_or_none(Citizen, get_param(request.GET, "obj_id"))
+    waste = get_or_none(Waste, get_param(request.GET, "waste"))
+    units = get_float(get_param(request.GET, "units"))
+    WasteCitizen.objects.create(citizen=obj, waste=waste, units=units)
+    return render(request, "operator/citizens-waste-form.html", {'obj': obj, 'waste_list': Waste.objects.all()})
 
 @group_required_pwa("operators")
 def operator_citizens_remove(request, obj_id):
@@ -110,6 +132,15 @@ def operator_citizens_remove(request, obj_id):
     if obj != None:
         obj.delete()
     return redirect(reverse("pwa-operator-citizens"))
+
+@group_required_pwa("operators")
+def operator_citizens_waste_remove(request):
+    obj = get_or_none(WasteCitizen, get_param(request.GET, "obj_id"))
+    citizen = obj.citizen
+    if obj != None:
+        obj.delete()
+    return render(request, "operator/citizens-waste-form.html", {'obj': citizen, 'waste_list': Waste.objects.all()})
+
 
 '''
     FACILITIES

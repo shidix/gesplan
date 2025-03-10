@@ -8,8 +8,8 @@ from gesplan.decorators import group_required
 from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc
 from .models import Company, Facility, Truck, Employee, EmployeeType, Route, Item, EmployeeItem
 from .models import EmployeeContract, ContractType, AgreementType, FacilityItem
-from .models import FacilityManteinance, FacilityManteinanceConcept, FacilityManteinanceImage
-from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceImage
+from .models import FacilityManteinance, FacilityManteinanceConcept, FacilityManteinanceStatus, FacilityManteinanceImage
+from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceStatus, TruckManteinanceImage
 
 
 @group_required("admins",)
@@ -163,7 +163,7 @@ def facilities_manteinances_form(request):
         facility = get_or_none(Facility, get_param(request.GET, "facility"))
         obj = FacilityManteinance.objects.create(facility=facility)
         
-    context = {'obj': obj, "concept_list": FacilityManteinanceConcept.objects.all()}
+    context = {'obj':obj,"concept_list":FacilityManteinanceConcept.objects.all(),"status_list":FacilityManteinanceStatus.objects.all()}
     return render(request, "facilities/manteinances/manteinances-form.html", context)
 
 @group_required("admins",)
@@ -261,7 +261,7 @@ def trucks_manteinances_form(request):
         truck = get_or_none(Truck, get_param(request.GET, "truck"))
         obj = TruckManteinance.objects.create(truck=truck)
         
-    context = {'obj': obj, "concept_list": TruckManteinanceConcept.objects.all()}
+    context = {'obj': obj, "concept_list": TruckManteinanceConcept.objects.all(), "status_list": TruckManteinanceStatus.objects.all()}
     return render(request, "trucks/manteinances/manteinances-form.html", context)
 
 @group_required("admins",)

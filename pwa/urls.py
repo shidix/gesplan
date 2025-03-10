@@ -53,6 +53,9 @@ urlpatterns = [
     path('operator/citizens/form/', operator_views.operator_citizens_form, name="pwa-operator-citizens-form"),
     path('operator/citizens/save/', operator_views.operator_citizens_save, name="pwa-operator-citizens-save"),
     path('operator/citizens/remove/<int:obj_id>', operator_views.operator_citizens_remove, name="pwa-operator-citizens-remove"),
+    path('operator/citizens/waste/save/', operator_views.operator_citizens_waste_save, name="pwa-operator-citizens-waste-save"),
+    path('operator/citizens/waste/force/', operator_views.operator_citizens_waste_force, name="pwa-operator-citizens-waste-force"),
+    path('operator/citizens/waste/remove/', operator_views.operator_citizens_waste_remove, name="pwa-operator-citizens-waste-remove"),
     path('operator/facility/select/', operator_views.facility_select, name="pwa-operator-facility-select"),
     path('operator/facility/save/', operator_views.facility_save, name="pwa-operator-facility-save"),
 

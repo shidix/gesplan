@@ -403,7 +403,7 @@ h2.pathway.b-right  {
 
 .form-control {
 	padding: 0rem 0.5em 0.1rem 0.5em;
-	font-size: 0.9em;
+/*	font-size: 0.9em;*/
 	color: #333;
 	border-color: #ced4da;
 	border-width: 0px 0px 1px 0px !important;

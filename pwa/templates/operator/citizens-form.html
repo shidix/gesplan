@@ -3,8 +3,9 @@
 <h3 class="orange text-center mt-2">Formulario de Recogida</h3>
 <p class="text-center"><strong>Fecha: </strong>{{today|date:"Y-m-d H:i:s"}}</p>
 
-<form action="{% url 'pwa-operator-citizens-save' %}" method="post" id="frmSelectFac" class="m-0">
-{% csrf_token %}
+<form action="{% url 'pwa-operator-citizens-save' %}" method="post" id="frmCitizen" class="m-0">
+    {% csrf_token %}
+    <input type="hidden" id="obj_id" name="obj_id" value="{{obj.id}}" />
     <div class="row my-2">
         <div class="h1-pwa col-12">Término Municipal</div>
         <div class="col-12">
@@ -14,7 +15,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="h1-pwa col-12 mt-3">Identificación</div>
+        <div class="h1-pwa col-12 mt-3">DNI/NIF</div>
         <div class="col-12">
             <input class="form form-control w-100 orange-inp" type="text" value="{{obj.identification}}" id="identification" 
                 name="identification" />
@@ -22,6 +23,10 @@
         <div class="h1-pwa col-12 mt-3">Teléfono</div>
         <div class="col-12">
             <input class="form form-control w-100 orange-inp" type="text" value="{{obj.phone}}" id="phone" name="phone" />
+        </div>
+        <div class="h1-pwa col-12 mt-3">Correo electrónico</div>
+        <div class="col-12">
+            <input class="form form-control w-100 orange-inp" type="text" value="{{obj.email}}" id="email" name="email" />
         </div>
         <div class="h1-pwa col-12 mt-3">Matrícula</div>
         <div class="col-12">
@@ -39,8 +44,10 @@
         </div>
 
         <div class="row m-0 mt-5">
-            <div class="col-6 text-center"> 
-                <button type="submit" class="btn btn-primary w-100"><strong>GUARDAR</strong></button>
+            {% if obj != None %} <div class="col-6 text-center"> {% else %} <div class="col-12 text-center"> {% endif %}
+                <button class="btn btn-info w-100 saveform" data-form="frmCitizen" data-target="div-content">
+                    <strong>GUARDAR</strong></button>
+                {#<button type="submit" class="btn btn-primary w-100"><strong>GUARDAR</strong></button>#}
                 {#<a href="{% url "pwa-operator-citizens" %}" class="btn btn-primary w-100"><strong>GUARDAR</strong></a> #}
             </div>
             {% if obj != None %}
@@ -51,5 +58,5 @@
             {% endif %}
         </div>
     </div>
-</div>
+</form>
 
