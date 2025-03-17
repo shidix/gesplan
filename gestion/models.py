@@ -396,9 +396,9 @@ class EmployeeType(models.Model):
 class Employee(models.Model):
     ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
     active = models.BooleanField(default=True, verbose_name=_('Activo'), blank=True)
-    code = models.CharField(max_length=10, null=True, unique=True, verbose_name='Código de Empleado')
-    nif = models.CharField(max_length=10, null=True, unique=True, verbose_name=_('NIF'))
-    pin = models.CharField(max_length=10, null=True, unique=True, verbose_name=_('PIN'))
+    code = models.CharField(max_length=10, null=True, verbose_name='Código de Empleado', default="")
+    nif = models.CharField(max_length=10, null=True, verbose_name=_('NIF'), default="")
+    pin = models.CharField(max_length=10, null=True, verbose_name=_('PIN'), default="")
     device_uid = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('DeviceUID'))
     name = models.CharField(max_length=100, null=True, verbose_name=_('Nombre'))
     surname = models.CharField(max_length=100, null=True, verbose_name=_('Apellidos'))

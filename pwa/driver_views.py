@@ -19,7 +19,8 @@ import random, string
 def driver_home(request):
     try:
         if request.user.employee.truck == None:
-            return redirect(reverse("pwa-driver-select-truck"))
+            return redirect(reverse("pwa-select-truck"))
+            #return redirect(reverse("pwa-driver-select-truck"))
         return redirect(reverse("pwa-driver-routes"))
         #return render(request, "drivers/home.html", {"now": datetime.now()})
     except Exception as e:
