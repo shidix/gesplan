@@ -1,0 +1,23 @@
+{% load i18n %}
+
+
+<div class="row main-th py-3 m-0">
+    <div class="col-5"> {% trans 'Número' %} </div>
+    <div class="col-5"> {% trans 'Estado' %} </div>
+    <div class="col-2"></div>
+</div>
+
+{% for item in items %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-5">{{ item.number|default:"" }}</div>
+        <div class="col-5">{{ item.status.name|default:"" }}</div>
+        <div class="col-2 text-right">
+            <a class="btn btn-xs ark" data-url="{%url "contracts-form"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+                title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
+            <a class="btn btn-xs ark" data-url="{% url "contracts-remove" %}" data-target="contracts-list" data-obj_id="{{item.id}}" 
+                title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                <i class="fas fa-trash"></i></a> 
+        </div>
+    </div>
+{% endfor %}
+

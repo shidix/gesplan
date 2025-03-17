@@ -26,6 +26,7 @@ urlpatterns = [
     path('incidents/', include('incidents.urls')),
     path('citizens/', include('citizens.urls')),
     path('shifts/', include('shifts.urls')),
+    path('administration/', include('administration.urls')),
     path('admin/', admin.site.urls),
 
     path('accounts/login/<slug:chk>/', auth_views.LoginView.as_view(template_name='login.html'), name='auth_login'),

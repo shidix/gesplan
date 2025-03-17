@@ -2,15 +2,17 @@
 
 <div class="content_ mt-4">
     <div class="toolbar-content">
+        {%comment%}
 	    <h2 class="pathway b-right"> {%trans 'Turnos'%}
-            <a class="ark pointer" data-url="{%url "shifts-check-updates"%}" data-target-modal="common-modal">
-                <i class="fas fa-code-branch"></i></a>
-            <a class="ark pointer" data-url="{%url "shifts-check-log"%}" data-target-modal="common-modal">
-                <i class="fas fa-list"></i></a>
+            <a class="btn btn-sm new ark pointer" data-url="{%url "shifts-check-updates"%}" data-target-modal="common-modal">
+                <i class="fas fa-code-branch"></i> {% trans "shifts-check-updates" %}</a>
+            <a class="btn btn-sm new ark pointer" data-url="{%url "shifts-check-log"%}" data-target-modal="common-modal">
+                <i class="fas fa-list"></i> {% trans "shifts-check-log" %}</a>
         </h2>
+        {%endcomment%}
         {% if perms.clone_shifts %}
             <a class="btn btn-sm new ark" data-url="{%url "shifts-clone-modal"%}" data-target-modal="common-modal">
-                <i class="fas fa-clone"></i>{% trans "Clonar turnos" %}</a>
+                <i class="fas fa-clone"></i> {% trans "Clonar turnos" %}</a>
             {%comment%}
             <a class="btn btn-sm new" data-target="#shift-clone-modal" data-toggle="modal"> 
                 <i class="fas fa-clone"></i>{% trans "Clonar turnos" %} </a>
@@ -18,12 +20,12 @@
         {% endif %}
         {% if perms.create_shifts %}
             <a class="btn btn-sm ark new" data-url="{% url "shifts-get-shift" %}" data-target="div-shifts"> 
-                <i class="fas fa-plus"></i>{% trans "Añadir turno" %} </a>
+                <i class="fas fa-plus"></i> {% trans "Añadir turno" %} </a>
         {% endif %}
     </div>
     <div class="toolbar-content mt-4">
         {% for fac in fac_list %}
-            <a class="btn btn-sm {%if fac.id == current_fac%}btn-warning{%endif%} new" 
+            <a class="btn btn-sm {%if fac.id == current_fac%}btn-warning{%endif%} cal-tab" 
                 href="{% url "shifts-index" fac.id %}"> {{ fac.description }} </a>
         {% endfor %}
     </div>

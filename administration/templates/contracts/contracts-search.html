@@ -1,0 +1,53 @@
+{% load i18n %}
+
+{%comment%}
+<div class="row toolbar-search p-2 m-0">
+    <div class="col-lg-1 col-1 b-search"><i class="fas fa-search pt-2"></i></div>
+    <div class="col-lg-11 col-11 p-0">
+        <input type="text" class="autosearch form-control form-control-dark w-100" name="s-name" id="s-name" 
+            placeholder="{%trans 'Matrícula'%}" data-url="{% url "citizens-search" %}" data-target="fac-list" 
+            data-related="s-name" />
+    </div>
+</div>
+{%endcomment%}
+
+<form class="form m-0" method="GET" action="{% url "contracts-search" %}" id="form-search">
+    {%csrf_token%}
+    <div class="row">
+        <div class="col-4">
+            <div class="row">
+                <div class="col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar otra fecha:" %}</span> </div>
+                <div class="col-4 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
+                    name="s_citizen_idate" id="s_citizen_idate" value="{{request.session.s_citizen_idate}}"/> </div>
+                <div class="col-4 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
+                    name="s_citizen_edate" id="s_citizen_edate" value="{{request.session.s_citizen_edate}}"/> </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="row">
+                <div class="col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
+                <div class="col-7"> <input type="text" class="form-control form-control-dark w-100 py-2" name="s_citizen_plate" 
+                    id="s_citizen_plate" placeholder="Matrícula" value="{{request.session.s_citizen_plate}}"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 b-search">
+            <div class="row">
+                <div class="col-3 py-2 text-end d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
+                <div class="col-9"> 
+                    <select class="form-control form-control-dark w-100 py-2" name="s_citizen_waste" id="s_citizen_waste">
+                        <option value="">{% trans "-- Seleccione un residuo --" %}</option>
+                    {% for w in waste_list %}
+                        <option value="{{w.id}}" {%if request.session.s_citizen_waste == w.id%}selected{%endif%}>{{w.name}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 p-0">
+            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="citizens-list">
+                <i class="fas fa-search"></i> </button>
+        </div>
+    </div>
+</form>
+

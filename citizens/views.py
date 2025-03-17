@@ -17,17 +17,20 @@ def index(request):
 '''
     CITIZENS
 '''
-def get_citizens(request):
-    plate = get_session(request, "s_citizen_plate")
+def set_initial_dates(request):
     idate = get_session(request, "s_citizen_idate")
     edate = get_session(request, "s_citizen_edate")
-    waste = get_session(request, "s_citizen_waste")
+    now = datetime.now()
     if idate == "":
-        idate = datetime.now().replace(hour=0, minute=0, second=0)
-        set_session(request, "s_citizen_idate", idate.strftime("%d-%m-%Y"))
+        set_session(request, "s_citizen_idate", now.strftime("%Y-%m-%d"))
     if edate == "":
-        edate = datetime.now().replace(hour=23, minute=59, second=59)
-        set_session(request, "s_citizen_edate", idate.strftime("%d-%m-%Y"))
+        set_session(request, "s_citizen_edate", now.strftime("%Y-%m-%d"))
+ 
+def get_citizens(request):
+    plate = get_session(request, "s_citizen_plate")
+    idate = datetime.strptime("{} 00:00:00".format(get_session(request, "s_citizen_idate")), "%Y-%m-%d %H:%M:%S")
+    edate = datetime.strptime("{} 23:59:59".format(get_session(request, "s_citizen_edate")), "%Y-%m-%d %H:%M:%S")
+    waste = get_session(request, "s_citizen_waste")
     kwargs = {"date__range": (idate, edate)}
     if plate != "":
         kwargs["plate__icontains"] = plate
@@ -45,6 +48,7 @@ def get_citizens_context(request):
 
 @group_required("admins",)
 def citizens(request):
+    set_initial_dates(request)
     return render(request, "citizens/citizens.html", get_citizens_context(request))
 
 @group_required("admins",)

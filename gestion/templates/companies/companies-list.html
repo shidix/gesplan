@@ -6,8 +6,8 @@
     <div class="col-2"> {% trans 'Número de registro' %} </div>
     <div class="col-2"> {% trans 'NIF' %} </div>
     <div class="col-1"> {% trans 'Teléfono' %} </div>
-    <div class="col-2"> {% trans 'Email' %} </div>
-    <div class="col-2"></div>
+    <div class="col-3"> {% trans 'Email' %} </div>
+    <div class="col-1"></div>
 </div>
 
 {% for item in items %}
@@ -16,7 +16,7 @@
         <div class="col-2">{{ item.register_number|default:"" }}</div>
         <div class="col-2">{{ item.nif|default:"" }}</div>
         <div class="col-1">{{ item.phone|default:"" }}</div>
-        <div class="col-2">{{ item.email|default:"" }}</div>
+        <div class="col-3">{{ item.email|default:"" }}</div>
         <div class="col-1 text-end">
             <div class="dropdown">
                 <a class="pt-3" type="button" id="dropdownProfile" data-bs-toggle="dropdown" aria-expanded="false">

@@ -1,0 +1,67 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="fa fa-warehouse"></i>&nbsp; {% trans 'Recogida' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> 
+            <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
+            <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+
+<div id="div-notification"></div>
+
+<div class="row justify-center">
+    <div class="col-6 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Código" %}
+            <input type="text" class="form-control autosave" id="code" name="code" value="{{obj.code|default:""}}" 
+                title="{{obj.code}}" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Código..." /> <span id="code__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Dispositivo" %}
+            <input type="text" class="form-control autosave" id="device" name="device" value="{{obj.device|default:""}}" 
+                title="{{obj.device}}" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Dispositivo..." /> <span id="device__msg"></span>
+        </div>
+    </div>
+    <div class="col-12 mt-3">
+        <div class="greybox-sm p-1">
+            {% trans "Identificación" %}
+            <input type="text" class="form-control autosave" id="identification" name="identification" 
+                value="{{obj.identification|default:""}}" title="{{obj.identification}}" data-model-name="citizens.citizen" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" 
+                placeholder="Identificación..." /> <span id="identification__msg"></span>
+        </div>
+    </div>
+   <div class="col-12 mt-3">
+        <div class="greybox-sm p-1">
+            {% trans "Dirección" %}
+            <input type="text" class="form-control autosave" id="address" name="address" value="{{obj.address|default:""}}" 
+                title="{{obj.address}}" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}"
+                data-target="div-notification" placeholder="Teléfono..." /> <span id="address__msg"></span>
+        </div>
+    </div>
+    <div class="col-12 mt-3">
+        <div class="greybox-sm p-1">
+            {% trans "Matrícula" %}
+            <input type="text" class="form-control autosave" id="plate" name="plate" value="{{obj.plate|default:""}}" 
+                title="{{obj.plate}}" data-model-name="citizens.citizen" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Matrícula..." /> <span id="plate__msg"></span>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "citizens-list" %}"
+        data-target="fac-list">{% trans "Guardar" %}</button>
+    {%comment%}
+    <button type="button" class="btn btn-sm ark cancel" data-bs-dismiss="modal" data-url="{% url "guest-remove" %}" data-target="guest-list"
+        data-obj_id="{{obj.id}}" data-confirm="{% trans "Are you sure to remove this element?" %}">{% trans "Remove" %}</button>
+    {%endcomment%}
+</div>
+
