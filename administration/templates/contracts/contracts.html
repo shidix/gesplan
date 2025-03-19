@@ -8,10 +8,8 @@
         <div class="toolbar-content p-3">
 	        <h2 class="pathway b-right">{%trans 'Recogidas'%} 
                 <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
-            {%comment%}
-            <button type="button" class="btn btn-sm ark new" data-url="{%url "facilities-form"%}" data-target-modal="common-modal"> 
-                <i class="fas fa-plus"></i> {% trans 'Crear Instalación' %}</button> 
-            {%endcomment%}
+            <button type="button" class="btn btn-sm ark new" data-url="{%url "contracts-form"%}" data-target-modal="common-modal"> 
+                <i class="fas fa-plus"></i> {% trans 'Crear Contrato' %}</button> 
         </div>
         <div id="contracts-list" class="ml-list">{% include "contracts/contracts-list.html" %}</div>
     </div>

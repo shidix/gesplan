@@ -187,7 +187,7 @@ img.logo {
 }
 
 .content {
-    padding-bottom:50px;
+    padding-bottom: 100px;
 }
 
 .welcome {
@@ -268,7 +268,7 @@ a.gesplan {
     color: #666;
     font-size: 0.7rem;
     font-weight: 600;
-    line-height: 2;
+    line-height: 1.5;
     padding: 0;
 }
 .tab-2, .tab-3, .tab-4 {

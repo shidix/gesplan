@@ -68,7 +68,7 @@ def upload_contract(instance, filename):
     instance.filename = ascii_filename
     #folder = "notes/%s" % (instance.id)
     folder = "contracts"
-    return '/'.join(['%s' % (folder), datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+    return '/'.join(['%s' % (folder), datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
 
 class ContractLot(models.Model):
     ini_date = models.DateTimeField(verbose_name='Fecha y hora', default=tz.now, null=True, blank=True)

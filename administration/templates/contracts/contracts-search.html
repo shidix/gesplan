@@ -14,6 +14,7 @@
 <form class="form m-0" method="GET" action="{% url "contracts-search" %}" id="form-search">
     {%csrf_token%}
     <div class="row">
+        {%comment%}
         <div class="col-4">
             <div class="row">
                 <div class="col-4 py-2 text-end d-none d-lg-block"> <span>{% trans "Buscar otra fecha:" %}</span> </div>
@@ -23,29 +24,30 @@
                     name="s_citizen_edate" id="s_citizen_edate" value="{{request.session.s_citizen_edate}}"/> </div>
             </div>
         </div>
-        <div class="col-3">
+        {%endcomment%}
+        <div class="col-5">
             <div class="row">
-                <div class="col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
-                <div class="col-7"> <input type="text" class="form-control form-control-dark w-100 py-2" name="s_citizen_plate" 
-                    id="s_citizen_plate" placeholder="Matrícula" value="{{request.session.s_citizen_plate}}"/>
+                <div class="col-5 py-2 text-end d-none d-lg-block"> <span>{% trans "Número:" %}</span> </div>
+                <div class="col-7"> <input type="text" class="form-control form-control-dark w-100 py-2" name="s_contract_number" 
+                    id="s_contract_number" placeholder="Número" value="{{request.session.s_contract_number}}"/>
                 </div>
             </div>
         </div>
-        <div class="col-3 b-search">
+        <div class="col-5 b-search">
             <div class="row">
-                <div class="col-3 py-2 text-end d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
+                <div class="col-3 py-2 text-end d-none d-lg-block"> <span>{% trans "Estado:" %}</span> </div>
                 <div class="col-9"> 
-                    <select class="form-control form-control-dark w-100 py-2" name="s_citizen_waste" id="s_citizen_waste">
-                        <option value="">{% trans "-- Seleccione un residuo --" %}</option>
-                    {% for w in waste_list %}
-                        <option value="{{w.id}}" {%if request.session.s_citizen_waste == w.id%}selected{%endif%}>{{w.name}}</option>
+                    <select class="form-control form-control-dark w-100 py-2" name="s_contract_status" id="s_contract_status">
+                        <option value="">{% trans "-- Seleccione un estado --" %}</option>
+                    {% for s in status_list %}
+                        <option value="{{s.id}}" {%if request.session.s_contract_status == s.id%}selected{%endif%}>{{s.name}}</option>
                     {% endfor %}
                     </select>
                 </div>
             </div>
         </div>
         <div class="col-2 p-0">
-            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="citizens-list">
+            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="contracts-list">
                 <i class="fas fa-search"></i> </button>
         </div>
     </div>

@@ -1,0 +1,67 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="fa fa-warehouse"></i>&nbsp; {% trans 'Lote' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> <button type="button" class="btn btn-lg" data-bs-dismiss="modal" 
+            title="{% trans "Close" %}"> <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+
+<div id="div-notification"></div>
+
+<div class="row justify-center">
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Fecha de inicio" %}
+            <input type="date" class="form-control autosave" id="ini_date" name="ini_date" value="{{obj.ini_date|date:"Y-m-d"}}" 
+                data-model-name="administration.contractlot" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="ini_date__msg"></span>
+        </div>
+    </div>
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Fecha de fin" %}
+            <input type="date" class="form-control autosave" id="end_date" name="end_date" value="{{obj.end_date|date:"Y-m-d"}}" 
+                data-model-name="administration.contractlot" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="end_date__msg"></span>
+        </div>
+    </div>
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Presupuesto asignado" %}
+            <input type="text" class="form-control autosave" id="amount" name="amount" value="{{obj.amount}}" 
+                data-model-name="administration.contractlot" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="amount__msg"></span>
+        </div>
+    </div>
+    <div class="col-8 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Nombre" %}
+            <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name}}" 
+                data-model-name="administration.contractlot" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="name__msg"></span>
+        </div>
+    </div>
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Epígrafe" %}
+            <select class="form-control autosave" id="epigraph" name="epigraph" data-model-name="administration.contractlot" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification"> 
+                <option value="">{% trans "-- Seleccione un epígrafe --" %}</option>
+                {% for epi in epi_list %}
+                    <option value="{{epi.id}}" {%if epi == obj.epigraph%}selected{%endif%}>{{epi.name}}</option>
+                {% endfor %}
+            </select>
+            <span id="epigraph__msg"></span>
+        </div>
+    </div>
+    <div class="col-12 mt-3" id="div-file">{% include "contracts/lots/lots-file.html" %}</div>
+</div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "contracts-lots-list" %}"
+        data-target="lots-list" data-obj_id="{{obj.contract.id}}">{% trans "Guardar" %}</button>
+</div>
+

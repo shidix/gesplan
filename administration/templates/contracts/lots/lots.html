@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block central_content %}
+    <div class="content mt-4">
+        <div class="toolbar-content p-3">
+            <h2 class="pathway b-right">{{contract.number}} - {%trans 'Lotes'%} 
+                <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
+            <button type="button" class="btn btn-sm ark new" data-url="{%url "contracts-lots-form"%}" 
+                data-target-modal="common-modal" data-contract="{{contract.id}}"> 
+                <i class="fas fa-plus"></i> {% trans 'Crear Lote' %}</button> 
+        </div>
+        <div id="lots-list" class="ml-list">{% include "contracts/lots/lots-list.html" %}</div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}
