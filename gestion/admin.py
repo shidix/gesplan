@@ -12,6 +12,8 @@ class ContractTypeAdmin(admin.ModelAdmin):
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('name', 'rol', 'company')
     list_filter = ('rol',)
+    search_fields = ['name', 'company']
+
 
 class EmployeeAccessLogAdmin(admin.ModelAdmin):
     list_display = ('employee', 'date', 'location', 'finish')
