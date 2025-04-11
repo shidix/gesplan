@@ -85,6 +85,16 @@ class WasteCitizen(models.Model):
 
     def __str__(self):
         return ("[%s] %s ha dejado %d de %s en la fecha %s" % (self.citizen.facility, self.citizen.identification, self.units, self.waste.name, self.citizen.date))
+    
+class CitizenRegister(models.Model):
+    uuid = models.CharField(max_length=100, verbose_name=_('UUID'), default="", blank=True, unique=True)
+    usual_plate = models.CharField(max_length=255, verbose_name=_('Matrícula Habitual'), blank=True)
+    address = models.CharField(max_length=255, verbose_name=_('Domicilio'), blank=True)
+    identification = models.CharField(max_length=200, verbose_name=_('Identificación'), blank=True)
+    phone = models.CharField(max_length=12, null=True, default = '000000000', verbose_name = _('Teléfono'), blank=True)
+    email = models.CharField(max_length=255, verbose_name=_('Correo eletrónico'), blank=True)
+    postcode = models.CharField(max_length=10, verbose_name=_('Código Postal'), blank=True)
+
 
 #    def save(self, *args, **kwargs):
 #        super(WasteCitizen, self).save(*args, **kwargs)
