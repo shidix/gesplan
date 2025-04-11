@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from gesplan.decorators import group_required_pwa
 from gesplan.commons import user_in_group, get_or_none, get_param, show_exc
-from gestion.models import Employee, EmployeeAccessLog, EmployeeTruck, Truck
+from gestion.models import Employee, EmployeeAccessLog, EmployeeTruck, EmployeeTruckKm, Truck
 
 
 @group_required_pwa("drivers", "drivers_mpl", "operators", "external")
@@ -113,6 +113,25 @@ def save_truck(request):
             return redirect("pwa-home")
         else:
             return (render(request, "error_exception.html", {'exc': 'Truck not found!'}))
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+@group_required_pwa("drivers", "drivers_mpl")
+def set_km(request):
+    return render(request, "pwa-set-km.html", {})
+
+@group_required_pwa("drivers", "drivers_mpl")
+def save_km(request):
+    try:
+        km = get_param(request.POST, "km")
+        emp = request.user.employee
+        etkm = EmployeeTruckKm.objects.create(employee=emp, truck=emp.truck, km=km)
+
+        if emp.is_driver:
+            return redirect(reverse('pwa-driver'))
+        if emp.is_driver_mpl:
+            return redirect(reverse('pwa-driver-mpl'))
+        return redirect("pwa-home")
     except Exception as e:
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))
 

@@ -1,0 +1,11 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <h1 class="h1-pwa mt-3">{% trans "Indique kilómetros actuales:" %}</h1>
+    <form action="{% url 'pwa-save-km' %}" method="post" id="frmSetKm" class="m-0">
+        {% csrf_token %}
+        <input type="text" class="form-control orange-sel mt-3" id="km" name="km" />
+        <div class="text-center mt-3"><input type="submit" class="btn btn-primary w-100" value="{% trans "ENVIAR" %}"/></div>
+    </form>
+{% endblock %}

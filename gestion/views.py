@@ -5,15 +5,17 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 
 from gesplan.decorators import group_required
-from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc
+from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc, user_in_group
 from .models import Company, Facility, Truck, Employee, EmployeeType, Route, Item, EmployeeItem
 from .models import EmployeeContract, ContractType, AgreementType, FacilityItem
 from .models import FacilityManteinance, FacilityManteinanceConcept, FacilityManteinanceStatus, FacilityManteinanceImage
 from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceStatus, TruckManteinanceImage
 
 
-@group_required("admins",)
+@group_required("admins", "external")
 def index(request):
+    if user_in_group(request.user, "external"):
+        return redirect("operation-index-external")
     return render(request, "index.html")
 
 
@@ -290,55 +292,55 @@ def trucks_manteinances_img_remove(request):
     return render(request, "trucks/manteinances/manteinances-images.html", {"obj": truck_man})
 
 
-'''
-    ROUTES
-'''
-def get_routes(request, code="PL"):
-    search_value = get_session(request, "s-truck-name")
-    filters_to_search = ["name__icontains",]
-    full_query = Q()
-    if search_value != "":
-        for myfilter in filters_to_search:
-            full_query |= Q(**{myfilter: search_value})
-    return Route.objects.filter(full_query).filter(code=code)
-
-@group_required("admins",)
-def routes(request):
-    return render(request, "routes/routes.html", {"items": get_routes(request)})
-
-@group_required("admins",)
-def routes_list(request):
-    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
-
-@group_required("admins",)
-def routes_search(request):
-    search_value = get_param(request.GET, "s-name")
-    set_session(request, "s-truck-name", search_value)
-    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
-
-@group_required("admins",)
-def routes_view(request):
-    obj_id = get_param(request.GET, "obj_id")
-    obj = get_or_none(Route, obj_id)
-    if obj == None:
-        obj = Route.objects.create()
-    return render(request, "routes/routes-view.html", {'obj': obj})
-
-@group_required("admins",)
-def routes_form(request):
-    obj_id = get_param(request.GET, "obj_id")
-    obj = get_or_none(Route, obj_id)
-    if obj == None:
-        obj = Route.objects.create()
-    return render(request, "routes/routes-form.html", {'obj': obj})
-
-@group_required("admins",)
-def routes_remove(request):
-    obj = get_or_none(Route, request.GET["obj_id"]) if "obj_id" in request.GET else None
-    if obj != None:
-        obj.delete()
-    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
-
+#'''
+#    ROUTES
+#'''
+#def get_routes(request, code="PL"):
+#    search_value = get_session(request, "s-truck-name")
+#    filters_to_search = ["name__icontains",]
+#    full_query = Q()
+#    if search_value != "":
+#        for myfilter in filters_to_search:
+#            full_query |= Q(**{myfilter: search_value})
+#    return Route.objects.filter(full_query).filter(code=code)
+#
+#@group_required("admins",)
+#def routes(request):
+#    return render(request, "routes/routes.html", {"items": get_routes(request)})
+#
+#@group_required("admins",)
+#def routes_list(request):
+#    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
+#
+#@group_required("admins",)
+#def routes_search(request):
+#    search_value = get_param(request.GET, "s-name")
+#    set_session(request, "s-truck-name", search_value)
+#    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
+#
+#@group_required("admins",)
+#def routes_view(request):
+#    obj_id = get_param(request.GET, "obj_id")
+#    obj = get_or_none(Route, obj_id)
+#    if obj == None:
+#        obj = Route.objects.create()
+#    return render(request, "routes/routes-view.html", {'obj': obj})
+#
+#@group_required("admins",)
+#def routes_form(request):
+#    obj_id = get_param(request.GET, "obj_id")
+#    obj = get_or_none(Route, obj_id)
+#    if obj == None:
+#        obj = Route.objects.create()
+#    return render(request, "routes/routes-form.html", {'obj': obj})
+#
+#@group_required("admins",)
+#def routes_remove(request):
+#    obj = get_or_none(Route, request.GET["obj_id"]) if "obj_id" in request.GET else None
+#    if obj != None:
+#        obj.delete()
+#    return render(request, "routes/routes-list.html", {"items": get_routes(request)})
+#
 '''
     EMPLOYEES
 '''

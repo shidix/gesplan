@@ -4,18 +4,18 @@
 {% block central_content %}
     <div class="content mt-4">
         <div class="toolbar-content p-3 row">
-            <div class="col-8"> <h2 class="pathway b-right">{{contract.number}} - {%trans 'Lotes'%} 
+            <div class="col-8"> <h2 class="pathway b-right">{{contract.number}} - {%trans 'Facturas'%} 
                 <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2></div>
 
             <div class="col-4 text-end">
-                <button type="button" class="btn btn-sm ark new" data-url="{%url "contracts-lots-form"%}" 
+                <button type="button" class="btn btn-sm ark new" data-url="{%url "contracts-invoices-form"%}" 
                     data-target-modal="common-modal" data-contract="{{contract.id}}"> 
-                    <i class="fas fa-plus"></i> {% trans 'Crear Lote' %}</button> 
+                    <i class="fas fa-plus"></i> {% trans 'Crear Factura' %}</button> 
                 <a class="btn btn-sm btn-info new" href="{% url "contracts" %}">
                     <i class="fas fa-arrow-left"></i> {% trans 'Volver a contratos' %}</a> 
             </div>
         </div>
-        <div id="lots-list" class="ml-list">{% include "contracts/lots/lots-list.html" %}</div>
+        <div id="invoices-list" class="ml-list">{% include "contracts/invoices/invoices-list.html" %}</div>
     </div>
     {% include "common-modal.html" %}
 {% endblock central_content %}

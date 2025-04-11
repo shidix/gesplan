@@ -1,0 +1,24 @@
+{% load i18n %}
+
+
+{% if obj.file %}
+    <div class="row list-item pt-2 pb-2 m-0">
+        <div class="col-10">
+            <a href="{{obj.file.url}}" target="_blank"><i class="fas fa-file-pdf"></i></a>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-xs ark" data-url="{% url "contracts-invoices-file-remove" %}" data-target="div-file" 
+                data-obj_id="{{obj.id}}" title="{%trans 'Borrar'%}"> <i class="fas fa-trash"></i></a> 
+        </div>
+    </div>
+{% else %}
+    <div class="row list-item pt-2 pb-2 m-0">
+        <div class="col-12 mt-3">
+            <label for ="file" class="btn btn-sm new">
+                <i class="fas fa-upload"></i><span class="d-none d-sm-block">{%trans "Elegir"%}&nbsp;{%trans "Archivo"%}</span></label>
+            <input type="file" class="multiupload d-none" name="file" id="file" data-url="{%url 'contracts-invoices-upload'%}"
+                data-target="div-file" data-obj-id="{{obj.id}}" data-csrf-token="{{ csrf_token }}"/>
+        </div>
+    </div>
+{% endif %}
+

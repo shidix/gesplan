@@ -1,0 +1,15 @@
+{% load i18n %}
+
+
+{% include "contracts/reports/contracts-search.html" %}
+
+<div class="content mt-4">
+    <div class="toolbar-content p-3 row">
+        <div class="col-8"> <h2 class="pathway b-right">{{contract.number}} - {%trans 'Lotes'%} 
+            <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2></div>
+
+        <div class="col-4 text-end"> </div>
+    </div>
+    <div id="contracts-list" class="ml-list">{% include "contracts/reports/contracts-list.html" %}</div>
+</div>
+{% include "common-modal.html" %}

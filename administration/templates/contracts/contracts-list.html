@@ -12,6 +12,8 @@
         <div class="col-5">{{ item.number|default:"" }}</div>
         <div class="col-5">{{ item.status.name|default:"" }}</div>
         <div class="col-2 text-right">
+            <a class="btn btn-xs" href="{% url "contracts-invoices" item.id %}" title="{% trans 'Facturas' %}"> 
+                <i class="fas fa-file-pdf"></i> </a></li>
             <a class="btn btn-xs" href="{% url "contracts-lots" item.id %}" title="{% trans 'Lotes' %}"> 
                 <i class="fas fa-cog"></i> </a></li>
             <a class="btn btn-xs ark" data-url="{%url "contracts-form"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 

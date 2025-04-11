@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.db.models import Exists, OuterRef
 
-from datetime import datetime
+
+from datetime import datetime, timedelta
 
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
@@ -12,7 +13,8 @@ from .models import Citizen, WasteCitizen
 
 @group_required("admins",)
 def index(request):
-    return render(request, "index.html")
+    set_initial_dates(request)
+    return render(request, "report-index.html", get_citizens_context(request))
 
 '''
     CITIZENS
@@ -77,5 +79,19 @@ def citizens_remove(request):
     if obj != None:
         obj.delete()
     return render(request, "citizens/citizens-list.html", get_citizens_context(request))
+
+def citizens_report(request, uuid=None):
+    if request.method == "POST":
+        print ("Buscando")
+        start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+        end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    else:
+        start_date = datetime.now()
+        end_date = datetime.now() + timedelta(days=30)
+    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+    return render(request, "citizens/citizens-report.html", context)
 
 

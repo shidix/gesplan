@@ -42,7 +42,7 @@
                             <a href="https://gesplan.shidix.es"><img src="{% static '/images/logo-gesplan.png'%}" width="100%"></a>
                         </div>	
         	            <div class="col-lg-3 offset-lg-6 col-6 text-right p-0"> 
-					        {% trans "Hola" %}, {{user.name}}Admin
+					        {% trans "Hola" %}, {{request.user}}
 				        </div>
         	            <div class="col-lg-1 col-1 text-right"> 
                 	        <form action="{% url 'auth_logout' %}" method="post" id="frmLogout" class="m-0">

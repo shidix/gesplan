@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block central_content %}
+    {# -------------------------- ROUTES ------------------------#}
+    <div class="toolbar-content p-3 text-end">
+        <button type="button" class="btn btn-sm ark new" data-url="{%url "operation-routes-external-form"%}" 
+            data-target-modal="common-modal"> <i class="fas fa-plus"></i> {% trans 'Crear Ruta' %}</button> 
+    </div>
+ 
+    <div id="div-routes">{% include "operations/external/routes-list.html" %} </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}

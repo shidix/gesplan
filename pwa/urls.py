@@ -11,6 +11,9 @@ urlpatterns = [
     path('access-log/', views.access_log, name="pwa-access-log"),
     path('select-truck', views.select_truck, name="pwa-select-truck"),
     path('save-truck', views.save_truck, name="pwa-save-truck"),
+    path('set-km', views.set_km, name="pwa-set-km"),
+    path('save-km', views.save_km, name="pwa-save-km"),
+
 
     # DRIVER
     path('driver/', driver_views.driver_home, name="pwa-driver"),

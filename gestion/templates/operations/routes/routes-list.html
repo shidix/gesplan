@@ -28,13 +28,19 @@
                 <div class="dropdown-menu user-dropdown" aria-labelledby="dropdownProfile" data-popper-placement="bottom-start"
                     style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(721px, 380px);" >
                     <ul class="m-0">
-                        <li> <a class="btn btn-xs ark" data-url="{% url "routes-view" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}"                                                 title="{% trans 'Ver' %}"><i class="fas fa-eye"></i> {% trans 'Info' %}</a> </li>
+                        <li> <a class="btn btn-xs ark" data-url="{% url "operation-routes-view" %}" data-target-modal="common-modal" 
+                            data-obj_id="{{item.id}}" title="{% trans 'Ver' %}"><i class="fas fa-eye"></i> {% trans 'Info' %}</a> </li>
                         <div class="dropdown-divider"></div>
-                        <li> <a class="btn btn-xs ark" data-url="{% url "routes-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
-                            title="{% trans 'Editar' %}"><i class="fas fa-edit"></i> {% trans 'Editar' %}</a></a> </li>
+                        {%comment%}
+                        <li> <a class="btn btn-xs ark" data-url="{% url "operation-routes-form" %}" data-target-modal="common-modal" 
+                            data-obj_id="{{item.id}}" title="{% trans 'Editar' %}">
+                            <i class="fas fa-edit"></i> {% trans 'Editar' %}</a></a> </li>
                         <div class="dropdown-divider"></div>
-                        <li> <a class="btn btn-xs ark" data-url="{% url "routes-remove" %}" data-target="route-list" data-obj_id="{{item.id}}" 
-                            title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i> {% trans 'Borrar' %}</a></a> </li>
+                        {%endcomment%}
+                        <li> <a class="btn btn-xs ark" data-url="{% url "operation-routes-remove" %}" data-target="route-list" 
+                            data-obj_id="{{item.id}}" title="{% trans 'Borrar' %}" 
+                            data-confirm="{% trans "Are you sure to remove this element?" %}">
+                            <i class="fas fa-trash"></i> {% trans 'Borrar' %}</a></a> </li>
                         <div class="dropdown-divider"></div>
                     </ul>
                 </div>

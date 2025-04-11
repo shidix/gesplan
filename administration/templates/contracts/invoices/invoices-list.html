@@ -1,0 +1,29 @@
+{% load i18n %}
+
+
+<div class="row main-th py-3 m-0">
+    <div class="col-2"> {% trans 'Fecha' %} </div>
+    <div class="col-2"> {% trans 'Importe' %} </div>
+    <div class="col-2"> {% trans 'Empresa' %} </div>
+    <div class="col-2"> {% trans 'Concepto' %} </div>
+    <div class="col-2"> {% trans 'Fichero' %} </div>
+    <div class="col-2"></div>
+</div>
+
+{% for item in items %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-2">{{ item.date|date:"d-m-Y" }}</div>
+        <div class="col-2">{{ item.amount }}</div>
+        <div class="col-2">{{ item.company|default:"" }}</div>
+        <div class="col-2">{{ item.concept|default:"" }}</div>
+        <div class="col-2">{% if item.file %}<a href="{{item.file.url}}" target="_blank">PDF</a>{% endif %}</div>
+        <div class="col-2 text-right">
+            <a class="btn btn-xs ark" data-url="{%url "contracts-invoices-form"%}" data-target-modal="common-modal" 
+                data-obj_id="{{item.id}}" title="{%trans 'Editar'%}"><i class="fas fa-edit"></i></a> 
+            <a class="btn btn-xs ark" data-url="{% url "contracts-invoices-remove" %}" data-target="invoices-list" 
+                data-obj_id="{{item.id}}" title="{%trans 'Borrar'%}" data-confirm="{%trans "Are you sure to remove this element?"%}">
+                <i class="fas fa-trash"></i></a> 
+        </div>
+    </div>
+{% endfor %}
+

@@ -19,5 +19,16 @@ urlpatterns = [
     path('contracts/lots/upload', views.contracts_lots_upload, name='contracts-lots-upload'),
     path('contracts/lots/file-remove', views.contracts_lots_file_remove, name='contracts-lots-file-remove'),
 
+    #---------------------- INVOICES -----------------------
+    path('contracts/invoices/<int:obj_id>', views.contracts_invoices, name='contracts-invoices'),
+    path('contracts/invoices/list', views.contracts_invoices_list, name='contracts-invoices-list'),
+    path('contracts/invoices/form', views.contracts_invoices_form, name='contracts-invoices-form'),
+    path('contracts/invoices/remove', views.contracts_invoices_remove, name='contracts-invoices-remove'),
+    path('contracts/invoices/upload', views.contracts_invoices_upload, name='contracts-invoices-upload'),
+    path('contracts/invoices/file-remove', views.contracts_invoices_file_remove, name='contracts-invoices-file-remove'),
+
+    #---------------------- REPORTS -----------------------
+    path('contracts-report', views.contracts_report, name='contracts-report'),
+    path('contracts-report-search', views.contracts_report_search, name='contracts-report-search'),
 ]
 

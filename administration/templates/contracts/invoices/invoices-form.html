@@ -1,0 +1,54 @@
+{% load i18n %}
+
+
+<div class="row modal-head m-0">
+    <div class="col-11"><i class="fa fa-warehouse"></i>&nbsp; {% trans 'Factura' %} </div>
+    <div class="col-1">
+        <div class="d-flex justify-content-end"> <button type="button" class="btn btn-lg" data-bs-dismiss="modal" 
+            title="{% trans "Close" %}"> <i class="fas fa-times"></i></button> </div>
+    </div>
+</div>
+
+<div id="div-notification"></div>
+
+<div class="row justify-center">
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Fecha" %}
+            <input type="date" class="form-control autosave" id="date" name="date" value="{{obj.ini_date|date:"Y-m-d"}}" 
+                data-model-name="administration.invoice" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="date__msg"></span>
+        </div>
+    </div>
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Importe" %}
+            <input type="text" class="form-control autosave" id="amount" name="amount" value="{{obj.amount}}" 
+                data-model-name="administration.invoice" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="amount__msg"></span>
+        </div>
+    </div>
+    <div class="col-4 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Empresa" %}
+            <input type="text" class="form-control autosave" id="company" name="company" value="{{obj.company}}" 
+                data-model-name="administration.invoice" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="company__msg"></span>
+        </div>
+    </div>
+    <div class="col-12 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Concepto" %}
+            <input type="text" class="form-control autosave" id="concept" name="concept" value="{{obj.concept}}" 
+                data-model-name="administration.invoice" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="concept__msg"></span>
+        </div>
+    </div>
+    <div class="col-12 mt-3" id="div-file">{% include "contracts/invoices/invoices-file.html" %}</div>
+</div>
+
+<div class="d-flex justify-content-end p-2">
+    <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "contracts-invoices-list" %}"
+        data-target="invoices-list" data-obj_id="{{obj.contract.id}}">{% trans "Guardar" %}</button>
+</div>
+

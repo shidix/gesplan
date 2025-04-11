@@ -130,3 +130,111 @@ def contracts_lots_file_remove(request):
         obj.save()
     return render(request, "contracts/lots/lots-file.html", {"obj": obj})
 
+'''
+   CONTRACTS INVOICES
+'''
+def get_contracts_invoices_context(contract):
+    context = {
+        "items": Invoice.objects.filter(contract=contract),
+        "contract": contract
+    }
+    return context
+
+@group_required("admins",)
+def contracts_invoices(request, obj_id):
+    obj = get_or_none(Contract, obj_id)
+    return render(request, "contracts/invoices/invoices.html", get_contracts_invoices_context(obj))
+
+@group_required("admins",)
+def contracts_invoices_list(request):
+    obj = get_or_none(Contract, get_param(request.GET, "obj_id"))
+    return render(request, "contracts/invoices/invoices-list.html", get_contracts_invoices_context(obj))
+
+@group_required("admins",)
+def contracts_invoices_form(request):
+    obj_id = get_param(request.GET, "obj_id")
+    obj = get_or_none(Invoice, obj_id)
+    if obj == None:
+        contract = get_or_none(Contract, get_param(request.GET, "contract"))
+        obj = Invoice.objects.create(contract=contract)
+        
+    context = {'obj':obj, "epi_list":Epigraph.objects.all()}
+    return render(request, "contracts/invoices/invoices-form.html", context)
+
+@group_required("admins",)
+def contracts_invoices_remove(request):
+    obj = get_or_none(Invoice, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    contract = obj.contract
+    if obj != None:
+        obj.file.delete(save=True)
+        obj.delete()
+    return render(request, "contracts/invoices/invoices-list.html", get_contracts_invoices_context(contract))
+
+@group_required("admins",)
+def contracts_invoices_upload(request):
+    obj = get_or_none(Invoice, get_param(request.POST, "obj_id"))
+    if obj != None:
+        obj.file = request.FILES['file']
+        obj.save()
+    return render(request, "contracts/invoices/invoices-file.html", {"obj": obj})
+
+@group_required("admins",)
+def contracts_invoices_file_remove(request):
+    obj = get_or_none(Invoice, get_param(request.GET, "obj_id"))
+    if obj != None:
+        obj.file.delete(save=True)
+        obj.file = None
+        obj.save()
+    return render(request, "contracts/invoices/invoices-file.html", {"obj": obj})
+
+'''
+    CONTRACTS REPORTS
+'''
+def get_contracts_report(request):
+    idate_ini = get_session(request, "sr_contract_idate_ini")
+    idate_end = get_session(request, "sr_contract_idate_end")
+    edate_ini = get_session(request, "sr_contract_edate_ini")
+    edate_end = get_session(request, "sr_contract_edate_end")
+    amount_ini = get_session(request, "sr_contract_amount_ini")
+    amount_end = get_session(request, "sr_contract_amount_end")
+    status = get_session(request, "sr_contract_status")
+    epigraph = get_session(request, "sr_contract_epigraph")
+
+    kwargs = {}
+    if idate_ini != "":
+        kwargs["ini_date__gte"] = idate_ini
+    if idate_end != "":
+        kwargs["ini_date__lte"] = idate_end
+    if edate_ini != "":
+        kwargs["end_date__gte"] = edate_ini
+    if edate_end != "":
+        kwargs["end_date__lte"] = edate_end
+    if amount_ini != "":
+        kwargs["amount__gte"] = get_float(amount_ini)
+    if amount_end != "":
+        kwargs["amount__lte"] = get_float(amount_end)
+    if status != "":
+        kwargs["contract__status__id"] = status
+    if status != "":
+        kwargs["epigraph__id"] = epigraph
+    #print(kwargs)
+    return ContractLot.objects.filter(**kwargs)
+
+@group_required("admins",)
+def contracts_report(request):
+    context = {"items": [], "status_list": ContractStatus.objects.all(), "epigraph_list": Epigraph.objects.all()}
+    return render(request, "contracts/reports/contracts.html", context)
+
+@group_required("admins",)
+def contracts_report_search(request):
+    set_session(request, "sr_contract_idate_ini", get_param(request.GET, "sr_contract_idate_ini"))
+    set_session(request, "sr_contract_idate_end", get_param(request.GET, "sr_contract_idate_end"))
+    set_session(request, "sr_contract_edate_ini", get_param(request.GET, "sr_contract_edate_ini"))
+    set_session(request, "sr_contract_edate_end", get_param(request.GET, "sr_contract_edate_end"))
+    set_session(request, "sr_contract_amount_ini", get_param(request.GET, "sr_contract_amount_ini"))
+    set_session(request, "sr_contract_amount_end", get_param(request.GET, "sr_contract_amount_end"))
+    set_session(request, "sr_contract_status", get_param(request.GET, "sr_contract_status"))
+    set_session(request, "sr_contract_epigraph", get_param(request.GET, "sr_contract_epigraph"))
+    return render(request, "contracts/reports/contracts-list.html", {"items": get_contracts_report(request)})
+
+

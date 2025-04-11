@@ -12,7 +12,7 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-4 mt-1">
+    <div class="col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Fecha" %}
             <input type="date" class="form-control autosave" id="date" name="date" value="{{obj.date|date:"Y-m-d"}}" 
@@ -20,7 +20,15 @@
                 data-target="div-notification" /> <span id="date__msg"></span>
         </div>
     </div>
-    <div class="col-4 mt-1">
+    <div class="col-6 mt-1">
+        <div class="greybox-sm p-1">
+            {% trans "Fecha de fin" %}
+            <input type="date" class="form-control autosave" id="end_date" name="end_date" value="{{obj.end_date|date:"Y-m-d"}}" 
+                data-model-name="gestion.truckmanteinance" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" /> <span id="end_date__msg"></span>
+        </div>
+    </div>
+    <div class="col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Concepto" %}
             <select class="form-control autosave" id="concept" name="concept" data-model-name="gestion.truckmanteinance" 
@@ -33,7 +41,7 @@
             <span id="concept__msg"></span>
         </div>
     </div>
-    <div class="col-4 mt-1">
+    <div class="col-6 mt-1">
         <div class="greybox-sm p-1">
             {% trans "Estado" %}
             <select class="form-control autosave" id="status" name="status" data-model-name="gestion.truckmanteinance" 

@@ -2,9 +2,11 @@
 
 
 <div class="row main-th py-3 m-0">
-    <div class="col-4"> {% trans 'Matrícula' %} </div>
-    <div class="col-4"> {% trans 'Modelo' %} </div>
+    <div class="col-2"> {% trans 'Matrícula' %} </div>
+    <div class="col-2"> {% trans 'Modelo' %} </div>
     <div class="col-2"> {% trans 'ITV' %} </div>
+    <div class="col-2"> {% trans 'Conductor' %} </div>
+    <div class="col-2"> {% trans 'Empresa' %} </div>
     {%comment%}
     <div class="col-3"> {% trans 'Observaciones' %} </div>
     <div class="col-1"> {% trans 'Disponible' %} </div>
@@ -15,9 +17,11 @@
 
 {% for item in items %}
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-4">{{ item.number_plate|default:"---" }}</div>
-        <div class="col-4">{{ item.type|default:"---" }}</div>
+        <div class="col-2">{{ item.number_plate|default:"---" }}</div>
+        <div class="col-2">{{ item.type|default:"---" }}</div>
         <div class="col-2">{{ item.itv_date }}</div>
+        <div class="col-2">{{ item.current_driver.full_name }}</div>
+        <div class="col-2">{{ item.company }}</div>
         {%comment%}
         <div class="col-3">{{ item.observations|default:"" }}</div>
         <div class="col-1 text-center">

@@ -48,13 +48,13 @@ urlpatterns = [
     path('trucks/manteinances/img-remove', views.trucks_manteinances_img_remove, name='trucks-manteinances-img-remove'),
 
 
-    #---------------------- ROUTES -----------------------
-    path('routes', views.routes, name='routes'),
-    path('routes/list', views.routes_list, name='routes-list'),
-    path('routes/view', views.routes_view, name='routes-view'),
-    path('routes/search', views.routes_search, name='routes-search'),
-    path('routes/form', views.routes_form, name='routes-form'),
-    path('routes/remove', views.routes_remove, name='routes-remove'),
+#    #---------------------- ROUTES -----------------------
+#    path('routes', views.routes, name='routes'),
+#    path('routes/list', views.routes_list, name='routes-list'),
+#    path('routes/view', views.routes_view, name='routes-view'),
+#    path('routes/search', views.routes_search, name='routes-search'),
+#    path('routes/form', views.routes_form, name='routes-form'),
+#    path('routes/remove', views.routes_remove, name='routes-remove'),
 
     #---------------------- EMPLOYEES -----------------------
     path('employees', views.employees, name='employees'),
@@ -81,9 +81,21 @@ urlpatterns = [
 
     #---------------------- OPERATION -----------------------
     path('operation/index', operation_views.index, name='operation-index'),
+    path('operation/routes/view', operation_views.routes_view, name='operation-routes-view'),
+    path('operation/routes/list', operation_views.routes_list, name='operation-routes-list'),
+    path('operation/routes-ext/list', operation_views.routes_ext_list, name='operation-routes-ext-list'),
+    #path('operation/routes/form', operation_views.routes_form, name='operation-routes-form'),
+    path('operation/routes-ext/form', operation_views.routes_ext_form, name='operation-routes-ext-form'),
+    path('operation/routes/remove', operation_views.routes_remove, name='operation-routes-remove'),
     path('operation/facility-waste', operation_views.facility_waste, name='operation-facility-waste'),
+    path('operation/report', operation_views.report, name='operation-report'),
+    path('operation/report-search', operation_views.report_search, name='operation-report-search'),
 
-   #---------------------- IMPORT -----------------------
+    path('operation/index-external', operation_views.index_external, name='operation-index-external'),
+    path('operation/routes-external/list', operation_views.routes_external_list, name='operation-routes-external-list'),
+    path('operation/routes-external/form', operation_views.routes_external_form, name='operation-routes-external-form'),
+
+    #---------------------- IMPORT -----------------------
     path('import', import_views.import_db, name='import'),
     path('import-db', import_views.import_db_file, name='import-db'),
 

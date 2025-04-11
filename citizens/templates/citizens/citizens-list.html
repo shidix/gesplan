@@ -4,9 +4,10 @@
 <div class="row main-th py-3 m-0">
     <div class="col-1"> {% trans 'Código' %} </div>
     <div class="col-1"> {% trans 'Matrícula' %} </div>
-    <div class="col-2"> {% trans 'Teléfono' %} </div>
+    <div class="col-1"> {% trans 'Teléfono' %} </div>
     <div class="col-2"> {% trans 'Fecha' %} </div>
-    <div class="col-4"> {% trans 'Residuos' %} </div>
+    <div class="col-2"> {% trans 'Punto limpio' %} </div>
+    <div class="col-3"> {% trans 'Residuos' %} </div>
     <div class="col-2"></div>
 </div>
 
@@ -14,9 +15,10 @@
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
         <div class="col-1">{{ item.code|default:"---" }}</div>
         <div class="col-1">{{ item.plate|default:"" }}</div>
-        <div class="col-2">{{ item.phone|default:"" }}</div>
+        <div class="col-1">{{ item.phone|default:"" }}</div>
         <div class="col-2">{{ item.date|date:"d-m-Y" }}</div>
-        <div class="col-4"> {%for item2 in item.wastes.all%}{{item2.waste}}: {{item2.units}}<br/>{%endfor%} </div>
+        <div class="col-2">{{ item.facility|default:"" }}</div>
+        <div class="col-3"> {%for item2 in item.wastes.all%}{{item2.waste}}: {{item2.units}}<br/>{%endfor%} </div>
         <div class="col-2 text-right">
             <a class="btn btn-xs ark" data-url="{%url "citizens-form"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 

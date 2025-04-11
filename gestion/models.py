@@ -264,6 +264,7 @@ class FacilityManteinanceStatus(models.Model):
 
 class FacilityManteinance(models.Model):
     date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
+    end_date = models.DateTimeField(default=datetime.datetime.min, null=True, verbose_name=('Fecha de fin'))
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
 
     concept = models.ForeignKey(FacilityManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
@@ -328,6 +329,12 @@ class Truck(models.Model):
         print( "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate))
         return "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate)
 
+    @property
+    def current_driver(self):
+        et = EmployeeTruck.objects.filter(truck=self).order_by("-date").first()
+        return et.employee if et != None else None
+
+
     class Meta:
         verbose_name = 'Camión'
         verbose_name_plural = ('Camiones')
@@ -355,6 +362,7 @@ class TruckManteinanceStatus(models.Model):
 
 class TruckManteinance(models.Model):
     date = models.DateTimeField(default=datetime.datetime.now, null=True, verbose_name=('Fecha'))
+    end_date = models.DateTimeField(default=datetime.datetime.min, null=True, verbose_name=('Fecha de fin'))
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='', blank=True)
 
     concept = models.ForeignKey(TruckManteinanceConcept, verbose_name=_('Concepto'), on_delete=models.SET_NULL, null=True, blank=True, related_name="manteinances")
@@ -434,6 +442,17 @@ class Employee(models.Model):
         et = self.trucks.order_by("-date").first()
         return et.truck if et != None else None
 
+    @property
+    def full_name(self):
+        return "{} {}".format(self.name, self.surname)
+
+    @property
+    def current_km(self):
+        now = datetime.datetime.now()
+        idate = now.replace(hour=0, minute=0, second=0)
+        edate = now.replace(hour=23, minute=59, second=59)
+        return EmployeeTruckKm.objects.filter(employee=self, truck=self.truck, date__range=(idate, edate)).first()
+
     def generate_pin(self):
         mypin = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
         while (Employee.objects.filter(pin = mypin).exists()):
@@ -490,6 +509,16 @@ class EmployeeAccessLog(models.Model):
     class Meta:
         verbose_name=_('Acceso de Empleado')
         verbose_name_plural=_('Acceso de Empleados')
+
+class EmployeeTruckKm(models.Model):
+    date = models.DateTimeField(verbose_name=('Fecha de ITV'), null=True, default=datetime.datetime.now)
+    km = models.CharField(max_length=100, verbose_name='Km', default="")
+    employee = models.ForeignKey(Employee, verbose_name='Empleado', on_delete=models.SET_NULL, null=True, related_name="trucks_km")
+    truck= models.ForeignKey(Truck, verbose_name='Vehículo', on_delete=models.CASCADE, null=True, related_name="employees_km")
+
+    class Meta:
+        verbose_name=_('Empleado Camion Km')
+        verbose_name_plural=_('Empleados Camiones Km')
 
 
 '''

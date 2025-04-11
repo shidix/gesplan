@@ -8,27 +8,6 @@ from datetime import datetime
 from gestion.models import Facility, Employee, Waste
 
 
-def upload_invoice(instance, filename):
-    ascii_filename = str(filename.encode('ascii', 'ignore'))
-    instance.filename = ascii_filename
-    #folder = "notes/%s" % (instance.id)
-    folder = "invoices"
-    return '/'.join(['%s' % (folder), datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
-
-class Invoice(models.Model):
-    date = models.DateTimeField(verbose_name='Fecha y hora', default=tz.now, null=True, blank=True)
-    amount = models.FloatField(verbose_name='Importe', default=0, null=True, blank=True)
-    company = models.CharField(max_length=255, verbose_name=_('Empresa'), null=True, blank=True)
-    concept = models.TextField(verbose_name=_('Observaciones'), blank=True)
-    file = models.FileField(upload_to=upload_invoice, blank=True, verbose_name="Fichero", help_text="Select file to upload")
-
-    def __str__(self):
-        return self.concept
-
-    class Meta:
-        verbose_name = _('Factura')
-        verbose_name_plural = _('Facturas')
-
 class ContractStatus(models.Model):
     code = models.CharField(max_length=10, verbose_name=_('Código'), default='')
     name = models.CharField(max_length=200, verbose_name=_('Nombre'))
@@ -86,4 +65,28 @@ class ContractLot(models.Model):
     class Meta:
         verbose_name = _('Lote del Contrato')
         verbose_name_plural = _('Lotes de los Contratos')
+
+def upload_invoice(instance, filename):
+    ascii_filename = str(filename.encode('ascii', 'ignore'))
+    instance.filename = ascii_filename
+    #folder = "notes/%s" % (instance.id)
+    folder = "invoices"
+    return '/'.join(['%s' % (folder), datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+
+class Invoice(models.Model):
+    date = models.DateTimeField(verbose_name='Fecha y hora', default=tz.now, null=True, blank=True)
+    amount = models.FloatField(verbose_name='Importe', default=0, null=True, blank=True)
+    company = models.CharField(max_length=255, verbose_name=_('Empresa'), null=True, blank=True, default="")
+    concept = models.TextField(verbose_name=_('Observaciones'), blank=True, default="")
+    file = models.FileField(upload_to=upload_invoice, blank=True, verbose_name="Fichero", help_text="Select file to upload")
+
+    contract = models.ForeignKey(Contract, verbose_name = _('Contrato'), on_delete=models.SET_NULL, null=True, blank=True, related_name="invoices")
+
+    def __str__(self):
+        return self.concept
+
+    class Meta:
+        verbose_name = _('Factura')
+        verbose_name_plural = _('Facturas')
+
 

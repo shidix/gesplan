@@ -21,6 +21,8 @@ def driver_home(request):
         if request.user.employee.truck == None:
             return redirect(reverse("pwa-select-truck"))
             #return redirect(reverse("pwa-driver-select-truck"))
+        if request.user.employee.current_km == None:
+            return redirect(reverse("pwa-set-km"))
         return redirect(reverse("pwa-driver-routes"))
         #return render(request, "drivers/home.html", {"now": datetime.now()})
     except Exception as e:

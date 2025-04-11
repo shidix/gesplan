@@ -1,30 +1,13 @@
-{% extends 'base.html' %}
 {% load i18n %}
 
-{% block central_content %}
-    {%comment%}
-    <div class="row toolbar-search p-2 m-0">
-        <div class="col-lg-1 col-1 b-search"><i class="fas fa-search pt-2"></i></div>
-        <div class="col-lg-11 col-11 p-0">
-            <input type="text" class="autosearch form-control form-control-dark w-100" name="s-name" id="s-name" 
-               placeholder="{%trans 'Matrícula'%}" data-url="{% url "citizens-search" %}" data-target="fac-list" 
-               data-related="s-name" />
-        </div>
-    </div>
-    {%endcomment%}
+<br/><br/>
+{% include "citizens/citizens-search.html" %}
 
-    {% include "citizens/citizens-search.html" %}
-
-    <div class="content mt-4">
-        <div class="toolbar-content p-3">
-	        <h2 class="pathway b-right">{%trans 'Recogidas'%} 
-                <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
-            {%comment%}
-            <button type="button" class="btn btn-sm ark new" data-url="{%url "facilities-form"%}" data-target-modal="common-modal"> 
-                <i class="fas fa-plus"></i> {% trans 'Crear Instalación' %}</button> 
-            {%endcomment%}
-        </div>
-        <div id="citizens-list" class="ml-list">{% include "citizens/citizens-list.html" %}</div>
+<div class="content mt-4">
+    <div class="toolbar-content p-3">
+        <h2 class="pathway b-right">{%trans 'Recogidas'%} 
+            <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
     </div>
-    {% include "common-modal.html" %}
-{% endblock central_content %}
+    <div id="citizens-list" class="ml-list">{% include "citizens/citizens-list.html" %}</div>
+</div>
+{% include "common-modal.html" %}

@@ -20,9 +20,9 @@
         <div class="col-2">{{ item.waste.waste.name }}</div>
         <div class="col-2">{{ item.target.description }}</div>
         <div class="col-1 text-right">
-            <a class="btn btn-xs ark" data-url="{% url "routes-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
-                title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
-            <a class="btn btn-xs ark" data-url="{% url "routes-remove" %}" data-target="route-list" data-obj_id="{{item.id}}" 
+            <a class="btn btn-xs ark" data-url="{%url "operation-routes-form"%}" data-target-modal="common-modal" 
+                data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
+            <a class="btn btn-xs ark" data-url="{%url "operation-routes-remove"%}" data-target="route-list" data-obj_id="{{item.id}}" 
                 title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
                 <i class="fas fa-trash"></i></a> 
         </div>
