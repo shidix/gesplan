@@ -49,7 +49,17 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Reporte de Ciudadanos</h5>
-            <p class="card-text">Desde {{start_date|date:'d/m/Y'}} hasta {{end_date|date:'d/m/Y'}}</p>
+            <p class="card-text">
+                Gestión y Planeamiento Territorial y Medioambiental S.A., en calidad de empresa pública que desarrolla el Encargo de Gestión de los Puntos Limpios en la Isla de Tenerife para el Cabildo Insular de Tenerife.
+            </p>
+            <p class="card-text">
+                <srtong>CERTIFICA</srtong> que:
+            </p>
+            <p>
+                D. {{ citizen.first_name | upper }} {{ citizen.last_name | upper }} con DNI/NIE {{ citizen.identification }} con domicilio en {{ citizen.address | upper }}, código postal {{ citizen.postcode }}, municipio de {{ citizen.town.name | upper }}
+            </p>
+            <p> Ha depositado los siguientes residuos </p>
+
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
