@@ -10,7 +10,14 @@ urlpatterns = [
     path('citizens/search', views.citizens_search, name='citizens-search'),
     path('citizens/form', views.citizens_form, name='citizens-form'),
     path('citizens/remove', views.citizens_remove, name='citizens-remove'),
+    path('citizens/report/', views.citizens_report, name='citizens-report'),
     path('citizens/report/<slug:uuid>/', views.citizens_report, name='citizens-report'),
+    path('citizens/cert/', views.citizens_report, name='citizens-report-cert'),
+    path('citizens/sign-up/', views.citizens_signup, name='citizens-signup'),
+    path('citizens/login/', views.citizens_login, name='citizens-login'),
+    path('citizens/logout/', views.citizens_logout, name='citizens-logout'),
+
+
 
 
 

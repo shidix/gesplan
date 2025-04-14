@@ -62,10 +62,14 @@ class Citizen(models.Model):
         #    out += " %s"%(self.citizen_user)
         return out
 
-    def total_by_waste(self, waste):
+    def total_by_waste(self, waste, date_range = None):
         now = datetime.now()
-        idate = now.replace(hour=0, minute=0, second=0)
-        edate = now.replace(hour=23, minute=59, second=59)
+        if date_range != None:
+            idate = date_range[0].replace(hour=0, minute=0, second=0)
+            edate = date_range[1].replace(hour=23, minute=59, second=59)
+        else:
+            idate = now.replace(hour=0, minute=0, second=0)
+            edate = now.replace(hour=23, minute=59, second=59)
         units = WasteCitizen.objects.filter(citizen__plate=self.plate, waste=waste, citizen__date__range=(idate,edate)).aggregate(Sum('units'))["units__sum"]
         return 0 if units == None else units
 
@@ -88,12 +92,17 @@ class WasteCitizen(models.Model):
     
 class CitizenRegister(models.Model):
     uuid = models.CharField(max_length=100, verbose_name=_('UUID'), default="", blank=True, unique=True)
+    first_name = models.CharField(max_length=255, verbose_name=_('Nombre'), blank=True)
+    last_name = models.CharField(max_length=255, verbose_name=_('Apellidos'), blank=True)
     usual_plate = models.CharField(max_length=255, verbose_name=_('Matrícula Habitual'), blank=True)
     address = models.CharField(max_length=255, verbose_name=_('Domicilio'), blank=True)
     identification = models.CharField(max_length=200, verbose_name=_('Identificación'), blank=True)
     phone = models.CharField(max_length=12, null=True, default = '000000000', verbose_name = _('Teléfono'), blank=True)
     email = models.CharField(max_length=255, verbose_name=_('Correo eletrónico'), blank=True)
     postcode = models.CharField(max_length=10, verbose_name=_('Código Postal'), blank=True)
+    town = models.ForeignKey(Town, verbose_name=_('Municipio'), on_delete=models.SET_NULL, null=True, blank=True)
+    signup_date = models.DateTimeField(verbose_name=_('Fecha de alta'), default=tz.now)
+    verfied_date = models.DateTimeField(verbose_name=_('Fecha de verificación'), null=True, blank=True)
 
 
 #    def save(self, *args, **kwargs):

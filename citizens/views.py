@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Sum
 
 
 from datetime import datetime, timedelta
@@ -9,6 +9,8 @@ from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
 from gestion.models import Waste
 from .models import Citizen, WasteCitizen, CitizenRegister
+from .forms import *
+
 
 
 @group_required("admins",)
@@ -82,33 +84,93 @@ def citizens_remove(request):
 
 def citizens_report(request, uuid=None):
     try: 
-        if uuid == None:
-            return render(request, "citizens/citizens-signup.html", {})
-        
-        if (CitizenRegister.objects.filter(uuid=uuid).exists()):
-            citizen_register = CitizenRegister.objects.get(uuid=uuid)
-            if request.method == "POST":
+        if request.method == "POST":    
+            uuid = request.POST.get("uuid", None)
+            if uuid is None:
+               return redirect("pwa-login")
+            if uuid == "0000-0000-00000-00000":
                 start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
-                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d").replace(hour=0, minute=0, second=0)
                 end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
-                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-                if (CitizenRegister.objects.filter(uuid=uuid).exists()):
-                    citizen_register = CitizenRegister.objects.get(uuid=uuid)
-                else:
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                import random
+                waste_list = Waste.objects.all()
+                # Simulate random data for testing
+                test_data = []
+                for idx in range(random.randint(20, 1000)):
+                    fake_date = start_date + timedelta(days = random.randint(0, int((end_date.timestamp() - start_date.timestamp()) / 86400)))
+                    waste = random.choice(waste_list)
+                    test_data.append({
+                        'name': waste.name,
+                        'units': waste.units,
+                        'date': fake_date,
+                        'total_units': random.randint(1, 100),
+                    })
+                # Sort test data by date
+                test_data.sort(key=lambda x: x['date'])
+                context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': test_data}
+                
+                return render(request, "citizens/citizens-report.html", context)                            
+            if (CitizenRegister.objects.filter(uuid=uuid).exists()):
+                citizen_register = CitizenRegister.objects.get(uuid=uuid)
+                start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d").replace(hour=0, minute=0, second=0)
+                end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                deliveries = Citizen.objects.filter(identification=citizen_register.identification, date__range=(start_date, end_date))
+                if deliveries.exists():
+                    ## Get WasteCitizen objects grouped by waste
+                    waste_citizen = WasteCitizen.objects.filter(citizen__identification=citizen_register.identification, citizen__date__range=(start_date, end_date))
+                    waste_list = Waste.objects.filter(id__in=waste_citizen.values_list('waste', flat=True)).distinct()
+                    waste_list = waste_list.annotate(total_units=Sum('wastecitizen__units')).order_by('name')
+                    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': waste_list}
 
-                    items = WasteCitizen.objects.filter(citizen__uuid=uuid, date__range=(start_date, end_date))
 
-            else:
-                start_date = datetime.now()
-                end_date = datetime.now() + timedelta(days=30)
-            context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
-            return render(request, "citizens/citizens-report.html", context)
+
+                context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+                return render(request, "citizens/citizens-report.html", context)
         else:
-            return redirect("pwa-login")
+
+            if uuid is not None:
+                if (uuid == '0000-0000-00000-00000'):
+                    start_date = (datetime.now() - timedelta(days=30)).replace(hour=0, minute=0, second=0)
+                    end_date = datetime.now().replace(hour=23, minute=59, second=59)
+                    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+                    
+                    return render(request, "citizens/citizens-report.html", context)
+                else:
+                    citizen_register = CitizenRegister.objects.get(uuid=uuid)
+                    # Get date range from one month ago today (trunc dates)
+                    start_date = (datetime.now() - timedelta(days=30)).replace(hour=0, minute=0, second=0)
+                    end_date = datetime.now().replace(hour=23, minute=59, second=59)
+                    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+                    return render(request, "citizens/citizens-report.html", context)
+            else:
+                return redirect("citizens-signup")
+
     except Exception as e:
         print (show_exc(e))
         return redirect("pwa-login")
+    
+def citizens_signup (request):
 
+    towns = Town.objects.all().order_by("island__name", "name")
+    if request.method == "POST":
+        uuid = request.POST.get("uuid", None)
+        if CitizenRegister.objects.filter(uuid=uuid).exists():
+            instance = CitizenRegister.objects.get(uuid=uuid)
+        else:
+            instance = CitizenRegister(uuid=uuid)
+        form = CitizenRegisterForm(request.POST, instance=instance)
+    else:
+        import uuid
+        uuid = str(uuid.uuid4())
+        form = CitizenRegisterForm(instance=CitizenRegister(uuid=uuid))
+    return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
 
+    
+def citizens_login(request):
+    return redirect("pwa-login")
 
-
+def citizens_logout(request):
+    return redirect("pwa-login")
