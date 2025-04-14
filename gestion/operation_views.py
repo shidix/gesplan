@@ -5,7 +5,7 @@ from datetime import datetime
 
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
-from .models import Facility, Route, RouteExt, Waste, Company
+from .models import Facility, Route, RouteExt, Waste, WasteInFacility, Company, Employee
 from .views import get_facilities
 
 
@@ -143,13 +143,36 @@ def index_external(request):
 @group_required("external",)
 def routes_external_list(request):
     items = RouteExt.objects.filter(external_manager=request.user.employee.company)
-    return render(request, "operations/external/routes-list.html", {"items": items})
+    return render(request, "operations/external/routes-list.html", {"routes_ext": items})
 
 @group_required("external",)
 def routes_external_form(request):
     obj = get_or_none(RouteExt, get_param(request.GET, "obj_id"))
+    comp = request.user.employee.company
     if obj == None:
-        obj = RouteExt.objects.create(external_manager=request.user.employee.company)
-    return render(request, "operations/external/routes-ext-form.html", {'obj': obj})
+        obj = RouteExt.objects.create(external_manager=comp)
+    fac_list = Facility.objects.filter(company=comp)
+    emp_list = Employee.objects.filter(company=comp)
+    #waste_list = Waste.objects.filter(external_manager=comp)
+    waste_list = WasteInFacility.objects.filter(facility=obj.facility)
+    context = {'obj': obj, 'fac_list': fac_list, 'emp_list': emp_list, 'waste_list': waste_list}
+    return render(request, "operations/external/routes-ext-form.html", context)
+
+@group_required("external",)
+def routes_external_facility_save(request):
+    obj = get_or_none(RouteExt, get_param(request.GET, "obj_id"))
+    fac = get_or_none(Facility, get_param(request.GET, "value"))
+    waste_list = WasteInFacility.objects.filter(facility=fac)
+    obj.facility = fac
+    obj.save()
+    return render(request, "operations/external/routes-ext-form-waste.html", {'obj': obj, 'waste_list': waste_list})
+
+@group_required("external",)
+def routes_external_remove(request):
+    obj = get_or_none(RouteExt, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    if obj != None:
+        obj.delete()
+    items = RouteExt.objects.filter(external_manager=request.user.employee.company)
+    return render(request, "operations/external/routes-list.html", {"routes_ext": items})
 
 

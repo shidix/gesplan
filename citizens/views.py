@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
 from gestion.models import Waste
-from .models import Citizen, WasteCitizen
+from .models import Citizen, WasteCitizen, CitizenRegister
 
 
 @group_required("admins",)
@@ -81,17 +81,34 @@ def citizens_remove(request):
     return render(request, "citizens/citizens-list.html", get_citizens_context(request))
 
 def citizens_report(request, uuid=None):
-    if request.method == "POST":
-        print ("Buscando")
-        start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
-        start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-        end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
-        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+    try: 
+        if uuid == None:
+            return render(request, "citizens/citizens-signup.html", {})
+        
+        if (CitizenRegister.objects.filter(uuid=uuid).exists()):
+            citizen_register = CitizenRegister.objects.get(uuid=uuid)
+            if request.method == "POST":
+                start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+                if (CitizenRegister.objects.filter(uuid=uuid).exists()):
+                    citizen_register = CitizenRegister.objects.get(uuid=uuid)
+                else:
 
-    else:
-        start_date = datetime.now()
-        end_date = datetime.now() + timedelta(days=30)
-    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
-    return render(request, "citizens/citizens-report.html", context)
+                    items = WasteCitizen.objects.filter(citizen__uuid=uuid, date__range=(start_date, end_date))
+
+            else:
+                start_date = datetime.now()
+                end_date = datetime.now() + timedelta(days=30)
+            context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+            return render(request, "citizens/citizens-report.html", context)
+        else:
+            return redirect("pwa-login")
+    except Exception as e:
+        print (show_exc(e))
+        return redirect("pwa-login")
+
+
 
 

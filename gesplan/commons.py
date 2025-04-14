@@ -52,13 +52,17 @@ def set_obj_field(obj, field, value):
     elif obj_field.get_internal_type() == "BooleanField":
         setattr(obj, field, (value == "True"))
     elif obj_field.get_internal_type() == "DateTimeField":
-        if "-" in value:
-            date = datetime.datetime.strptime(value, '%Y-%m-%d')
-            if date >= datetime.datetime(1970,1,1):
-                setattr(obj, field, date)
-        if ":" in value:
-            val = datetime.datetime.strptime("{} {}".format(getattr(obj, field).strftime('%Y-%m-%d'), value), '%Y-%m-%d %H:%M')
+        if "T" in value:
+            val = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M')
             setattr(obj, field, val)
+        else:
+            if "-" in value:
+                date = datetime.datetime.strptime(value, '%Y-%m-%d')
+                if date >= datetime.datetime(1970,1,1):
+                    setattr(obj, field, date)
+            if ":" in value:
+                val = datetime.datetime.strptime("{} {}".format(getattr(obj, field).strftime('%Y-%m-%d'), value), '%Y-%m-%d %H:%M')
+                setattr(obj, field, val)
     else:
         setattr(obj, field, value)
     obj.save()

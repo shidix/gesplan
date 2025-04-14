@@ -94,6 +94,8 @@ urlpatterns = [
     path('operation/index-external', operation_views.index_external, name='operation-index-external'),
     path('operation/routes-external/list', operation_views.routes_external_list, name='operation-routes-external-list'),
     path('operation/routes-external/form', operation_views.routes_external_form, name='operation-routes-external-form'),
+    path('operation/routes-external/facility-save', operation_views.routes_external_facility_save, name='operation-routes-facility-save'),
+    path('operation/routes-external/remove', operation_views.routes_external_remove, name='operation-routes-external-remove'),
 
     #---------------------- IMPORT -----------------------
     path('import', import_views.import_db, name='import'),
