@@ -41,12 +41,12 @@
         <div class="container-fluid">
             <div class="header">
                 <div class="row m-0">
-                    <div class="col-3 text-center pt-1"> <img class="logo" src="{% static 'images/app-logo.png' %}" width="100%"> </div>
+                    <div class="col-4 text-center pt-2"> <img class="logo" src="{% static 'images/app-logo.png' %}" width="100%"> </div>
                     <div class="col-4 offset-1 status-bar text-center">
                         <small id="conn-status">...</small> <i class='fas fa-wifi'></i> <br />
                         <span class="driver-name">{{request.user.employee.name}}</span>
                     </div>
-                    <div class="col-1 offset-2 pt-3">
+                    <div class="col-1 offset-1 pt-2">
                         {% if request.user|in_group:"external" %}
                             <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout-confirm'%}">
                                 <i class="fas fa-power-off"></i></a></strong>

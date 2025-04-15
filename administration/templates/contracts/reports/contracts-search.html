@@ -13,51 +13,52 @@
 
 <form class="form m-0" method="GET" action="{% url "contracts-report-search" %}" id="form-search">
     {%csrf_token%}
-    <div class="row">
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha de inicio entre:" %}</span> </div>
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha de fin entre:" %}</span> </div>
-    </div>
-    <div class="row">
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_contract_idate_ini" id="sr_contract_idate_ini" value="{{request.session.sr_contract_idate_ini}}"/> </div>
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_contract_idate_end" id="sr_contract_idate_end" value="{{request.session.sr_contract_idate_end}}"/> </div>
+    <div class="row toolbar-search p-2 m-0 mt-4">
+        <div class="row">
+            <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha inicio entre:" %}</span> </div>
+            <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha fin entre:" %}</span> </div>
+        </div>
 
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_contract_edate_ini" id="sr_contract_edate_ini" value="{{request.session.sr_contract_edate_ini}}"/> </div>
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_contract_edate_end" id="sr_contract_edate_end" value="{{request.session.sr_contract_edate_end}}"/> </div>
-    </div>
-    <div class="row">
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Presupuesto:" %}</span> </div>
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Estado:" %}</span> </div>
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Epígrafe:" %}</span> </div>
-    </div>
-    <div class="row">
-        <div class="col-2 p-0"> <input type="text" class="form-control form-control-dark py-2" placeholder="Inicial..."
-            name="sr_contract_amount_ini" id="sr_contract_amount_ini" value="{{request.session.sr_contract_amount_ini}}"/> </div>
-        <div class="col-2 p-0"> <input type="text" class="form-control form-control-dark py-2" placeholder="Final..." 
-            name="sr_contract_amount_end" id="sr_contract_amount_end" value="{{request.session.sr_contract_amount_end}}"/> </div>
-        <div class="col-4"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_contract_status" id="sr_contract_status">
-                <option value="">{% trans "-- Seleccione un estado --" %}</option>
-                {% for s in status_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_contract_status == s.id%}selected{%endif%}>{{s.name}}</option>
-                {% endfor %}
-            </select>
+        <div class="row">
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_contract_idate_ini" id="sr_contract_idate_ini" value="{{request.session.sr_contract_idate_ini}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_contract_idate_end" id="sr_contract_idate_end" value="{{request.session.sr_contract_idate_end}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_contract_edate_ini" id="sr_contract_edate_ini" value="{{request.session.sr_contract_edate_ini}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_contract_edate_end" id="sr_contract_edate_end" value="{{request.session.sr_contract_edate_end}}"/> </div>
         </div>
-        <div class="col-4"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_contract_epigraph" id="s_contract_epigraph">
-                <option value="">{% trans "-- Seleccione un epígrafe --" %}</option>
-                {% for s in epigraph_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_contract_status == s.id%}selected{%endif%}>{{s.name}}</option>
-                {% endfor %}
-            </select>
+        <div class="row">
+            <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Presupuesto:" %}</span> </div>
+            <div class="col-3 py-2 text-center d-none d-lg-block"> <span>{% trans "Estado:" %}</span> </div>
+            <div class="col-3 py-2 text-center d-none d-lg-block"> <span>{% trans "Epígrafe:" %}</span> </div>
         </div>
-    <div class="row">
-        <div class="col-12 text-center p-0">
-            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="contracts-list">
-                <i class="fas fa-search"></i> Buscar</button>
+        <div class="row">
+            <div class="col-3"> <input type="text" class="form-control form-control-dark" placeholder="Inicial..."
+                name="sr_contract_amount_ini" id="sr_contract_amount_ini" value="{{request.session.sr_contract_amount_ini}}"/> </div>
+            <div class="col-3"> <input type="text" class="form-control form-control-dark" placeholder="Final..." 
+                name="sr_contract_amount_end" id="sr_contract_amount_end" value="{{request.session.sr_contract_amount_end}}"/> </div>
+            <div class="col-2 text-center"> 
+                <select class="form-control form-control-dark w-100" name="sr_contract_status" id="sr_contract_status">
+                    <option value="">{% trans "-- Seleccione estado --" %}</option>
+                    {% for s in status_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_contract_status == s.id%}selected{%endif%}>{{s.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-2 text-center b-search"> 
+                <select class="form-control form-control-dark w-100" name="sr_contract_epigraph" id="s_contract_epigraph">
+                    <option value="">{% trans "-- Seleccione epígrafe --" %}</option>
+                    {% for s in epigraph_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_contract_status == s.id%}selected{%endif%}>{{s.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-1 text-center">
+                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="contracts-list">
+                    <i class="fas fa-search"></i></button>
+            </div>
         </div>
     </div>
 </form>

@@ -34,14 +34,16 @@
 			<p>Esta aplicación ofrece una gestión integral para el tratamiento de los residuos en los Puntos Limpios, desde el depósito de los mismos por parte de los ciudadanos como su posterior tratamiento. Creación de rutas, mantenimiento de bandejas y vehículos, control de personal, asignación de recursos son algunos de los módulos que facilitan el día a día de la gestión de los residuos. </p>
                     {% endblocktrans %}
                 </div>
+		{% comment %}
                <div><img src="{% static '/images/bg-siluete.png'%}" width="100%"/></div>
+		{% endcomment %}
                <div class="login-left-bottom p-5">
 		       <img src="{% static '/images/logo-gobcan.png'%}" width="150"/> <span class="text">Gestión y Planeamiento Territorial y Medioambiental, S.A.</span>
 	       </div>
             </div>
-            <div class="login-right">
-		    <div class="logo text-center"><a href="https://www.gesplan.es" target="_blank"><img src="{% static '/images/logo-gesplan.png'%}" width="200"/></a></div>
-                {% block login-right %}
+            <div class="login-right pt-5">
+		    <div class="logo text-center"><a href="https://www.gesplan.es" target="_blank"><img src="{% static '/images/logo-negativo.png'%}" width=""/></a></div>
+{% block login-right %}
                     <div class="form-container toggle-container mt-5" id="login-form">
                         <h4 class="title text-center">{% trans "Inicia Sesión" %}
                         {% include "login_form.html" %}

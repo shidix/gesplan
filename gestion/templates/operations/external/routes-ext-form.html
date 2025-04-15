@@ -22,7 +22,7 @@
     </div>
     <div class="col-4">
         <div class="greybox-sm p-1">
-            {% trans "Fecha de llenado" %}
+            {% trans "Fecha de recogida" %}
             <input type="datetime-local" class="form-control autosave" id="get_date" name="get_date" 
                 value="{{obj.get_date|date:"Y-m-d H:i"}}" title="{{obj.get_date}}" data-model-name="gestion.routeext" 
                 data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
@@ -74,5 +74,10 @@
 <div class="d-flex justify-content-end p-2">
     <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "operation-routes-external-list" %}"
         data-target="div-routes">{% trans "Guardar" %}</button>
+    &nbsp; &nbsp;
+    <button class="btn btn-danger text-white ark" data-url="{% url "operation-routes-external-remove" %}" data-target="div-routes" 
+        data-obj_id="{{obj.id}}" data-bs-dismiss="modal" title="{% trans 'Borrar' %}" 
+        data-confirm="{% trans "Are you sure to remove this element?" %}">{% trans "Eliminar"%}</i></button>
+
 </div>
 

@@ -5,54 +5,53 @@
 <meta name="theme-color" content="#000000">
 {% endblock %}
 {% block content %}
-<div class="col-12 mt-3">
-    <div class="card">
-        <div class="card-header">
-            <h2 class="card-title">Datos del ciudadano</h2>
-        </div>
-        <div class="card-body">
-            <form action="{% url 'citizens-signup' %}" method="POST">
+
+
+<div class="col-12 p-0">
+    <div class="nav-bar text-center p-2"><strong>Datos del ciudadano</strong></div>
+        <form action="{% url 'citizens-signup' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="uuid" value="{{ form.instance.uuid }}">
-                <div class="form-group">
-                    <label for="name">Nombre(s)</label>
+              
+             <div class="row m-0 py-2">
+                <div class="col-12 form-group py-2">
+                    <label for="name"><strong>Nombre(s)</strong></label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="Nombre completo" value="{{form.instance.first_name}}" required>
                 </div>
-                <div class="form-group">
-                    <label for="surname">Apellidos</label>
+                <div class="col-12 form-group py-2">
+                    <label for="surname"><strong>Apellidos</strong></label>
                     <input type="text" class="form-control" id="surname" name="surname" placeholder="Apellidos" value="{{form.instance.last_name}}" required>
                 </div>
                 <!-- DNI / NIE -->
-                <div class="form-group">
-                    <label for="identification">DNI / NIE</label>
+                <div class="col-6 form-group py-2">
+                    <label for="identification"><strong>DNI / NIE</strong></label>
                     <input type="text" class="form-control" id="identification" name="identification" placeholder="DNI / NIE" value="{{form.instance.identification}}"  required>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Teléfono</label>
+                <div class="col-6 form-group py-2">
+                    <label for="phone"><strong>Teléfono</strong></label>
                     <input type="text" class="form-control" id="phone" name="phone" placeholder="Teléfono" value="{{form.instance.phone}}"  required>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
+                <div class="col-12 form-group py-2">
+                    <label for="email"><strong>Email</strong></label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{form.instance.email}}"  required>
                 </div>
                 <!-- Direccion -->
-                <div class="form-group">
-                    <label for="address">Dirección</label>
+                <div class="col-12 form-group py-2">
+                    <label for="address"><strong>Dirección</strong></label>
                     <input type="text" class="form-control" id="address" name="address" placeholder="Dirección" value="{{form.instance.address}}"  required>
                 </div>
                 <!-- Postcode -->
-                <div class="form-group">
-                    <label for="postcode">Código Postal</label>
+                <div class="col-6 form-group py-2">
+                    <label for="postcode"><strong>Código Postal</strong></label>
                     <input type="text" class="form-control" id="postcode" name="postcode" placeholder="Código Postal" value="{{form.instance.postcode}}"  required>
                 </div>
                 <!-- Matricula habitual -->
-                <div class="form-group">
-                    <label for="usual_plate">Matrícula habitual</label>
+                <div class="col-6 form-group py-2">
+                    <label for="usual_plate"><strong>Matrícula habitual</strong></label>
                     <input type="text" class="form-control" id="usual_plate" name="usual_plate" placeholder="Matrícula habitual" value="{{form.instance.usual_plate}}"  required>
                 </div>
-
-                <div class="form-group">
-                    <label for="town">Municipio</label>
+                <div class="col-12 form-group py-2">
+                    <label for="town"><strong>Municipio</strong></label>
                     <select class="form-control" id="town" name="town" required>
                         <option value="" disabled selected>Selecciona un municipio</option>
                         {% for town in towns %}
@@ -62,7 +61,7 @@
                 </div>
 
                 <!-- Botones de aceptar y cancelar -->
-                <div class="form-group mt-2">
+                <div class="col-12 form-group mt-3 py-2">
                     <div class="row">
                         <div class="col-4">
                             <button type="submit" class="btn btn-primary w-100">Aceptar</button>
@@ -76,12 +75,9 @@
 
                         </div>
                     </div>
-
-
                 </div>
-
-            </form>
-        </div>
-    </div>
+            </div>
+        </form>
 </div>
+
 {% endblock %}

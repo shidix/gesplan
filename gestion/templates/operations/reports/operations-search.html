@@ -3,76 +3,70 @@
 
 <form class="form m-0" method="GET" action="{% url "operation-report-search" %}" id="form-search">
     {%csrf_token%}
-    <div class="row">
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha de inicio entre:" %}</span> </div>
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha de fin entre:" %}</span> </div>
-    </div>
-    <div class="row">
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_operation_idate_ini" id="sr_operation_idate_ini" value="{{request.session.sr_operation_idate_ini}}"/> </div>
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_operation_idate_end" id="sr_operation_idate_end" value="{{request.session.sr_operation_idate_end}}"/> </div>
-
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_operation_edate_ini" id="sr_operation_edate_ini" value="{{request.session.sr_operation_edate_ini}}"/> </div>
-        <div class="col-3 p-0"> <input type="date" class="form-control form-control-dark w-100 py-2" 
-            name="sr_operation_edate_end" id="sr_operation_edate_end" value="{{request.session.sr_operation_edate_end}}"/> </div>
-    </div>
-    <div class="row">
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Transportista:" %}</span> </div>
-        <div class="col-4 py-2 text-center d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
-    </div>
-    <div class="row">
-        <div class="col-4"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_operation_waste" id="sr_operation_waste">
-                <option value="">{% trans "-- Seleccione un residuo --" %}</option>
-                {% for s in waste_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_operation_waste == s.id%}selected{%endif%}>{{s.name}}</option>
-                {% endfor %}
-            </select>
+    <div class="row toolbar-search p-2 m-0 mt-4">
+        <div class="row">
+            <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha inicio entre:" %}</span> </div>
+            <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Fecha fin entre:" %}</span> </div>
         </div>
-        <div class="col-4"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_operation_comp" id="s_operation_comp">
-                <option value="">{% trans "-- Seleccione un transportista --" %}</option>
-                {% for s in comp_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_operation_comp == s.id%}selected{%endif%}>{{s.name}}</option>
-                {% endfor %}
-            </select>
+        <div class="row">
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_operation_idate_ini" id="sr_operation_idate_ini" value="{{request.session.sr_operation_idate_ini}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_operation_idate_end" id="sr_operation_idate_end" value="{{request.session.sr_operation_idate_end}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_operation_edate_ini" id="sr_operation_edate_ini" value="{{request.session.sr_operation_edate_ini}}"/> </div>
+            <div class="col-3"> <input type="date" class="form-control form-control-dark w-100" 
+                name="sr_operation_edate_end" id="sr_operation_edate_end" value="{{request.session.sr_operation_edate_end}}"/> </div>
         </div>
-        <div class="col-4 p-0"> <input type="text" class="form-control form-control-dark w-100 py-2" 
-            name="sr_operation_plate" id="sr_operation_plate" value="{{request.session.sr_operation_plate}}"/> </div>
-    </div>
-    <div class="row">
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Punto limpio:" %}</span> </div>
-        <div class="col-6 py-2 text-center d-none d-lg-block"> <span>{% trans "Destino:" %}</span> </div>
-    </div>
-    <div class="row">
-        <div class="col-6"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_operation_fac" id="sr_operation_fac">
-                <option value="">{% trans "-- Seleccione un punto limpio --" %}</option>
-                {% for s in fac_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_operation_fac == s.id%}selected{%endif%}>
-                        {{s.description}}</option>
-                {% endfor %}
-            </select>
+        <div class="row">
+            <div class="col-3 py-2 text-center d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
+            <div class="col-3 py-2 text-center d-none d-lg-block"> <span>{% trans "Transportista:" %}</span> </div>
+            <div class="col-1 py-2 text-center d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
+            <div class="col-2 py-2 text-center d-none d-lg-block"> <span>{% trans "Punto limpio:" %}</span> </div>
+            <div class="col-2 py-2 text-center d-none d-lg-block"> <span>{% trans "Destino:" %}</span> </div>
         </div>
-        <div class="col-6"> 
-            <select class="form-control form-control-dark w-100 py-2" name="sr_operation_target" id="s_operation_target">
-                <option value="">{% trans "-- Seleccione un destino --" %}</option>
-                {% for s in fac_list %}
-                    <option value="{{s.id}}" {%if request.session.sr_operation_target == s.id%}selected{%endif%}>
-                        {{s.description}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
- 
-    <div class="row">
-        <div class="col-12 text-center p-0">
-            <button class="btn btn-default saveform w-100" data-form="form-search" data-target="operations-list">
-                <i class="fas fa-search"></i> Buscar</button>
-        </div>
+        <div class="row">
+            <div class="col-3"> 
+                <select class="form-control form-control-dark w-100" name="sr_operation_waste" id="sr_operation_waste">
+                    <option value="">{% trans "-- Seleccione un residuo --" %}</option>
+                    {% for s in waste_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_operation_waste == s.id%}selected{%endif%}>{{s.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-3"> 
+                <select class="form-control form-control-dark w-100" name="sr_operation_comp" id="s_operation_comp">
+                    <option value="">{% trans "-- Seleccione un transportista --" %}</option>
+                    {% for s in comp_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_operation_comp == s.id%}selected{%endif%}>{{s.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-1"> <input type="text" class="form-control form-control-dark w-100" 
+                name="sr_operation_plate" id="sr_operation_plate" value="{{request.session.sr_operation_plate}}"/> </div>
+            <div class="col-2"> 
+                <select class="form-control form-control-dark w-100" name="sr_operation_fac" id="sr_operation_fac">
+                    <option value="">{% trans "-- Seleccione un punto limpio --" %}</option>
+                    {% for s in fac_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_operation_fac == s.id%}selected{%endif%}>
+                            {{s.description}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-2 b-search"> 
+                <select class="form-control form-control-dark w-100" name="sr_operation_target" id="s_operation_target">
+                    <option value="">{% trans "-- Seleccione un destino --" %}</option>
+                    {% for s in fac_list %}
+                        <option value="{{s.id}}" {%if request.session.sr_operation_target == s.id%}selected{%endif%}>
+                            {{s.description}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+     
+            <div class="col-1 text-center">
+                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="operations-list">
+                    <i class="fas fa-search"></i></button>
+            </div>
     </div>
 </form>
 

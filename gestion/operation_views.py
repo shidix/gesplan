@@ -154,15 +154,16 @@ def routes_external_form(request):
     fac_list = Facility.objects.filter(company=comp)
     emp_list = Employee.objects.filter(company=comp)
     #waste_list = Waste.objects.filter(external_manager=comp)
-    waste_list = WasteInFacility.objects.filter(facility=obj.facility)
+    waste_list = WasteInFacility.objects.filter(facility=obj.facility, waste__external_manager=comp)
     context = {'obj': obj, 'fac_list': fac_list, 'emp_list': emp_list, 'waste_list': waste_list}
     return render(request, "operations/external/routes-ext-form.html", context)
 
 @group_required("external",)
 def routes_external_facility_save(request):
+    comp = request.user.employee.company
     obj = get_or_none(RouteExt, get_param(request.GET, "obj_id"))
     fac = get_or_none(Facility, get_param(request.GET, "value"))
-    waste_list = WasteInFacility.objects.filter(facility=fac)
+    waste_list = WasteInFacility.objects.filter(facility=fac, waste__external_manager=comp)
     obj.facility = fac
     obj.save()
     return render(request, "operations/external/routes-ext-form-waste.html", {'obj': obj, 'waste_list': waste_list})
@@ -175,4 +176,13 @@ def routes_external_remove(request):
     items = RouteExt.objects.filter(external_manager=request.user.employee.company)
     return render(request, "operations/external/routes-list.html", {"routes_ext": items})
 
+@group_required("external",)
+def facility_external(request):
+    items = Facility.objects.filter(company=request.user.employee.company)
+    return render(request, "operations/external/facilities.html", {"facilities": items})
+
+@group_required("external",)
+def facility_waste_external(request):
+    fac = get_or_none(Facility, get_param(request.GET, "obj_id"))
+    return render(request, "operations/external/facility-waste.html", {"item_list": fac.waste.filter(toRoute=False),})
 

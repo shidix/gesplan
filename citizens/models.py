@@ -104,9 +104,39 @@ class CitizenRegister(models.Model):
     signup_date = models.DateTimeField(verbose_name=_('Fecha de alta'), default=tz.now)
     verfied_date = models.DateTimeField(verbose_name=_('Fecha de verificación'), null=True, blank=True)
 
+class Certificate(models.Model):
+    citizen = models.ForeignKey(CitizenRegister, verbose_name=_('Ciudadano'), on_delete=models.CASCADE, null=True, related_name='certificates')
+    creation_date = models.DateTimeField(verbose_name=_('Fecha de creación'), default=tz.now)
+    start_date = models.DateTimeField(verbose_name=_('Fecha de inicio'))
+    end_date = models.DateTimeField(verbose_name=_('Fecha de fin'))
+    uuid = models.CharField(max_length=100, verbose_name=_('UUID'), default="", blank=True, unique=True)
 
-#    def save(self, *args, **kwargs):
-#        super(WasteCitizen, self).save(*args, **kwargs)
-#        if self.citizen.citizen_user != None:
-#            calculate_score(self.citizen.citizen_user)
+    def QR(self):
+        '''Return QR code image for the certificate'''
+        import qrcode
+        import os
+        from io import BytesIO
+        from django.core.files.base import ContentFile
+        from django.core.files import File
+        from django.conf import settings
+
+        # Check if PNG exists
+
+        if os.path.exists("%s/%s.png" % (settings.MEDIA_ROOT, self.uuid)):
+            return "%s/%s.png" % (settings.MEDIA_URL, self.uuid)
+
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        url = "%s/citizens/report/check-cert/%s/" % (settings.SITE_URL, self.uuid)
+        qr.add_data(url)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        file_name = "%s.png" % (self.uuid)
+        file_path = "%s/%s" % (settings.MEDIA_ROOT, file_name)
+        with open(file_path, 'wb') as f:
+            f.write(buffer.getvalue())
+        buffer.close()
+        return file_name
 

@@ -207,10 +207,10 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 .fc .fc-button-primary {
     color: #fff;
     color: var(--fc-button-text-color, #fff);
-    background-color: #2C3E50;
-    background-color: var(--fc-button-bg-color, #2C3E50);
-    border-color: #2C3E50;
-    border-color: var(--fc-button-border-color, #2C3E50);
+    background-color: #446d7b;
+    background-color: var(--fc-button-bg-color, #446d7b);
+    border-color: #446d7b;
+    border-color: var(--fc-button-border-color, #446d7b);
   }
 .fc .fc-button-primary:hover {
     color: #fff;
@@ -300,7 +300,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     margin-top: 1.5em;
   }
 .fc .fc-toolbar-title {
-    color: #f2902d;
+    color: #a58a11;
     font-size: 1.75em;
     margin: 0;
   }

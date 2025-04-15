@@ -5,8 +5,8 @@
 }
 
 .btn-primary {
-	background-color: #82bc00 !important;
-	border:1px solid #82bc00 !important;
+	background-color: #647b5f !important;
+	border:1px solid #647b5f !important;
 }
 
 .btn-primary:disabled, .btn-primary:hover{
@@ -31,7 +31,9 @@ body{
 .title{
 	text-align: left;
 	padding-left: 1rem;
+	padding-top: 100px;
 	padding-bottom: 10px;
+	color: #becaad;
 }
 
 .apptitle{
@@ -42,10 +44,12 @@ body{
 	margin-top: 1em;
 	font-size: 2rem;
 	font-weight: 600;
+	color: #545454;
 }
 
 
 p{
+	color: #545454;
 	font-size: 1.1rem;
 	font-weight: lighter;
 }
@@ -54,6 +58,7 @@ p strong{
 	font-weight: bold;
 }
 .subtitle{
+	color: #545454;
 	display: block;
 
 }
@@ -85,8 +90,8 @@ p strong{
 }
 
 .login-left-bottom {
-	background:black; 
-	color: #9c9b9b;
+	background: #657c60; 
+	color: #ffffff;
 	width: 100%;
 }
 .login-left-bottom span.text {
@@ -104,12 +109,12 @@ p strong{
 
 .login-right{
 	display: flex;
+	background-color: #303a2d;
 	color: #777;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	width: 35%;
-	background-color: white;
 	transition: width 1s ease-out;
 	padding-top:20px;
 }
