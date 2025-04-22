@@ -1,0 +1,27 @@
+{% extends "pwa-base-login.html" %}
+{% load static i18n %}
+
+{% block content %}
+    <div class="col-12 my-5 py-3 text-center"> <img src="{% static 'images/logo-gesplan.png' %}" width=""> </div>
+    <div class="col-8 offset-2 text-center small">
+        <p class="text-center">Para acceder a la aplicación, introduce tu DNI y pulsa el botón de entrar.</p>
+        <p class="text-center">Si todavía no te has registrado, la plataforma te redirigirá automáticamente a un formulario de registro.</p>
+        <p class="text-center">Si ya te has registrado, la plataforma te enviará un enlace al correo electrónico que hayas indicado en el registro desde el que podrás acceder al certificado.</p>
+    </div>
+
+    <div class="col-8 offset-2 mt-2 p-2">
+        <form action="{% url 'citizens-login' %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-12 tiny">DNI</div>
+                <div class="col-12"> <input class="pin w-100 p-3" type="text" name="dni"> </div>
+                <input type="hidden" value="SZRf2QMpIfZHPEh0ib7YoDlnnDp5HtjDqbAw" name="control_key">
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 mt-5"> <input type="submit" class="btn btn-success gesplan w-100 py-3" value="Entrar"> </div>
+            </div>
+        </form>
+        {% if msg and msg != "" %} <div class="alert alert-danger text-center">{{msg}}</div> {% endif %}
+    </div>
+{% endblock %}
+
