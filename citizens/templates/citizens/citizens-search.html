@@ -14,12 +14,54 @@
 <form class="form m-0" method="GET" action="{% url "citizens-search" %}" id="form-search">
     {%csrf_token%}
     <div class="row toolbar-search p-2 m-0">
+
+        <div class="row">
+            <div class="col-2 py-2 d-none d-lg-block"> <span>{% trans "Fechas:" %}</span> </div>
+            <div class="col-5"> <input type="date" class="form-control form-control-dark w-100" 
+                 name="s_citizen_idate" id="s_citizen_idate" value="{{request.session.s_citizen_idate}}"/> </div>
+            <div class="col-5"> <input type="date" class="form-control form-control-dark w-100" 
+                 name="s_citizen_edate" id="s_citizen_edate" value="{{request.session.s_citizen_edate}}"/> </div>
+        </div>
+        <div class="row">
+            <div class="col-2 d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
+            <div class="col-10">
+                <input type="text" class="form-control form-control-dark w-100" name="s_citizen_plate" 
+                    id="s_citizen_plate" placeholder="Matrícula" value="{{request.session.s_citizen_plate}}"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
+            <div class="col-10">
+                <select class="form-control form-control-dark w-100 " name="s_citizen_waste" id="s_citizen_waste">
+                    <option value="">{% trans "-- Seleccione un residuo --" %}</option>
+                    {% for w in waste_list %}
+                        <option value="{{w.id}}" {%if request.session.s_citizen_waste == w.id%}selected{%endif%}>{{w.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+       
+        <div class="row">
+            <div class="col-2 d-none d-lg-block"> <span>{% trans "Punto limpio:" %}</span> </div>
+            <div class="col-10">
+                <select class="form-control form-control-dark w-100 " name="s_citizen_facility" id="s_citizen_facility">
+                    <option value="">{% trans "-- Seleccione un punto limpio --" %}</option>
+                    {% for f in facility_list %}
+                        <option value="{{f.id}}" {%if request.session.s_citizen_facility == f.id%}selected{%endif%}>
+                            {{f.description}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% comment %}
         <div class="row">
             <div class="col-3 d-none d-lg-block"> <span>{% trans "Fechas:" %}</span> </div>
             <div class="col-2 d-none d-lg-block"> <span>{% trans "Matrícula:" %}</span> </div>
             <div class="col-3 d-none d-lg-block"> <span>{% trans "Residuo:" %}</span> </div>
             <div class="col-3 d-none d-lg-block"> <span>{% trans "Punto limpio:" %}</span> </div>
         </div>
+
         <div class="row">
             <div class="col-3">
                 <div class="row">
@@ -43,18 +85,21 @@
             </div>
             <div class="col-3 b-search">
                 <select class="form-control form-control-dark w-100 " name="s_citizen_facility" id="s_citizen_facility">
-                    <option value="">{% trans "-- Seleccione un residuo --" %}</option>
+                    <option value="">{% trans "-- Seleccione un punto limpio --" %}</option>
                     {% for f in facility_list %}
                         <option value="{{f.id}}" {%if request.session.s_citizen_facility == f.id%}selected{%endif%}>
                             {{f.description}}</option>
                     {% endfor %}
                 </select>
             </div>
+        {% endcomment %}
 
-            <div class="col-1">
-                <button class="btn btn-default saveform w-100" data-form="form-search" data-target="citizens-list">
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <button class="btn btn-default saveform w-25" style="border: 1px solid #a58a11;" data-form="form-search" data-target="citizens-list">
                     <i class="fas fa-search"></i> </button>
             </div>
+        </div>
         </div>
     </div>
 </form>

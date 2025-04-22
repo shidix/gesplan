@@ -192,7 +192,25 @@ def citizens_signup (request):
 
     
 def citizens_login(request):
-    return redirect("pwa-login")
+    try:
+        if request.method == "POST":
+            dni = request.POST.get("dni", None)
+            control_key = request.POST.get("control_key", None)
+            if control_key == "SZRf2QMpIfZHPEh0ib7YoDlnnDp5HtjDqbAw":
+                if CitizenRegister.objects.filter(identification=dni).exists():
+                    citizen_register = CitizenRegister.objects.get(identification=dni)
+                    uuid = citizen_register.uuid
+                else:
+                    return redirect("citizens-signup")
+            else:
+                return redirect("citizens-login")
+        else:
+            import uuid
+            uuid = str(uuid.uuid4())
+        return render(request, "citizens/citizens-login.html")
+    except Exception as e:
+        print (show_exc(e))
+        return redirect("citizens-login")
 
 def citizens_logout(request):
     return redirect("pwa-login")
