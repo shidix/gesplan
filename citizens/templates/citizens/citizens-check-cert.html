@@ -2,7 +2,7 @@
 {% load i18n static %}
 {% block content %}
 {% if error %}
-<div class="col-12 mt-3 justify-center">
+<div class="col-12 mt-3 text-center">
     <a href="#" class="btn btn-danger btn-xl w-50 p-4">
     <i class="fas fa-exclamation-triangle fa-2xl"></i> 
     </a>
@@ -10,10 +10,24 @@
 </div>
 {% else %}
 <div class="col-12 mt-3 text-center">
-    <a href="#" class="btn btn-success w-50 p-4">
-    <i class="fas fa-check"></i> 
-    </a>
-    <br class="text-success">El certificado es válido.
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="card-title">Datos del certificado</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">UUID: {{ certificate.uuid }}</p>
+            <p class="card-text">Fecha de emisión: {{ certificate.creation_date|date:'d/m/Y' }}</p>
+            <p class="card-text">Fecha de inicio: {{ certificate.start_date|date:'d/m/Y' }}</p>
+            <p class="card-text">Fecha de fin: {{ certificate.end_date|date:'d/m/Y' }}</p>
+            <p class="card-text">Nombre del solicitante: {{ certificate.citizen.first_name }} {{certificate.citizen.last_name}}</p>
+            <p class="card-text">DNI del solicitante: {{ certificate.citizen.identification }}</p>
+            <p class="catd-text">
+                <a class="btn btn-success"><i class="fas fa-check"></i> El certificado es válido.</a>
+                </p>
+
+        </div>
+    </div>
 </div>
 {% endif %}
 

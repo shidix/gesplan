@@ -1,0 +1,98 @@
+{% load i18n static %}
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GESPLAN</title>
+        <style>
+            @page {
+                margin: 2cm;
+                size: A4;
+            }
+            table.table-striped {
+                border-collapse: collapse;
+                width: 100%;
+            }
+        
+            table.table-striped th,table.table-striped  td {
+                border: 1px solid black;
+                padding: 2px;
+                text-align: left;
+            }
+        
+            table.table-striped th {
+                background-color: #f2f2f2;
+            }
+            table.table-striped tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+            table.table-striped tr:nth-child(odd) {
+                background-color: #ffffff;
+            }
+        </style>
+        
+
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>
+                    <img src="{{domain}}/static/images/logo-cabtfe.png" height="125">
+                </td>
+                <td align="right">
+                    <img src="{{domain}}/static/images/logo-gesplan.png" height="125">
+                </td>
+
+            </tr>
+            
+
+        </table>
+        <hr>
+        <div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">CERTIFICADO</h5>
+                    <p class="card-text">
+                        Gestión y Planeamiento Territorial y Medioambiental S.A., en calidad de empresa pública que desarrolla el Encargo de Gestión de los Puntos Limpios en la Isla de Tenerife para el Cabildo Insular de Tenerife.
+                    </p>
+                    <p class="card-text">
+                        <strong>CERTIFICA</strong> que:
+                    </p>
+                    <p>
+                        D. {{ cert.citizen.first_name | upper }} {{ cert.citizen.last_name | upper }} con DNI/NIE {{ cert.citizen.identification }} con domicilio en {{ cert.citizen.address | upper }}, código postal {{ cert.citizen.postcode }}, municipio de {{ cert.citizen.town.name | upper }}
+                    </p>
+                    {% if items.count > 0 %}
+                    <p> Ha depositado los siguientes residuos </p>
+                </div>
+                </div>
+
+                    <table class="table table-striped table-bordered" style="width: 100%; border-collapse: collapse; border: 1px solid black;">
+
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Residuo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.date|date:'d/m/Y' }}</td>
+                                <td>{{ item.name }}</td>
+                                <td class="text-end">{{ item.units }} {{item.code}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p> No ha depositado residuos en el periodo indicado </p>
+                    {% endif %}
+
+        </div>
+        <div style="text-align:center; margin-top: 20px;">
+            <img src="{{domain}}/media/qr_codes/{{cert.uuid}}.png" height="125">
+        </div>
+    </body>
+

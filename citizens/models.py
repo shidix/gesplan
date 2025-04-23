@@ -73,9 +73,17 @@ class Citizen(models.Model):
         units = WasteCitizen.objects.filter(citizen__plate=self.plate, waste=waste, citizen__date__range=(idate,edate)).aggregate(Sum('units'))["units__sum"]
         return 0 if units == None else units
 
+    def getCitizenRegister(self):
+        try:
+            citizen = CitizenRegister.objects.get(identification=self.identification)
+            return citizen
+        except CitizenRegister.DoesNotExist:
+            return None
+
+
     class Meta:
-        verbose_name = _('Ciudadano')
-        verbose_name_plural = _('Ciudadano')
+        verbose_name = _('Entrega Ciudadana')
+        verbose_name_plural = _('Entrega Ciudadana')
 
 class WasteCitizen(models.Model):
     units = models.FloatField(verbose_name=_('Cantidad'), blank=False, null=False)
@@ -89,6 +97,15 @@ class WasteCitizen(models.Model):
 
     def __str__(self):
         return ("[%s] %s ha dejado %d de %s en la fecha %s" % (self.citizen.facility, self.citizen.identification, self.units, self.waste.name, self.citizen.date))
+
+    def date(self):
+        return self.citizen.date
+
+    def name(self):
+        return self.waste.name
+
+    def code(self):
+        return self.waste.units.code
     
 class CitizenRegister(models.Model):
     uuid = models.CharField(max_length=100, verbose_name=_('UUID'), default="", blank=True, unique=True)
@@ -103,6 +120,10 @@ class CitizenRegister(models.Model):
     town = models.ForeignKey(Town, verbose_name=_('Municipio'), on_delete=models.SET_NULL, null=True, blank=True)
     signup_date = models.DateTimeField(verbose_name=_('Fecha de alta'), default=tz.now)
     verfied_date = models.DateTimeField(verbose_name=_('Fecha de verificación'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _('Registro ciudadano')
+        verbose_name_plural = _('Registros ciudadanos')
 
 class Certificate(models.Model):
     citizen = models.ForeignKey(CitizenRegister, verbose_name=_('Ciudadano'), on_delete=models.CASCADE, null=True, related_name='certificates')

@@ -26,16 +26,16 @@ class CitizenRegisterForm( ModelForm):
         if not identification:
             raise ValidationError(_('Este campo es obligatorio'))
         if not identification.isalnum():
-            raise ValidationError(_('El campo identificación solo puede contener letras y números'))
+            raise ValidationError(_('El campo DNI solo puede contener letras y números'))
         letras = "TRWAGMYFPDXBNJZSQVHLCKE"
-        if len(nif) != 9:
-            return False
+        if len(identification) != 9:
+            raise ValidationError(_('El DNI debe tener 9 caracteres'))
         
-        numeros = nif[:-1]
-        letra = nif[-1].upper()
+        numeros = identification[:-1]
+        letra = identification[-1].upper()
         
         if not numeros.isdigit():
-            return False
+            raise ValidationError(_('El campo DNI debe cumplir el formato correcto'))
         
         numero = int(numeros)
         letra_correcta = letras[numero % 23]

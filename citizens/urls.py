@@ -5,6 +5,7 @@ urlpatterns = [
     path('reports', views.index, name='report-index'),
 
     #---------------------- CITIZENS -----------------------
+    path('', views.citizens_login),
     path('citizens', views.citizens, name='citizens'),
     path('citizens/list', views.citizens_list, name='citizens-list'),
     path('citizens/search', views.citizens_search, name='citizens-search'),
@@ -13,7 +14,7 @@ urlpatterns = [
     path('citizens/report/', views.citizens_report, name='citizens-report'),
     path('citizens/report/<slug:uuid>/', views.citizens_report, name='citizens-report'),
     path('citizens/report/check-cert/<slug:uuid>', views.citizens_check_certificate, name='citizens-report-check-cert'),
-    path('citizens/cert/', views.citizens_report, name='citizens-report-cert'),
+    path('citizens/cert/', views.citizens_report_cert, name='citizens-report-cert'),
     path('citizens/sign-up/', views.citizens_signup, name='citizens-signup'),
     path('citizens/login/', views.citizens_login, name='citizens-login'),
     path('citizens/logout/', views.citizens_logout, name='citizens-logout'),

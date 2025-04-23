@@ -9,23 +9,50 @@
 
 <div class="col-12 p-0">
     <div class="nav-bar text-center p-2"><strong>Datos del ciudadano</strong></div>
+    {% if form.errors %}
+        <div class="alert alert-danger text-center">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
         <form action="{% url 'citizens-signup' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="uuid" value="{{ form.instance.uuid }}">
               
              <div class="row m-0 py-2">
                 <div class="col-12 form-group py-2">
-                    <label for="name"><strong>Nombre(s)</strong></label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre completo" value="{{form.instance.first_name}}" required>
+                    <label for="first_name"><strong>Nombre(s)</strong></label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nombre completo" value="{{form.instance.first_name}}" required>
+                    {% if form.errors.name %}
+                        <div class="text-danger">
+                            {% for error in form.errors.name %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-12 form-group py-2">
                     <label for="surname"><strong>Apellidos</strong></label>
-                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Apellidos" value="{{form.instance.last_name}}" required>
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Apellidos" value="{{form.instance.last_name}}" required>
                 </div>
                 <!-- DNI / NIE -->
                 <div class="col-6 form-group py-2">
                     <label for="identification"><strong>DNI / NIE</strong></label>
                     <input type="text" class="form-control" id="identification" name="identification" placeholder="DNI / NIE" value="{{form.instance.identification}}"  required>
+                    {% if form.errors.identification %}
+                        <div class="text-danger">
+                            {% for error in form.errors.identification %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-6 form-group py-2">
                     <label for="phone"><strong>Teléfono</strong></label>
@@ -34,6 +61,13 @@
                 <div class="col-12 form-group py-2">
                     <label for="email"><strong>Email</strong></label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{form.instance.email}}"  required>
+                    {% if form.errors.email %}
+                        <div class="text-danger">
+                            {% for error in form.errors.email %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <!-- Direccion -->
                 <div class="col-12 form-group py-2">
@@ -44,6 +78,13 @@
                 <div class="col-6 form-group py-2">
                     <label for="postcode"><strong>Código Postal</strong></label>
                     <input type="text" class="form-control" id="postcode" name="postcode" placeholder="Código Postal" value="{{form.instance.postcode}}"  required>
+                    {% if form.errors.postcode %}
+                        <div class="text-danger">
+                            {% for error in form.errors.postcode %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <!-- Matricula habitual -->
                 <div class="col-6 form-group py-2">

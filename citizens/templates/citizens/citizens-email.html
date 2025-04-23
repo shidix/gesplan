@@ -10,8 +10,9 @@
     <body>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-8 offset-2 mt-2">
-                    <img src="https://puntoslimpiostenerife.es/static/images/app-logo.png" class="img-fluid" alt="Logo">
+                <div class="col-12 text-center">
+                    <img src="https://puntoslimpiostenerife.es/static/images/logo-cabtfe-positivo.png" class="img-fluid" alt="Logo">
+                  <img src="https://puntoslimpiostenerife.es/static/images/logo-gesplan.png" class="img-fluid" alt="Logo">
                 </div>
                 <div class="col-8 offset-2 mt-2">
                     <h1 class="text-center">Gesplan. Plataforma del ciudadano</h1>
@@ -21,7 +22,7 @@
                         Si has sido tú, por favor, haz clic en el siguiente enlace para acceder a la plataforma:
                     </p>
                     <p class="text-center">
-                        <a href="{% url 'citizens-signup' uuid=uuid %}">Acceder a la plataforma</a>
+                        <a href="{{url_cert}}">Acceder a la plataforma</a>
                     </p>
                 </div>
         </div>

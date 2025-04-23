@@ -5,6 +5,11 @@
 <meta name="theme-color" content="#000000">
 {% endblock %}
 {% block content %}
+{% if message %}
+<div class="alert alert-danger" role="alert">
+    {{ message }}
+</div>
+{% endif %}
 {% if not items %}
 <div class="col-12 mt-3">
 
@@ -36,11 +41,11 @@
     <a href="{% url 'citizens-report' uuid %}" class="btn btn-primary w-100 p-1">Volver</a>
 </div>
 <div class="col-6 p-1 mt-3">
-    <form method="POST" action="{% url 'citizens-report-cert' %}">
+    <form method="POST" action="{% url 'citizens-report-cert' %}" target="_blank">
         {% csrf_token %}
         <input type="hidden" name="uuid" value="{{ uuid }}">
-        <input type="hidden" name="start_date" value="{{start_date}}">
-        <input type="hidden" name="end_date" value="{{end_date}}">
+        <input type="hidden" name="start_date" value="{{start_date|date:'Y-m-d'}}">
+        <input type="hidden" name="end_date" value="{{end_date|date:'Y-m-d'}}">
         <input type="submit" id="btn-search" class="btn btn-primary w-100 p-1" value="Descargar">
     </form>
 </div>
@@ -73,7 +78,7 @@
                     <tr>
                         <td>{{ item.date|date:'d/m/Y' }}</td>
                         <td>{{ item.name }}</td>
-                        <td class="text-end">{{ item.total_units }} {{item.units.code}}</td>
+                        <td class="text-end">{{ item.units }} {{item.code}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -82,6 +87,7 @@
         </div>
     </div>
 </div>
+
 {% endif %}
 
 

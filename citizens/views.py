@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.db.models import Exists, OuterRef, Sum
 
 
@@ -8,7 +9,7 @@ from datetime import datetime, timedelta
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
 from gestion.models import Waste
-from .models import Citizen, WasteCitizen, CitizenRegister, Facility
+from .models import Citizen, WasteCitizen, CitizenRegister, Facility, Certificate
 from .forms import *
 
 
@@ -124,9 +125,9 @@ def citizens_report(request, uuid=None):
                     waste = random.choice(waste_list)
                     test_data.append({
                         'name': waste.name,
-                        'units': waste.units,
+                        'code': waste.units.code,
                         'date': fake_date,
-                        'total_units': random.randint(1, 100),
+                        'units': random.randint(1, 100),
                     })
                 # Sort test data by date
                 test_data.sort(key=lambda x: x['date'])
@@ -142,15 +143,19 @@ def citizens_report(request, uuid=None):
                 deliveries = Citizen.objects.filter(identification=citizen_register.identification, date__range=(start_date, end_date))
                 if deliveries.exists():
                     ## Get WasteCitizen objects grouped by waste
-                    waste_citizen = WasteCitizen.objects.filter(citizen__identification=citizen_register.identification, citizen__date__range=(start_date, end_date))
-                    waste_list = Waste.objects.filter(id__in=waste_citizen.values_list('waste', flat=True)).distinct()
-                    waste_list = waste_list.annotate(total_units=Sum('wastecitizen__units')).order_by('name')
+                    waste_list = WasteCitizen.objects.filter(citizen__identification=citizen_register.identification, citizen__date__range=(start_date, end_date))
+
+
+                    # waste_list = Waste.objects.filter(id__in=waste_citizen.values_list('waste', flat=True)).distinct()
+                    # waste_list = waste_list.annotate(total_units=Sum('wastecitizen__units')).order_by('name')
+                    # print(waste_list)
                     context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': waste_list, 'citizen': citizen_register}
-
-
-
+                else:
+                    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': [], 'citizen': citizen_register, 'message': 'No se han encontrado entregas en el rango de fechas seleccionado.'}
+            else:
+                print(3)
                 context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
-                return render(request, "citizens/citizens-report.html", context)
+            return render(request, "citizens/citizens-report.html", context)
         else:
 
             if uuid is not None:
@@ -189,8 +194,8 @@ def citizens_signup (request):
             form = CitizenRegisterForm(request.POST, instance=instance)
             if form.is_valid():
                 citizen_register = form.save()
-
-                return render(request, "citizens/citizens-email-sent.html", {'error':send_email(citizen_register)})
+                url_cert = request.build_absolute_uri(reverse("citizens-report", kwargs={"uuid": citizen_register.uuid}))
+                return render(request, "citizens/citizens-email-sent.html", {'error':send_email(url_cert, citizen_register)})
             else:
                 print (form.errors)
                 return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
@@ -204,16 +209,17 @@ def citizens_signup (request):
         print (show_exc(e))
         return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
 
-def send_email(citizen):
+def send_email(url_cert, citizen):
     try:
         from django.core.mail import send_mail
         from django.template.loader import render_to_string
-        email_html = render_to_string("citizens/citizens-email.html", {'uuid': citizen.uuid})
-        send_mail("Plataforma de Gestión de residuos de Gesplan", "emailtest@shidix.com", [citizen_register.email], html_message=email_html, fail_silently=False)
+        email_html = render_to_string("citizens/citizens-email.html", {'url_cert': url_cert})
+        
+        send_mail("Plataforma de Gestión de residuos de Gesplan", email_html, "emailtest@shidix.com", [citizen.email], html_message=email_html, fail_silently=False)
     except Exception as e:
         print (show_exc(e))
-        return False
-    return True
+        return True
+    return False
 
     
 def citizens_login(request):
@@ -224,7 +230,8 @@ def citizens_login(request):
             if control_key == "SZRf2QMpIfZHPEh0ib7YoDlnnDp5HtjDqbAw":
                 if CitizenRegister.objects.filter(identification=dni).exists():
                     citizen_register = CitizenRegister.objects.get(identification=dni)
-                    return render(request, "citizens/citizens-email-sent", {'error':send_email(citizen_register)})
+                    url_cert = request.build_absolute_uri(reverse("citizens-report", kwargs={"uuid": citizen_register.uuid}))
+                    return render(request, "citizens/citizens-email-sent.html", {'error':send_email(url_cert, citizen_register)})
                 else:
                     return redirect("citizens-signup")
             else:
@@ -244,9 +251,130 @@ def citizens_check_certificate(request, uuid=None):
     if uuid is None:
         return HttpResponse("Certificado no validado")
     
-    uuid = request.POST.get("uuid", None)
-    if CitizenRegister.objects.filter(uuid=uuid).exists():
-        citizen_register = CitizenRegister.objects.get(uuid=uuid)
-        return render(request, "citizens/citizens-check-cert.html", {'error': False})
+    if Certificate.objects.filter(uuid=uuid).exists():
+        certificate = Certificate.objects.get(uuid=uuid)
+        return render(request, "citizens/citizens-check-cert.html", {'error': False, 'certificate': certificate})
     else:
         return render(request, "citizens/citizens-check-cert.html", {'error': True})
+    
+def citizens_report_cert(request):
+    if request.method == "POST":
+        try:
+            uuid = request.POST.get("uuid", None)
+            if uuid is None:
+               return redirect("pwa-login")
+            if uuid == "0000-0000-00000-00000":
+                import random
+
+                start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
+                # Fake citizen register for testing
+                citizen_register = CitizenRegister(
+                    uuid=uuid,
+                    first_name="Test",
+                    last_name="Citizen",
+                    identification="12345678Z",
+                    address="Test Address",
+                    usual_plate="ABC123",
+                    phone="600000000",
+                    email="none@none.com",
+                    town=random.choice(Town.objects.all()),
+                    postcode = f'{random.randint(38000, 38999)}'
+                )
+
+
+
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d").replace(hour=0, minute=0, second=0)
+                end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                waste_list = Waste.objects.all()
+                # Simulate random data for testing
+                test_data = []
+                for idx in range(random.randint(20, 1000)):
+                    fake_date = start_date + timedelta(days = random.randint(0, int((end_date.timestamp() - start_date.timestamp()) / 86400)))
+                    waste = random.choice(waste_list)
+                    test_data.append({
+                        'name': waste.name,
+                        'code': waste.units.code,
+                        'date': fake_date,
+                        'units': random.randint(1, 100),
+                    })
+                # Sort test data by date
+                test_data.sort(key=lambda x: x['date'])
+                context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': test_data, 'citizen': citizen_register, 'domain': request.build_absolute_uri('/')}
+                
+                return render(request, "citizens/citizens-report.html", context)                            
+            if (CitizenRegister.objects.filter(uuid=uuid).exists()):
+                citizen_register = CitizenRegister.objects.get(uuid=uuid)
+                start_date_str = request.POST.get("start_date", datetime.now().strftime("%Y-%m-%d"))
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d").replace(hour=0, minute=0, second=0)
+                end_date_str = request.POST.get("end_date", (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d"))
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                deliveries = Citizen.objects.filter(identification=citizen_register.identification, date__range=(start_date, end_date))
+                if deliveries.exists():
+                    waste_list = WasteCitizen.objects.filter(citizen__identification=citizen_register.identification, citizen__date__range=(start_date, end_date))
+                    try:
+                        from django.template.loader import get_template
+                        from xhtml2pdf import pisa
+                        from io import BytesIO
+                        from django.http import HttpResponse
+                        import uuid as moduuid
+
+                        cert_uuid = str(moduuid.uuid4())
+
+                        qr_data = request.build_absolute_uri(reverse("citizens-report-check-cert", kwargs={"uuid": cert_uuid}))
+                        # Generate QR  in memory
+                        import qrcode
+                        qr = qrcode.QRCode(
+                            version=1,
+                            error_correction=qrcode.constants.ERROR_CORRECT_L,
+                            box_size=10,
+                            border=4,
+                        )
+                        qr.add_data(qr_data)
+                        qr.make(fit=True)
+                        qr_img = qr.make_image(fill_color="black", back_color="white")
+                        # Save QR code to <static>/qr_codes/<uuid>.png
+                        import os
+                        from django.conf import settings
+                        qr_path = os.path.join(settings.MEDIA_ROOT, "qr_codes", f"{cert_uuid}.png")
+                        qr_img.save(qr_path)
+                        # Get the path to the QR code image
+                        new_certificate = Certificate(uuid=cert_uuid, citizen=citizen_register, start_date=start_date, end_date=end_date)
+                        new_certificate.save()
+
+
+
+                        template_path = 'citizens/citizens-report-pdf.html'
+                        context = { 'cert': new_certificate, 'domain': request.build_absolute_uri('/'), 'items': waste_list}
+                        response = HttpResponse(content_type='application/pdf')
+                        response['Content-Disposition'] = 'attachment; filename="certificado.pdf"'
+                        
+                        template = get_template(template_path)
+                        html = template.render(context)
+                        
+                        pisa_status = pisa.CreatePDF(html, dest=response)
+
+
+                        
+                        if pisa_status.err:
+                            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+                        
+                        return response
+                    except Exception as e:
+                        print (show_exc(e))
+                        return HttpResponse('We had some errors <br>' + show_exc(e))
+
+                else:
+                    context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': [], 'citizen': citizen_register, 'message': 'No se han encontrado entregas en el rango de fechas seleccionado.'}
+            else:
+                print(3)
+                context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
+            return render(request, "citizens/citizens-report.html", context)
+        except Exception as e:
+            print (show_exc(e))
+            return redirect("citizens-login")
+    else:
+        return redirect("citizens-login")
+
+
+
