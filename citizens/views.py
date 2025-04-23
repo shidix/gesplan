@@ -336,6 +336,8 @@ def citizens_report_cert(request):
                         # Save QR code to <static>/qr_codes/<uuid>.png
                         import os
                         from django.conf import settings
+                        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "qr_codes")):
+                            os.makedirs(os.path.join(settings.MEDIA_ROOT, "qr_codes"))
                         qr_path = os.path.join(settings.MEDIA_ROOT, "qr_codes", f"{cert_uuid}.png")
                         qr_img.save(qr_path)
                         # Get the path to the QR code image
