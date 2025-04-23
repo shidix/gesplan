@@ -1,0 +1,29 @@
+{% extends "pwa-base-login.html" %}
+{% load static i18n %}
+
+{% block content %}
+    <div class="col-12 my-5 py-3 text-center"> <img src="{% static 'images/logo-gesplan.png' %}" width=""> </div>
+    <div class="col-8 offset-2 text-center small">
+        {% if not error %}
+            <h1 class="text-success">¡Correo electrónico enviado!</h1>
+
+            <p class="text-center">
+
+                Hemos enviado un correo electrónico a la dirección que has indicado en el registro. En él encontrarás un enlace para acceder a la plataforma.
+            </p>
+            <p class="text-center">
+                Si no has recibido el correo, por favor, revisa tu carpeta de spam o correo no deseado.
+            </p>
+            <p class="text-center">
+                Si no lo encuentras, puedes volver a solicitar el acceso a la plataforma desde la aplicación.
+            </p>
+        {% else %}
+            <h1 class="text-danger">¡Lo sentimos, ha habido un error!</h1>
+
+            <p class="text-center">
+                Ha ocurrido un error al enviar el correo electrónico. Por favor, vuelve a intentarlo más tarde.
+            </p>
+        {% endif %}
+    </div>
+
+{% endblock %}

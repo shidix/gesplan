@@ -175,20 +175,45 @@ def citizens_report(request, uuid=None):
         return redirect("pwa-login")
     
 def citizens_signup (request):
+    towns = []
+    form = None
+    uuid = None
+    try:
+        towns = Town.objects.all().order_by("island__name", "name")
+        if request.method == "POST":
+            uuid = request.POST.get("uuid", None)
+            if CitizenRegister.objects.filter(uuid=uuid).exists():
+                instance = CitizenRegister.objects.get(uuid=uuid)
+            else:
+                instance = CitizenRegister(uuid=uuid)
+            form = CitizenRegisterForm(request.POST, instance=instance)
+            if form.is_valid():
+                citizen_register = form.save()
 
-    towns = Town.objects.all().order_by("island__name", "name")
-    if request.method == "POST":
-        uuid = request.POST.get("uuid", None)
-        if CitizenRegister.objects.filter(uuid=uuid).exists():
-            instance = CitizenRegister.objects.get(uuid=uuid)
+                return render(request, "citizens/citizens-email-sent.html", {'error':send_email(citizen_register)})
+            else:
+                print (form.errors)
+                return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
         else:
-            instance = CitizenRegister(uuid=uuid)
-        form = CitizenRegisterForm(request.POST, instance=instance)
-    else:
-        import uuid
-        uuid = str(uuid.uuid4())
-        form = CitizenRegisterForm(instance=CitizenRegister(uuid=uuid))
-    return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
+            import uuid
+            uuid = str(uuid.uuid4())
+            form = CitizenRegisterForm(instance=CitizenRegister(uuid=uuid))
+            return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
+
+    except Exception as e:
+        print (show_exc(e))
+        return render (request, "citizens/citizens-signup.html", {'form': form, 'towns': towns, 'uuid': uuid})
+
+def send_email(citizen):
+    try:
+        from django.core.mail import send_mail
+        from django.template.loader import render_to_string
+        email_html = render_to_string("citizens/citizens-email.html", {'uuid': citizen.uuid})
+        send_mail("Plataforma de Gestión de residuos de Gesplan", "emailtest@shidix.com", [citizen_register.email], html_message=email_html, fail_silently=False)
+    except Exception as e:
+        print (show_exc(e))
+        return False
+    return True
 
     
 def citizens_login(request):
@@ -199,7 +224,7 @@ def citizens_login(request):
             if control_key == "SZRf2QMpIfZHPEh0ib7YoDlnnDp5HtjDqbAw":
                 if CitizenRegister.objects.filter(identification=dni).exists():
                     citizen_register = CitizenRegister.objects.get(identification=dni)
-                    uuid = citizen_register.uuid
+                    return render(request, "citizens/citizens-email-sent", {'error':send_email(citizen_register)})
                 else:
                     return redirect("citizens-signup")
             else:
