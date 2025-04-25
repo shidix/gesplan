@@ -60,3 +60,43 @@
     </div>
 </form>
 
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            xhrFields: {
+            withCredentials: true // <-- Esto mantiene las cookies en la misma web
+            }
+        });
+
+        $('#plate').keyup(function() {
+            // Call to an url to get the info of the plate with AJAX. The response will be a JSON object
+
+            $.ajax({
+                url: "{% url 'citizens-info' %}",
+                type: "POST",
+                data: {
+                    'plate': $(this).val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    // If the response is ok, fill the form with the data
+                    if (!data.error) {
+                        $('#identification').val(data.citizen.identification);
+                        $('#phone').val(data.citizen.phone);
+                        $('#email').val(data.citizen.email);
+                        $('#address').val(data.citizen.address);
+                        $('#observations').val(data.citizen.postcode);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // If there is an error, show an error message
+                    alert(status);
+                    alert(error);
+                }
+            });
+        });
+
+    });
+</script>
+
