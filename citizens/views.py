@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Exists, OuterRef, Sum
@@ -6,7 +6,7 @@ from django.db.models import Exists, OuterRef, Sum
 
 from datetime import datetime, timedelta
 
-from gesplan.decorators import group_required
+from gesplan.decorators import group_required, group_required_json, group_required_pwa
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
 from gestion.models import Waste, WasteInFacility
 from .models import Citizen, WasteCitizen, CitizenRegister, Facility, Certificate
@@ -401,5 +401,34 @@ def citizens_status_containers(request):
         print (show_exc(e))
         return redirect("citizens-login")
 
-
-
+@group_required_json("admins","operators")
+def citizens_info(request):
+    json_data = {
+        'citizen': None,
+        'error': True,
+    }
+    try:
+        if request.method == "POST":
+            plate = request.POST.get("plate", None)
+            # Get the plate from request ajax (data.plate)
+            if plate is not None:
+                if CitizenRegister.objects.filter(usual_plate=plate).exists():
+                    citizen_register = CitizenRegister.objects.filter(usual_plate=plate).first()
+                    json_data = {
+                        'citizen': citizen_register.toJson(),
+                        'error': False,
+                    }
+                    return JsonResponse(json_data, status=200)
+            else:
+                json_data['error_message'] = "No se ha encontrado el ciudadano"
+                return JsonResponse(json_data)
+        else:
+            json_data['error_message'] = "No tiene permiso para acceder a los datos"
+            return JsonResponse(json_data)
+        return JsonResponse(json_data)
+    except Exception as e:
+        print (show_exc(e))
+        json_data['error_message'] = "Error al procesar la solicitud"
+        return JsonResponse(json_data)
+    
+    return JsonResponse(json_data)

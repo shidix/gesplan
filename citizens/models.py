@@ -125,6 +125,23 @@ class CitizenRegister(models.Model):
         verbose_name = _('Registro ciudadano')
         verbose_name_plural = _('Registros ciudadanos')
 
+    def toJson(self):
+        '''Return citizen register as JSON'''
+        return {
+            'uuid': self.uuid,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'usual_plate': self.usual_plate,
+            'address': self.address,
+            'identification': self.identification,
+            'phone': self.phone,
+            'email': self.email,
+            'postcode': self.postcode,
+            'town': self.town.name if self.town else '',
+            'signup_date': self.signup_date.strftime("%Y-%m-%d %H:%M:%S"),
+            'verfied_date': self.verfied_date.strftime("%Y-%m-%d %H:%M:%S") if self.verfied_date else None
+        }
+
 class Certificate(models.Model):
     citizen = models.ForeignKey(CitizenRegister, verbose_name=_('Ciudadano'), on_delete=models.CASCADE, null=True, related_name='certificates')
     creation_date = models.DateTimeField(verbose_name=_('Fecha de creación'), default=tz.now)
