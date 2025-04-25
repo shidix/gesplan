@@ -15,6 +15,7 @@ urlpatterns = [
     path('citizens/report/<slug:uuid>/', views.citizens_report, name='citizens-report'),
     path('citizens/report/check-cert/<slug:uuid>', views.citizens_check_certificate, name='citizens-report-check-cert'),
     path('citizens/cert/', views.citizens_report_cert, name='citizens-report-cert'),
+    path('citizens/status-containers/', views.citizens_status_containers, name='citizens-status-containers'),
     path('citizens/sign-up/', views.citizens_signup, name='citizens-signup'),
     path('citizens/login/', views.citizens_login, name='citizens-login'),
     path('citizens/logout/', views.citizens_logout, name='citizens-logout'),

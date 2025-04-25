@@ -1,0 +1,83 @@
+{% extends "pwa-base.html" %}
+{% load i18n static %}
+{% block extra_head %}
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#000000">
+{% endblock %}
+{% block content %}
+{% if not facility %}
+<div class="alert alert-info m-2" role="alert">
+    <strong>
+        Selecionando una instalación, se mostrará el estado de los contenedores de residuos disponibles en la misma.
+    </strong>
+</div>
+{% endif %}
+
+<div class="row m-2">
+    <div class="col-12">
+        <form action="{% url 'citizens-status-containers' %}" method="POST">
+            {% csrf_token %}
+            <select name="facility" id="facility" class="form-select">
+                <option value="" disabled selected>Seleccione una instalación</option>
+                {% for facility in facilities %}
+                <option value="{{ facility.pk }}">{{ facility.description }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</div>
+
+<div class="row m-2" id="loading" style="display: none;">
+    <div class="col-12">
+        <p class="alert alert-info" role="alert">
+            <strong>Cargando datos...</strong>
+        </p>
+    </div>
+</div>
+
+{% if facility %}
+<div id="data-content">
+    <div class="row m-2">
+        <div class="col-12">
+            <p class="alert alert-info" role="alert">
+                <strong>Instalación seleccionada:</strong> {{ facility.description }}
+            </p>
+        </div>
+    </div>
+
+
+        {% if items.count > 0 %}
+
+        <div class="row my-3 py-3 m-0 box-wastes">
+            {% for waste in items %}
+                <div class="col-4 text-white p-1 text-center">
+                    <div class="card op-wastes">
+                        <div class="card-body bg-{{waste.class_state}} gesplan waste-circle">
+                            <div><strong>{{waste.filling_degree|floatformat:0}}%</strong></div>
+                            <div class="tiny py-auto text-white  pt-1">{{waste.waste.name}}</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="row m-2">
+            <div class="col-12">
+                <h5 class="card-title">No hay datos disponibles</h5>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const facilitySelect = document.getElementById('facility');
+        facilitySelect.addEventListener('change', function() {
+            $('#loading').show();
+            $('#data-content').remove();
+            this.form.submit();
+        });
+    });
+</script>
+{% endblock %}

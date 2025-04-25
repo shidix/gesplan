@@ -8,8 +8,9 @@ from datetime import datetime, timedelta
 
 from gesplan.decorators import group_required
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
-from gestion.models import Waste
+from gestion.models import Waste, WasteInFacility
 from .models import Citizen, WasteCitizen, CitizenRegister, Facility, Certificate
+
 from .forms import *
 
 
@@ -369,13 +370,35 @@ def citizens_report_cert(request):
                 else:
                     context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date, 'items': [], 'citizen': citizen_register, 'message': 'No se han encontrado entregas en el rango de fechas seleccionado.'}
             else:
-                print(3)
                 context = {'uuid': uuid, 'start_date': start_date, 'end_date': end_date}
             return render(request, "citizens/citizens-report.html", context)
         except Exception as e:
             print (show_exc(e))
             return redirect("citizens-login")
     else:
+        return redirect("citizens-login")
+    
+def citizens_status_containers(request):
+    try:
+        all_facilities = Facility.objects.all()
+        items_list = WasteInFacility.objects.none()
+        facility = None
+
+        if request.method == "POST":
+            facility_pk = request.POST.get("facility", None)
+            try:
+                facility = Facility.objects.get(pk=facility_pk)
+            except Facility.DoesNotExist:
+                facility = None
+
+            if facility is not None:
+                items_list = WasteInFacility.objects.filter(facility=facility)
+            return render(request, "citizens/citizens-status-containers.html", {'items': items_list, 'facilities': all_facilities, 'facility': facility})
+            return Citizen.objects.filter(**kwargs)
+        else:
+            return render(request, "citizens/citizens-status-containers.html", {'items': items_list, 'facilities': all_facilities, 'facility': facility})
+    except Exception as e:
+        print (show_exc(e))
         return redirect("citizens-login")
 
 

@@ -1,0 +1,19 @@
+{% load i18n static %}
+<div style="display:none;">
+    <form id="status-containers" method="POST" action="{% url 'citizens-status-containers' %}">
+        {% csrf_token %}
+        <input type="hidden" name="citizen_uuid" value="{{ uuid }}">
+    </form>
+
+</div>
+<div class="row mv p-0">
+    <div class="col-6 text-center nav-item nav-tabs tab-2 active p-1">
+        <a class="nav-link" href="{% url 'citizens-report' uuid %}">
+            <img src="{% static 'images/stamp.png' %}" height="30px"><br />Certificados</a>
+    </div>
+    <div class="col-6 text-center nav-item nav-tabs tab-1 p-1">
+        <a class="nav-link" href="javascript:void(0)" onclick="$('#status-containers').submit();">
+            <img src="{% static 'images/operations.png' %}" height="30px"><br />Contenedores</a>
+    </div>
+</div>
+
