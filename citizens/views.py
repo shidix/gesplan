@@ -380,7 +380,7 @@ def citizens_report_cert(request):
     
 def citizens_status_containers(request):
     try:
-        all_facilities = Facility.objects.all()
+        all_facilities = Facility.objects.filter(description__startswith="Punto Limpio")
         items_list = WasteInFacility.objects.none()
         facility = None
 
