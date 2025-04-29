@@ -167,3 +167,5 @@ cython_debug/
 
 media
 viewlog.sh
+collect_static
+IMPORT.txt

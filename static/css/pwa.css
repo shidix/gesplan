@@ -110,6 +110,11 @@ input.orange-inp {
     color: #47662b;
 }
 
+body {
+    max-width: 768px !important;
+    margin: 0 auto;
+}
+
 /*********** END UTILS *************/
 
 

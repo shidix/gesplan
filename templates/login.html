@@ -41,15 +41,54 @@
 		       <img src="{% static '/images/logo-gobcan.png'%}" width="150"/> <span class="text">Gestión y Planeamiento Territorial y Medioambiental, S.A.</span>
 	       </div>
             </div>
-            <div class="login-right pt-5">
-		    <div class="logo text-center"><a href="https://www.gesplan.es" target="_blank"><img src="{% static '/images/logo-negativo.png'%}" width=""/></a></div>
-{% block login-right %}
-                    <div class="form-container toggle-container mt-5" id="login-form">
-                        <h4 class="title text-center">{% trans "Inicia Sesión" %}
-                        {% include "login_form.html" %}
-                    </div>
-                {% endblock %}
+            <div class="login-right pt-1">
+		    
+            <div class="row logo text-center mb-5">
+                <div class="col-6"><a href="https://www.tenerife.es/" target="_blank"><img src="{% static '/images/logo-cabtfe-negativo.png'%}" width=""/></a></div>
+                <div class="col-6"><a href="https://www.gesplan.es" target="_blank"><img src="{% static '/images/logo-negativo.png'%}" width=""/></a></div>
             </div>
+
+            <div class="row m-0 mt-5 pt-5">
+                <div class="col-12 text-center">
+                    <p class="small" style="color:#fff;">Teléfono: 900 305 000<br />
+                        Horario: L (8:00-16:00) - M a V (08:00-20:00) - S (09:00-20:00) - D (09:00-14:00)</p>
+                </div>
+                <div class="col-12 text-center"><a href="{% url 'citizens-status-containers' %}" class="btn btn-earth btn-block mt-2"> {% trans "Estado de los Puntos Limpios" %} </a></div>
+            </div>
+            
+            <div class="row m-0 mt-5 pt-3">
+                <div class="col-12 text-center">
+                    <p class="small" style="color:#fff;">El Cabildo de Tenerife, junto con las entidades locales ofrece al ciudadano reducciones en la cuota de la tasa de residuos por la utilización de puntos limpios.<br /><br />
+                    Si quieres beneficiarte, pincha en el siguiente enlace:
+                       </p>
+                </div>
+                <div class="col-12 text-center"><a class="btn btn-sky btn-block mt-2" href="{% url 'citizens-login' %}"> {% trans "Obtener Certificado" %} </a></div>
+            </div>
+            <div class="flot">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <img src="{% static '/images/float-log.png'%}" width="50" data-toggle="modal" data-target="#loginModal"/>
+                </a>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginModalLabel"></h5>
+                            <button type="button" class="btn btn-lg close" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                                <h4 class="title-login text-center">{% trans "Inicia Sesión" %}</h4>
+                                {% include "login_form.html" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </body>
 </html>

@@ -41,20 +41,27 @@
         <div class="container-fluid">
             <div class="header">
                 <div class="row m-0">
-                    <div class="col-4 text-center pt-2"> <img class="logo" src="{% static 'images/app-logo.png' %}" width="100%"> </div>
+                    <div class="col-2 text-center pt-2"> <img class="logo" src="{% static 'images/logo-pwa-cabtfe.png' %}" height="50"> </div>
+                    <div class="col-2 text-center pt-2"> <img class="logo" src="{% static 'images/logo-pwa.png' %}" height="50"> </div>
                     <div class="col-4 offset-1 status-bar text-center">
                         <small id="conn-status">...</small> <i class='fas fa-wifi'></i> <br />
                         <span class="driver-name">{{request.user.employee.name}}</span>
                     </div>
-                    <div class="col-1 offset-1 pt-2">
-                        {% if request.user|in_group:"external" %}
-                            <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout-confirm'%}">
-                                <i class="fas fa-power-off"></i></a></strong>
+                    <div class="col-1 offset-1 pt-3">
+                        {% if request.user.is_authenticated %}
+    
+                        
+                            {% if request.user|in_group:"external" %}
+                                <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout-confirm'%}">
+                                    <i class="fas fa-power-off"></i></a></strong>
+                            {% else %}
+                                <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout'%}">
+                                    <i class="fas fa-power-off"></i></a></strong>
+                            {% endif %}
                         {% else %}
-                            <strong><a class="btn btn-light powericon" href="{%url 'pwa-logout'%}">
-                                <i class="fas fa-power-off"></i></a></strong>
+                            &nbsp;
                         {% endif %}
-                    </div>
+                        </div>
                 </div>
                 {#{% if not request.user|in_group:"operators" and not request.user|in_group:"external"%}#}
                 {% if request.user|in_group:"drivers" and request.user|in_group:"drivers_mpl" %}
@@ -89,6 +96,8 @@
                 {% include "operator/menu-footer.html" %}
             {% elif request.user|in_group:"external" %}
                 {% include "external/menu-footer.html" %}
+            {% elif request.user|in_group:"citizens" %}
+                {% include "citizens/menu-citizens.html" %}
             {% endif%}
         </div>
         <script>

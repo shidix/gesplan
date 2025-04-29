@@ -56,20 +56,22 @@ def driver_routes_waste(request):
     TrayTracking.finishTracking(request.user.employee, source)
     TrayTracking.startTracking(request.user.employee, source, tray)
     #item_list = Waste.objects.all()
-    return render(request, "drivers/routes-waste.html", {'item_list': source.waste.filter(toRoute=True), 'source': source})
+    return render(request, "drivers/routes-waste.html", {'item_list':source.waste_by_filling_degree(), 'source':source, 'tray':tray})
 
 @group_required_pwa("drivers")
 def driver_routes_confirm(request):
     source = get_or_none(Facility, get_param(request.GET, "source"))
+    tray = get_or_none(Tray, get_param(request.GET, "tray"))
     waste = get_or_none(WasteInFacility, get_param(request.GET, "value"))
-    return render(request, "drivers/routes-confirm.html", {'waste': waste, 'source': source})
+    return render(request, "drivers/routes-confirm.html", {'waste': waste, 'source': source, 'tray': tray})
 
 @group_required_pwa("drivers")
-def driver_routes_start(request, source, waste):
+def driver_routes_start(request, source, waste, tray):
     try:
         s = get_or_none(Facility, source)
+        t = get_or_none(Tray, tray)
         w = get_or_none(WasteInFacility, waste)
-        Route.objects.create(source=s, waste=w, truck=request.user.employee.truck, driver=request.user.employee, code="PL")
+        Route.objects.create(source=s, waste=w, truck=request.user.employee.truck, driver=request.user.employee, tray=t, code="PL")
         return redirect("pwa-driver-routes")
     except Exception as e:
         return (render(request, "error_exception.html", {'exc':show_exc(e)}))
@@ -101,6 +103,43 @@ def driver_routes_finish(request):
 def driver_routes_dir(request, route_id):
     route = get_or_none(Route, route_id)
     return render(request, "drivers/driver-doc.html", {'route': route, 'datas': route.jsonDoc()})
+
+
+@group_required_pwa("drivers")
+def driver_routes_source_exp(request):
+    tray_list = []
+    for tray in Tray.objects.all():
+        track = tray.last_tracking()
+        if track != None and track.target !=None and track.target.code == "EXP":
+            tray_list.append(tray)
+    context = {'truck': request.user.employee.truck, 'tray_list': tray_list}
+    return render(request, "drivers/routes-source-exp.html", context)
+
+@group_required_pwa("drivers")
+def driver_routes_start_exp(request):
+    try:
+        tray = get_or_none(Tray, get_param(request.POST, "tray"))
+        source = get_or_none(Facility, "EXP", "code")
+        tt = TrayTracking.startTracking(request.user.employee, source, tray)
+        last_route = tray.last_route()
+        emp = request.user.employee
+        route = Route.objects.create(source=source, waste=last_route.waste, truck=emp.truck, driver=emp, tray=tray, code="PL")
+        return redirect("pwa-driver-routes")
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+
+@group_required_pwa("drivers")
+def driver_routes_target_exp(request, route):
+    r = get_or_none(Route, route)
+    target = get_or_none(Facility, "EXP", "code")
+
+    TrayTracking.finishTracking(request.user.employee, target)
+
+    r.target = target
+    r.end_date = datetime.now()
+    r.finish = True
+    r.save()
+    return redirect(reverse("pwa-driver-routes"))
 
 
 #'''

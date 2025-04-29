@@ -3,12 +3,47 @@ from django.contrib.auth.models import User, Group
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Avg, Sum
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _ 
-import django.utils.timezone as tz
 
+import django.utils.timezone as tz
 import datetime, hashlib, random, string
 
 from gestion.route_lib import route_to_json
+from gestion.email_lib import send_warning_level_email
+
+
+class Config(models.Model):
+    key = models.CharField(max_length=200, verbose_name = _('clave'))
+    value = models.TextField(verbose_name="valor")
+
+    @staticmethod
+    def get_value(key, default=""):
+        try:
+            config = Config.objects.get(key=key)
+            return config.value
+        except Exception as e:
+            return ""
+
+    @staticmethod
+    def get_or_create_value(key):
+        try:
+            config, created = Config.objects.get_or_create(key=key)
+            return config.value
+        except Exception as e:
+            print(e)
+            return ""
+
+    @staticmethod
+    def set_value(key, value):
+        config, created = Config.objects.get_or_create(key=key)
+        config.value = value
+        config.save()
+
+    class Meta:
+        verbose_name="Configuracion"
+        verbose_name_plural = "Configuraciones"
 
 '''
     COMPANIES
@@ -166,6 +201,16 @@ class Facility(models.Model):
     def __str__(self):
         return self.description
 
+    def waste_by_filling_degree(self):
+        i_list = self.waste.filter(toRoute=True).order_by("filling_degree", "waste")
+        item_list = []
+        current_waste = ""
+        for item in i_list:
+            if current_waste != item.waste.id:
+                current_waste = item.waste.id
+                item_list.append(item)
+        return item_list
+
     @staticmethod
     def getPL():
         return Facility.objects.filter(description__contains="Punto")
@@ -201,6 +246,12 @@ class WasteInFacility(models.Model):
     facility = models.ForeignKey(Facility, verbose_name = _('Instalación'), related_name="waste", on_delete=models.CASCADE)
     download_point = models.ForeignKey(Facility, verbose_name=_('Punto de descarga'), related_name="download", on_delete=models.SET_NULL, null=True, default=None, blank=True)
     alt_download_point = models.ForeignKey(Facility, verbose_name = _('Descarga alternativo'), related_name="download_alt", on_delete=models.SET_NULL, null=True, default=None, blank=True)
+
+#    def save(self, *args, **kwargs):
+        #Si se supera el umbral de aviso y el residuo es voluminoso se envía una alerta
+#        if self.warning and self.toRoute:
+#            send_warning_level_email(["zebenperez@gmail.com"], self.waste.name, self.facility.description)
+#        super(Event, self).save(*args, **kwargs)
 
     def toJSON(self):
         wif = {'pk': self.pk, 'to_route': self.toRoute, 'waste': self.waste.toJSON(), 'facility': self.facility.toJSON(),
@@ -241,6 +292,20 @@ class WasteInFacility(models.Model):
                 if self.filling_degree >= 1:
                     return "success"
         return "info"
+
+@receiver(post_save, sender=WasteInFacility)
+def send_warning_alert(sender, instance, **kwargs):
+    #print("--1--")
+    #print(instance.warning)
+    #print(instance.toRoute)
+    #Si se supera el umbral de aviso y el residuo es voluminoso se envía una alerta
+    if instance != None and instance.warning and instance.toRoute:
+        #print("--2--")
+        waste = instance.waste.name
+        facility = instance.facility.description
+        subject = Config.get_value("EMAIL_WARNING_SUBJECT").replace("__RES__", waste).replace("__INS__", facility)
+        html = Config.get_value("EMAIL_WARNING_HTML").replace("__RES__", waste).replace("__INS__", facility)
+        send_warning_level_email(["zebenperez@gmail.com"], subject, html)
 
 class FacilityManteinanceConcept(models.Model):
     code = models.CharField(max_length=10, verbose_name='Código')
@@ -326,8 +391,13 @@ class Truck(models.Model):
 
     @property
     def name(self):
-        print( "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate))
-        return "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate)
+        #print( "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate))
+        if self != None:
+            if self.type != None:
+                return "{} {} ({})".format(self.type.brand, self.type.model, self.number_plate)
+            else:
+                return "{}".format(self.number_plate)
+        return ""
 
     @property
     def current_driver(self):
@@ -520,6 +590,52 @@ class EmployeeTruckKm(models.Model):
         verbose_name=_('Empleado Camion Km')
         verbose_name_plural=_('Empleados Camiones Km')
 
+'''
+    Tray
+'''
+class Tray(models.Model):
+    number = models.CharField(max_length=100, verbose_name='Número')
+
+    def __str__(self):
+        return self.number
+
+    def last_tracking(self):
+        return self.tracking.all().order_by("-end_date").first()
+
+    def last_route(self):
+        return self.routes.all().order_by("-end_date").first()
+
+    class Meta:
+        verbose_name=_('Bandeja')
+        verbose_name_plural=_('Bandejas')
+
+class TrayTracking(models.Model):
+    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
+    ini_date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
+    end_date = models.DateTimeField(verbose_name=('Fin'), null=True, default=tz.now)
+
+    source = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="trays_source")
+    target = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Destino', null=True, related_name="trays_target")
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
+    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+    tray = models.ForeignKey(Tray, on_delete=models.CASCADE, verbose_name='Bandeja', null=True, related_name="tracking")
+
+    @staticmethod
+    def startTracking(driver, source, tray):
+        return TrayTracking.objects.create(ini_date=tz.now(), source=source, truck=driver.truck, driver=driver, tray=tray)
+
+    @staticmethod
+    def finishTracking(driver, target):
+        tt = TrayTracking.objects.filter(driver=driver, finish=False).first()
+        if tt != None:
+            tt.target = target
+            tt.end_date = tz.now()
+            tt.finish = True
+            tt.save()
+
+    class Meta:
+        verbose_name=_('Localización Bandeja')
+        verbose_name_plural=_('Localización Bandejas')
 
 '''
     ROUTES
@@ -543,10 +659,15 @@ class Route(models.Model):
     waste = models.ForeignKey(WasteInFacility, on_delete=models.SET_NULL, verbose_name='Residuo', null=True)
     truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
     driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
+    tray = models.ForeignKey(Tray, on_delete=models.SET_NULL, verbose_name='Bandeja', null=True, related_name="routes")
     #company = models.ForeignKey(Company, on_delete=models.SET_NULL, verbose_name=_('Company'), null=True, blank=True, default=None)
 
     def jsonDoc(self):
         return route_to_json(self)
+
+    def source_by_tray(self):
+        route = Route.objects.filter(tray=self.tray).order_by("-end_date").exclude(id=self.id).first()
+        return route.source.description if route != None and route.source != None else ""
 
     @staticmethod
     def getCurrent(driver):
@@ -633,46 +754,6 @@ class FacilityActions(models.Model):
         ordering=['-date']
 
 '''
-    Tray
-'''
-class Tray(models.Model):
-    number = models.CharField(max_length=100, verbose_name='Número')
-
-    def __str__(self):
-        return self.number
-
-    class Meta:
-        verbose_name=_('Bandeja')
-        verbose_name_plural=_('Bandejas')
-
-class TrayTracking(models.Model):
-    finish = models.BooleanField(default=False, verbose_name=_('Finalizada'));
-    ini_date = models.DateTimeField(verbose_name=('Inicio'), null=True, default=tz.now)
-    end_date = models.DateTimeField(verbose_name=('Fin'), null=True, default=tz.now)
-
-    source = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Origen', null=True, related_name="trays_source")
-    target = models.ForeignKey(Facility, on_delete=models.SET_NULL, verbose_name='Destino', null=True, related_name="trays_target")
-    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, verbose_name='Camión', null=True)
-    driver = models.ForeignKey(Employee, on_delete=models.SET_NULL, verbose_name=_('Conductor'), null=True)
-    tray = models.ForeignKey(Tray, on_delete=models.CASCADE, verbose_name='Bandeja', null=True, related_name="tracking")
-
-    @staticmethod
-    def startTracking(driver, source, tray):
-        return TrayTracking.objects.create(ini_date=tz.now(), source=source, truck=driver.truck, driver=driver, tray=tray)
-
-    @staticmethod
-    def finishTracking(driver, target):
-        tt = TrayTracking.objects.filter(driver=driver, finish=False).first()
-        if tt != None:
-            tt.target = target
-            tt.end_date = tz.now()
-            tt.save()
-
-    class Meta:
-        verbose_name=_('Localización Bandeja')
-        verbose_name_plural=_('Localización Bandejas')
-
-'''
     Items
 '''
 class Item(models.Model):
@@ -749,5 +830,4 @@ class EmployeeContract(models.Model):
     class Meta:
         verbose_name=_('Empleado Material')
         verbose_name_plural=_('Empleados Materiales')
-
 

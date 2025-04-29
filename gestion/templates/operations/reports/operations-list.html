@@ -17,7 +17,8 @@
         <div class="col-1">{{ item.ini_date|date:"d-m-Y H:i" }}</div>
         <div class="col-2">{{ item.waste.waste.name }}</div>
         <div class="col-2">{{ item.driver.company }}</div>
-        <div class="col-2">{{ item.source.description }}</div>
+        <div class="col-2">{{ item.source.description }}
+            {%if item.source.code == "EXP"%}({{item.source_by_tray}}){%endif%}</div>
         <div class="col-2">{{ item.target.description }}</div>
         <div class="col-2">{{ item.truck.number_plate }}</div>
     </div>

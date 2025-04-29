@@ -1,0 +1,22 @@
+{% extends 'pwa-base.html' %}
+{% load i18n static %}
+
+
+{% block content %}
+
+    <h1 class="d-flex justify-content-center mt-4">Operaciones de mantenimeinto</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-8 offset-2 text-center">
+                    <img src="{% static 'images/incident.png' %}" class="img-fluid" alt="Mantenimiento">
+                </div>
+                <div class="col-8 offset-2 p-2 text-center">
+                    <h5 class="card-title">Estamos trabajando para mejorar la aplicación</h5>
+                    <p class="card-text">La aplicación está en mantenimiento. Por favor, vuelve más tarde.</p>
+                </div>
+            </div>
+        </div>    
+    </div>
+{% endblock %}
+

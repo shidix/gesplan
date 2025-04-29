@@ -522,3 +522,14 @@ def items_location(request):
     return render(request, "items/items-location.html", {'obj': obj})
 
 
+'''
+    Test
+'''
+from .email_lib import send_email
+
+def test_email(request):
+    email_to = Config.get_value("EMAIL_TEST_TO").split(",")
+    ec = EmailConfig(email_to, Config.get_value("EMAIL_TEST_SUBJECT"), "", Config.get_value("EMAIL_TEST_HTML"))
+    send_email(ec)
+    return HttpResponse("Ok!")
+

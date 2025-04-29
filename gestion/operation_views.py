@@ -81,7 +81,8 @@ def routes_remove(request):
     OPERATIONS REPORTS
 '''
 def get_operation_report(request):
-    idate_ini = datetime.strptime(get_session(request, "sr_operation_idate_ini"), "%Y-%m-%d")
+    #idate_ini = datetime.strptime(get_session(request, "sr_operation_idate_ini"), "%Y-%m-%d")
+    idate_ini = get_session(request, "sr_operation_idate_ini")
     idate_end = get_session(request, "sr_operation_idate_end")
     edate_ini = get_session(request, "sr_operation_edate_ini")
     edate_end = get_session(request, "sr_operation_edate_end")
@@ -105,13 +106,13 @@ def get_operation_report(request):
     if comp != "":
         kwargs["driver__company__id"] = comp
     if fac != "":
-        kwargs["source__id"] = comp
+        kwargs["source__id"] = fac
     if target != "":
-        kwargs["target__id"] = comp
+        kwargs["target__id"] = target
     if plate != "":
-        kwargs["truck__number_plate__icontains"] = comp
-    print(kwargs)
-    return Route.objects.filter(**kwargs)
+        kwargs["truck__number_plate__icontains"] = plate
+    #print(kwargs)
+    return Route.objects.filter(**kwargs).exclude(target__code = "EXP")
 
 @group_required("admins",)
 def report(request):

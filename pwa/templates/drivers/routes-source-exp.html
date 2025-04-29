@@ -1,0 +1,21 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <form method="POST" action="{% url "pwa-driver-routes-start-exp" %}">
+        {% csrf_token %}
+        <div class="row m-0">
+            <div class="col-12 mt-3" id="pl-list">
+                <select class="form-control orange-sel py-3" id="tray" name="tray">
+                    <option value="">{% trans "-- Seleccione una Bandeja --" %}</option>
+                    {% for item in tray_list %} <option value="{{item.id}}">{{item.number}}</option> {% endfor %}
+                </select>
+            </div>
+         
+            <div class="col-12 my-4">
+                <button type="submit" id="btn-next" class="btn btn-primary w-100" data-url="{% url "pwa-driver-routes-waste" %}">
+                    <strong>{% trans "INICIAR" %}</strong></button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

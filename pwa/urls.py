@@ -22,10 +22,14 @@ urlpatterns = [
     path('driver/routes/source', driver_views.driver_routes_source, name="pwa-driver-routes-source"),
     path('driver/routes/waste', driver_views.driver_routes_waste, name="pwa-driver-routes-waste"),
     path('driver/routes/confirm', driver_views.driver_routes_confirm, name="pwa-driver-routes-confirm"),
-    path('driver/routes/start/<int:source>/<int:waste>/', driver_views.driver_routes_start, name="pwa-driver-routes-start"),
+    path('driver/routes/start/<int:source>/<int:waste>/<int:tray>/', driver_views.driver_routes_start, name="pwa-driver-routes-start"),
     path('driver/routes/target/<int:route>/', driver_views.driver_routes_target, name="pwa-driver-routes-target"),
     path('driver/routes/finish/', driver_views.driver_routes_finish, name="pwa-driver-routes-finish"),
     path('driver/routes/dir/<int:route_id>', driver_views.driver_routes_dir, name="pwa-driver-routes-dir"),
+
+    path('driver/routes/source/exp/', driver_views.driver_routes_source_exp, name="pwa-driver-routes-source-exp"),
+    path('driver/routes/start/exp/', driver_views.driver_routes_start_exp, name="pwa-driver-routes-start-exp"),
+    path('driver/routes/target/exp/<int:route>/', driver_views.driver_routes_target_exp, name="pwa-driver-routes-target-exp"),
 
     #path('driver/actions/', driver_views.actions, name="pwa-driver-actions"),
     #path('driver/save-action/', driver_views.save_action, name="pwa-driver-save-action"),

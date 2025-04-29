@@ -14,8 +14,16 @@
 
     <div class="row mx-0 my-3">
         {% if route == None%}
-            <div class="col-12 p-0"> <a class="btn btn-md btn-primary w-100" href="{% url "pwa-driver-routes-source" %}">
-                <strong>{% trans "CARGAR" %}</strong></a> </div>
+            <div class="row p-0 m-0">
+                <div class="col-8 p-1">
+                    <a class="btn btn-md btn-primary w-100" href="{% url "pwa-driver-routes-source" %}">
+                        <strong>{% trans "CARGAR" %}</strong></a> 
+                </div>
+                <div class="col-4 p-1">
+                    <a class="btn btn-md btn-info w-100" href="{% url "pwa-driver-routes-source-exp" %}">
+                        <strong><small>{% trans "EXPLANADA" %}</small></strong></a> 
+                </div>
+            </div>
         {% else %}
             <h3>{% trans "Ruta actual" %}</h3>
             <div class="route-item active p-2 mt-1">
@@ -26,8 +34,16 @@
                 <p><i class='fas fa-print orange'></i> <a href="{% url "pwa-driver-routes-dir" route.id %}" target="_blank">
                     {% trans "Documento de identificación de residuos"%}</a> </p>
             </div>
-            <a class="btn btn-md btn-danger my-2" href="{% url "pwa-driver-routes-target" route.id %}"> 
-                <strong>{% trans "DESCARGAR" %}</strong></a> 
+            <div class="row p-0 m-0">
+                <div class="col-8 p-1">
+                    <a class="btn btn-md btn-danger my-2 w-100" href="{% url "pwa-driver-routes-target" route.id %}"> 
+                        <strong>{% trans "DESCARGAR" %}</strong></a> 
+                </div>
+                <div class="col-4 p-1">
+                    <a class="btn btn-md btn-warning my-2 w-100" href="{% url "pwa-driver-routes-target-exp" route.id %}"> 
+                        <strong><small>{% trans "EXPLANADA" %}</small></strong></a> 
+                </div>
+            </div>
         {% endif %}
         {% for item in item_list %}
             <div class="route-item py-2 my-1">

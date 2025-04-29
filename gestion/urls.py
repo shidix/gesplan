@@ -103,6 +103,9 @@ urlpatterns = [
     path('import', import_views.import_db, name='import'),
     path('import-db', import_views.import_db_file, name='import-db'),
 
+    #---------------------- TEST -----------------------
+    path('test-email', views.test_email, name='test-email'),
+
     #---------------------- AUTO -----------------------
     path('autosave_field/', auto_views.autosave_field, name='autosave_field'),
     path('autoremove_obj/', auto_views.autoremove_obj, name='autoremove_obj'),

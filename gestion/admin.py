@@ -6,6 +6,9 @@ from .models import *
 class AgreementTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name',)
 
+class ConfigAdmin(admin.ModelAdmin):
+    list_display = ('key', 'value',)
+
 class ContractTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name',)
 
@@ -14,12 +17,14 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_filter = ('rol',)
     search_fields = ['name', 'company']
 
-
 class EmployeeAccessLogAdmin(admin.ModelAdmin):
     list_display = ('employee', 'date', 'location', 'finish')
 
 class EmployeeTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name',)
+
+class FacilityAdmin(admin.ModelAdmin):
+    list_display = ('description', 'code')
 
 class FacilityTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'order', 'operation_time', 'dashboard')
@@ -65,13 +70,14 @@ class WasteInFacilityAdmin(admin.ModelAdmin):
     list_filter = ('facility',)
 
 admin.site.register(AgreementType, AgreementTypeAdmin)
+admin.site.register(Config, ConfigAdmin)
 admin.site.register(ContractType, ContractTypeAdmin)
 admin.site.register(Company)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(EmployeeAccessLog, EmployeeAccessLogAdmin)
 admin.site.register(EmployeeType, EmployeeTypeAdmin)
 admin.site.register(EmployeeTruck)
-admin.site.register(Facility)
+admin.site.register(Facility, FacilityAdmin)
 admin.site.register(FacilityType, FacilityTypeAdmin)
 admin.site.register(FacilityActions, FacilityActionsAdmin)
 admin.site.register(FacilityActionType, FacilityActionTypeAdmin)
