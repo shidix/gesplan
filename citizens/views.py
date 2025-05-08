@@ -229,8 +229,8 @@ def citizens_login(request):
             dni = request.POST.get("dni", None)
             control_key = request.POST.get("control_key", None)
             if control_key == "SZRf2QMpIfZHPEh0ib7YoDlnnDp5HtjDqbAw":
-                if CitizenRegister.objects.filter(identification=dni).exists():
-                    citizen_register = CitizenRegister.objects.get(identification=dni)
+                if CitizenRegister.objects.filter(identification__iexact=dni).exists():
+                    citizen_register = CitizenRegister.objects.get(identification__iexact=dni)
                     url_cert = request.build_absolute_uri(reverse("citizens-report", kwargs={"uuid": citizen_register.uuid}))
                     return render(request, "citizens/citizens-email-sent.html", {'error':send_email(url_cert, citizen_register)})
                 else:
