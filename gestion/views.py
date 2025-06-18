@@ -3,17 +3,20 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from datetime import datetime
+import django.utils.timezone as tz
 
 from gesplan.decorators import group_required
 from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc, user_in_group
 from .models import Company, Facility, Truck, Employee, EmployeeType, Route, Item, EmployeeItem
-from .models import EmployeeContract, ContractType, AgreementType, FacilityItem
+from .models import EmployeeContract, ContractType, AgreementType, FacilityItem, WasteInFacility
 from .models import FacilityManteinance, FacilityManteinanceConcept, FacilityManteinanceStatus, FacilityManteinanceImage
-from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceStatus, TruckManteinanceImage
+from .models import TruckManteinance, TruckManteinanceConcept, TruckManteinanceStatus, TruckManteinanceImage, Tray
 
 
-@group_required("admins", "external")
+@group_required("admins", "external", "cabildo")
 def index(request):
+    if user_in_group(request.user, "cabildo"):
+        return redirect("operation-index-cabildo")
     if user_in_group(request.user, "external"):
         return redirect("operation-index-external")
     return render(request, "index.html")
@@ -63,6 +66,13 @@ def companies_remove(request):
 '''
     FACILITIES
 '''
+@group_required("admins",)
+def facilities_index(request):
+    fac_list = Facility.objects.filter(description__contains="Punto")
+    mpl_list = Facility.objects.filter(code__startswith="MPL-")
+    tray_list = Tray.objects.all()
+    return render(request, "facilities/index.html", {"fac_list": fac_list, "mpl_list": mpl_list, "tray_list": tray_list})
+
 def get_facilities(request):
 #    search_value = get_session(request, "s_facility_name")
 #    filters_to_search = ["name__icontains",]
@@ -116,6 +126,7 @@ def facilities_items_add(request):
     amount = get_int(get_param(request.POST, "amount"))
     desc = get_param(request.POST, "desc")
     FacilityItem.objects.create(facility=obj, item=item, amount=amount, desc=desc)
+    item.sub_amount(amount)
     return render(request, "facilities/facilities-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
 
 @group_required("admins",)
@@ -124,6 +135,7 @@ def facilities_items_return(request):
     obj.return_date = datetime.now()
     obj.returned = True
     obj.save()
+    obj.item.add_amount(obj.amount)
     return render(request, "facilities/facilities-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
 
 @group_required("admins",)
@@ -132,6 +144,7 @@ def facilities_items_remove(request):
     fac = None
     if obj != None:
         fac = obj.facility
+        obj.item.add_amount(obj.amount)
         obj.delete()
     return render(request, "facilities/facilities-items-list.html", {"obj": fac, "item_list": Item.objects.all()})
 
@@ -424,6 +437,7 @@ def employees_items_add(request):
     amount = get_int(get_param(request.POST, "amount"))
     desc = get_param(request.POST, "desc")
     EmployeeItem.objects.create(employee=obj, item=item, amount=amount, desc=desc)
+    item.sub_amount(amount)
     return render(request, "employees/employees-items-list.html", {"obj": obj, "item_list": Item.objects.all()})
 
 @group_required("admins",)
@@ -432,6 +446,7 @@ def employees_items_return(request):
     obj.return_date = datetime.now()
     obj.returned = True
     obj.save()
+    obj.item.add_amount(amount)
     return render(request, "employees/employees-items-list.html", {"obj": obj.employee, "item_list": Item.objects.all()})
 
 @group_required("admins",)
@@ -440,6 +455,7 @@ def employees_items_remove(request):
     emp = None
     if obj != None:
         emp = obj.employee
+        obj.item.add_amount(amount)
         obj.delete()
     return render(request, "employees/employees-items-list.html", {"obj": emp, "item_list": Item.objects.all()})
 
@@ -510,6 +526,20 @@ def items_form(request):
     return render(request, "items/items-form.html", {'obj': obj})
 
 @group_required("admins",)
+def items_form_amount(request):
+    obj = get_or_none(Item, get_param(request.GET, "obj_id"))
+    return render(request, "items/items-form-amount.html", {'obj': obj})
+
+@group_required("admins",)
+def items_form_amount_save(request):
+    obj = get_or_none(Item, get_param(request.POST, "obj_id"))
+    amount = get_int(get_param(request.POST, "amount"))
+    if obj != None:
+        obj.amount += amount
+        obj.save()
+    return render(request, "items/items-list.html", {"items": get_items(request)})
+
+@group_required("admins",)
 def items_remove(request):
     obj = get_or_none(Item, request.GET["obj_id"]) if "obj_id" in request.GET else None
     if obj != None:
@@ -517,17 +547,62 @@ def items_remove(request):
     return render(request, "items/items-list.html", {"items": get_items(request)})
 
 @group_required("admins",)
-def items_location(request):
-    obj = get_or_none(Item, get_param(request.GET, "obj_id"))
+def items_location(request, obj_id):
+    #obj = get_or_none(Item, get_param(request.GET, "obj_id"))
+    obj = get_or_none(Item, obj_id)
     return render(request, "items/items-location.html", {'obj': obj})
 
+@group_required("admins",)
+def items_emps_search(request):
+    obj_id = get_int(get_param(request.GET, "s-item-emp-id"))
+    name = get_param(request.GET, "s-item-emp-name")
+    ini_date = get_param(request.GET, "s-item-emp-idate")
+    end_date = get_param(request.GET, "s-item-emp-edate")
+    kwargs = {"item__id":obj_id}
+    if name != "":
+        kwargs["employee__name__icontains"] = name
+    if ini_date != "":
+        kwargs["date__gte"] = ini_date
+    if end_date != "":
+        kwargs["date__lte"] = end_date
+    item_list = EmployeeItem.objects.filter(**kwargs)
+    return render(request, "items/items-location-emps.html", {"item_list": item_list})
+
+@group_required("admins",)
+def items_facs_search(request):
+    obj_id = get_int(get_param(request.GET, "s-item-fac-id"))
+    name = get_param(request.GET, "s-item-fac-name")
+    ini_date = get_param(request.GET, "s-item-fac-idate")
+    end_date = get_param(request.GET, "s-item-fac-edate")
+    kwargs = {"item__id":obj_id}
+    if name != "":
+        kwargs["facility__description__icontains"] = name
+    if ini_date != "":
+        kwargs["date__gte"] = ini_date
+    if end_date != "":
+        kwargs["date__lte"] = end_date
+    item_list = FacilityItem.objects.filter(**kwargs)
+    return render(request, "items/items-location-facs.html", {"item_list": item_list})
+
 
 '''
-    Test
+    EMAIL
 '''
-from .email_lib import send_email
+from .email_lib import send_email, send_warning_level_email
 
-def test_email(request):
+def email_warning(request, token):
+    if token == "2r8rxK4Pzt6kizSXPLl4xFZKweq2vAkD":
+        w_list = WasteInFacility.objects.filter(toRoute=True)
+        for item in w_list:
+            diff = tz.now() - item.last_warning 
+            if item.warning and diff.days >= item.advise_frec:
+                #print("Email enviado a {}".format(item.emails))
+                send_warning_level_email(item.emails.split(","), item.subject, item.body, item.waste.name, item.facility.description)
+                item.last_warning = datetime.now()
+                item.save()
+    return HttpResponse("Ok!")
+
+def email_test(request):
     email_to = Config.get_value("EMAIL_TEST_TO").split(",")
     ec = EmailConfig(email_to, Config.get_value("EMAIL_TEST_SUBJECT"), "", Config.get_value("EMAIL_TEST_HTML"))
     send_email(ec)

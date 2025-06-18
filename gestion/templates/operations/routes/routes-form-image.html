@@ -1,0 +1,15 @@
+{% load i18n %}
+
+
+{% if obj.image %}
+    <img src="{{obj.image.url}}" alt="image {{obj.id}}" /> <br/>
+    <a class="btn btn-xs ark" data-url="{% url "operation-routes-img-remove" %}" data-target="div-images" 
+        data-obj_id="{{obj.id}}" title="{%trans 'Borrar'%}" data-confirm="{%trans "Are you sure to remove this element?"%}">
+    <i class="fas fa-trash"></i></a> 
+{% else %}
+    <label for="image" class="btn btn-sm new">
+        <i class="fas fa-upload"></i><span class="d-none d-sm-block">{%trans "Elegir"%}&nbsp;{%trans "Archivo"%}</span></label>
+    <input type="file" class="multiupload d-none" name="image" id="image" data-url="{%url 'operation-routes-img-upload'%}"
+        data-target="div-images" data-obj-id="{{obj.id}}" data-csrf-token="{{ csrf_token }}" multiple/>
+{% endif %}
+

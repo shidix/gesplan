@@ -1,0 +1,23 @@
+{% load i18n %}
+
+<h1> {% trans "Materiales entregados a los empleados" %} </h1>
+<div class="row main-th py-3 m-0">
+    <div class="col-4"> {% trans 'Empleado' %} </div>
+    <div class="col-2"> {% trans 'Fecha de entrega' %} </div>
+    <div class="col-2"> {% trans 'Cantidad' %} </div>
+    <div class="col-2"> {% trans 'Descripción' %} </div>
+    <div class="col-2"> {% trans 'Devolución' %} </div>
+</div>
+
+{% for item in item_list %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-4">{{ item.employee.name|default:"---" }}</div>
+        <div class="col-2">{{ item.date|date:"d-m-Y H:i" }}</div>
+        <div class="col-2">{{ item.amount|default:0 }}</div>
+        <div class="col-2">{{ item.desc|default:"---" }}</div>
+        <div class="col-2">
+            {%if item.returned%}{{item.return_date|date:"d-m-Y H:i"}}{%else%}<i class="fas fa-times"></i>{%endif%}</div>
+    </div>
+{% endfor %}
+
+

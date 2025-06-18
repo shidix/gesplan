@@ -69,6 +69,14 @@ class Company(models.Model):
         company = { 'pk': self.pk, 'name': self.name}
         return company
 
+    def get_facilities(self):
+        items = list(Facility.objects.filter(company=self).distinct())
+        fac_list = FacilityWasteManager.objects.filter(manager=self)
+        for fac in fac_list:
+            if fac.facility not in items:
+                items.append(fac.facility)
+        return items
+
     def __str__(self):
         try:
             return "%s - %s" % (self.nif, self.name)
@@ -146,13 +154,14 @@ class Waste(models.Model):
                'dangerous': self.dangerous, 'alert': self.alert}
         return waste
 
+    def __str__(self):
+        return "%s [%s]" % (self.name, self.units.code)
+
     class Meta:
         verbose_name = 'Residuo'
         verbose_name_plural = 'Residuos'
         ordering = ['name']
 
-    def __str__(self):
-        return "%s [%s]" % (self.name, self.units.code)
 
 '''
     FACILITIES
@@ -241,6 +250,7 @@ class WasteInFacility(models.Model):
     emails = models.CharField(max_length=900, verbose_name='Emails', default="", blank=True)
     subject = models.CharField(max_length=900, verbose_name='Subject', default="", blank=True)
     body = models.TextField(verbose_name='Body', default="", blank=True)
+    last_warning = models.DateTimeField(default=datetime.datetime.min, null=True, verbose_name=('Último aviso'))
 
     waste = models.ForeignKey(Waste, verbose_name = _('Residuo'), related_name = "facilities", on_delete=models.SET_NULL, null=True)
     facility = models.ForeignKey(Facility, verbose_name = _('Instalación'), related_name="waste", on_delete=models.CASCADE)
@@ -282,6 +292,11 @@ class WasteInFacility(models.Model):
     def warning(self):
         return ((self.warning_filling_degree <= self.filling_degree))
 
+    @property
+    def external_manager(self):
+        fwm = FacilityWasteManager.objects(waste=self.waste, facility=self.facility).first()
+        return fwm.manager if fwm != None else None
+
     def class_state(self):
         if self.alert:
             return "danger"
@@ -299,13 +314,19 @@ def send_warning_alert(sender, instance, **kwargs):
     #print(instance.warning)
     #print(instance.toRoute)
     #Si se supera el umbral de aviso y el residuo es voluminoso se envía una alerta
-    if instance != None and instance.warning and instance.toRoute:
+    warning = instance.last_warning.strftime("%y-%m-%d %H:%M:%S")
+    min_date = datetime.datetime.min.strftime("%y-%m-%d %H:%M:%S")
+    if instance != None and instance.warning and instance.toRoute and warning == min_date:
         #print("--2--")
-        waste = instance.waste.name
-        facility = instance.facility.description
-        subject = Config.get_value("EMAIL_WARNING_SUBJECT").replace("__RES__", waste).replace("__INS__", facility)
-        html = Config.get_value("EMAIL_WARNING_HTML").replace("__RES__", waste).replace("__INS__", facility)
-        send_warning_level_email(["zebenperez@gmail.com"], subject, html)
+        #subject = Config.get_value("EMAIL_WARNING_SUBJECT").replace("__RES__", waste).replace("__INS__", facility)
+        #html = Config.get_value("EMAIL_WARNING_HTML").replace("__RES__", waste).replace("__INS__", facility)
+        email_to = instance.emails.split(",")
+        send_warning_level_email(email_to, instance.subject, instance.body, instance.waste.name, instance.facility.description)
+        instance.last_warning = datetime.datetime.now()
+        instance.save()
+    elif instance != None and instance.toRoute and instance.filling_degree < instance.warning_filling_degree:
+        instance.last_warning = datetime.datetime.min
+        instance.save()
 
 class FacilityManteinanceConcept(models.Model):
     code = models.CharField(max_length=10, verbose_name='Código')
@@ -352,6 +373,15 @@ class FacilityManteinanceImage(models.Model):
 
     class Meta:
         verbose_name = _('Imágenes de mantenimiento')
+
+class FacilityWasteManager(models.Model):
+    waste = models.ForeignKey(Waste, verbose_name=_('Tratemiento'), on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(Company, verbose_name=_("Gestor Externo"), on_delete=models.SET_NULL, blank=True, null=True)
+    facility = models.ForeignKey(Facility, verbose_name=_("Instalación"), on_delete=models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Gestor de Residuo'
+        verbose_name_plural = 'Gestores de Residuos'
 
 
 '''
@@ -599,6 +629,17 @@ class Tray(models.Model):
     def __str__(self):
         return self.number
 
+    @property
+    def current_location(self):
+        track = self.tracking.all().order_by("-end_date").first()
+        if track != None:
+            return track.target.description if track.target != None else track.source.description
+    @property
+    def current_date(self):
+        track = self.tracking.all().order_by("-end_date").first()
+        if track != None:
+            return track.end_date if track.finish else track.ini_date
+
     def last_tracking(self):
         return self.tracking.all().order_by("-end_date").first()
 
@@ -758,13 +799,25 @@ class FacilityActions(models.Model):
 '''
 class Item(models.Model):
     name = models.CharField(max_length=255, verbose_name='Nombre', default="")
+    amount = models.IntegerField(verbose_name='Cantidad', default=0)
 
     def __str__(self):
         return self.name
 
+    def add_amount(self, amount):
+        self.amount += amount
+        self.save()
+        return self.amount
+
+    def sub_amount(self, amount):
+        self.amount -= amount
+        self.save()
+        return self.amount
+
     class Meta:
         verbose_name=_('Material')
         verbose_name_plural=_('Materiales')
+        ordering = ["name"]
 
 class EmployeeItem(models.Model):
     returned = models.BooleanField(default = False, verbose_name=_('Devuelto'));

@@ -1,0 +1,28 @@
+{% load i18n %}
+
+<div class="internal"> <div class="container" id="facilities-mpl"> <div id="div-pl"> 
+    <div class="content mt-4">
+        <div id="fac-list" class="ml-list">
+            <div class="row main-th py-3 m-0">
+                <div class="col-8"> {% trans 'Descripción' %} </div>
+                <div class="col-4"></div>
+            </div>
+
+            {% for item in facilities %}
+                <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+                    <div class="col-8">{{ item.description|default:"" }}</div>
+                    <div class="col-4 text-right">
+                        <a class="btn btn-xs ark small" data-url="{%url "operation-facility-waste-cabildo"%}" 
+                            data-target-modal="common-modal" data-obj_id="{{item.id}}" data-route="False" title="{%trans 'Residuos'%}">
+                            <i class='fas fa-th-large no-vol'></i> No voluminoso</a> 
+                        <a class="btn btn-xs ark small" data-url="{%url "operation-facility-waste-cabildo"%}" 
+                            data-target-modal="common-modal" data-obj_id="{{item.id}}" data-route="True" title="{%trans 'Residuos'%}">
+                            <i class='fas fa-th-large vol'></i> Voluminoso</a> 
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div> </div> </div>
+
+ 

@@ -1,5 +1,12 @@
 {% load i18n %}
 
+<br/><br/>
+{% include "citizens/citizens-stats.html" %}
+
+<div class="toolbar-content p-3">
+    <h2 class="pathway b-right">{%trans 'Recogidas'%}
+        <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
+</div>
 
 <div class="row main-th py-3 m-0">
     <div class="col-1"> {% trans 'Código' %} </div>

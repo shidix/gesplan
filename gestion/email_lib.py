@@ -16,7 +16,9 @@ def send_email(ec):
         email_from = "noresponse@fundec.org"
     send_mail(ec.subject, ec.body, email_from, ec.email_to, html_message=ec.html)
 
-def send_warning_level_email(email_to, subject, html):
+def send_warning_level_email(email_to, subject, html, waste="", facility=""):
+    subject = subject.replace("__RES__", waste).replace("__INS__", facility)
+    html = html.replace("__RES__", waste).replace("__INS__", facility)
     ec = EmailConfig(email_to, subject, "", html)
     send_email(ec)
 

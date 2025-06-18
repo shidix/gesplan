@@ -9,6 +9,12 @@
     </div>
 </div>
 {%endcomment%}
+<div class="row toolbar-search p-2 m-0">
+    <div class="col-12 text-end">
+        <button type="button" class="btn btn-sm ark new" data-url="{%url "operation-routes-form"%}" 
+            data-target-modal="common-modal"> <i class="fas fa-plus"></i> {% trans 'Crear Ruta' %}</button> 
+    </div>
+</div>
 
 {% with items=routes %}
     <div class="content mt-1">

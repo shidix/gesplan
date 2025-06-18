@@ -24,10 +24,16 @@ def external_home(request):
 '''
 @group_required_pwa("external")
 def external_wastes(request):
-    print(request.user.employee)
-    print(request.user.employee.company)
-    item_list = WasteInFacility.objects.filter(waste__external_manager=request.user.employee.company, toRoute=False)
-    print(item_list)
+    #print(request.user.employee)
+    #print(request.user.employee.company)
+    #i_list = WasteInFacility.objects.filter(waste__external_manager=request.user.employee.company, toRoute=False)
+    item_list = []
+    i_list = WasteInFacility.objects.filter(toRoute=False)
+    comp = request.user.employee.company
+    for item in i_list:
+        if item.external_manager == comp:
+            item_list.append(item)
+    #print(item_list)
     return render(request, "external/wastes.html", {'item_list': item_list,})
 
 '''

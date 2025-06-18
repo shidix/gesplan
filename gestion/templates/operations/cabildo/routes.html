@@ -12,14 +12,14 @@
 <div class="tab-content internal mt-3">
     {# -------------------------- PUNTOS LIMPIOS ------------------------#}
     <div class="tab-pane container {%if not current_tab or current_tab == ""%}active{%endif%}" id="routes-pl">
-        <div id="div-routes-pl"> {% include "operations/routes/routes-pl.html" %}</div></div>
+        <div id="div-routes-pl"> {% include "operations/cabildo/routes-pl.html" %}</div></div>
 
     {# -------------------------- MINI PUNTOS LIMPIOS ------------------------#}
     <div class="tab-pane container {%if current_tab == "mpl"%}active{%endif%}" id="routes-mpl">
-        <div id="div-routes-mpl"> {% include "operations/routes/routes-mpl.html" %}</div></div>
+        <div id="div-routes-mpl"> {% include "operations/cabildo/routes-mpl.html" %}</div></div>
 
     {# -------------------------- GESTORES EXTERNOS ------------------------#}
     <div class="tab-pane container {%if current_tab == "ext"%}active{%endif%}" id="routes-ext">
-        <div id="div-routes-ext"> {% include "operations/routes/routes-ext.html" %}</div></div>
+        <div id="div-routes-ext"> {% include "operations/cabildo/routes-ext.html" %}</div></div>
 </div>
  

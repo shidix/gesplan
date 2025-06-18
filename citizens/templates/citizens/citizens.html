@@ -4,10 +4,6 @@
 {% include "citizens/citizens-search.html" %}
 
 <div class="content mt-4">
-    <div class="toolbar-content p-3">
-        <h2 class="pathway b-right">{%trans 'Recogidas'%} 
-            <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
-    </div>
     <div id="citizens-list" class="ml-list">{% include "citizens/citizens-list.html" %}</div>
 </div>
 {% include "common-modal.html" %}
