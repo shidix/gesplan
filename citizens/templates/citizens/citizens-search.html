@@ -39,7 +39,6 @@
                     {% endfor %}
                 </select>
             </div>
-
         </div>
        
         <div class="row">
@@ -54,6 +53,16 @@
                 </select>
             </div>
         </div>
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <button class="btn btn-default saveform w-25" style="border: 1px solid #a58a11;" 
+                    data-form="form-search" data-target="citizens-list"> <i class="fas fa-search"></i> </button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
         {% comment %}
         <div class="row">
             <div class="col-3 d-none d-lg-block"> <span>{% trans "Fechas:" %}</span> </div>
@@ -94,13 +103,4 @@
             </div>
         {% endcomment %}
 
-        <div class="row mt-3">
-            <div class="col-12 text-center">
-                <button class="btn btn-default saveform w-25" style="border: 1px solid #a58a11;" data-form="form-search" data-target="citizens-list">
-                    <i class="fas fa-search"></i> </button>
-            </div>
-        </div>
-        </div>
-    </div>
-</form>
 

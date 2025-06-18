@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+<div id="graficaContainer" style="height: 370px; width: 100%;"></div>
+
+<script>
+    window.onload = function () {
+        const chart = new CanvasJS.Chart("graficaContainer", {
+            animationEnabled: true,
+            title: { text: "Entregas por meses" },
+            axisY: { title: "Unidades" },
+            data: [{
+                type: "line", // también puedes usar "line", "pie", etc.
+                //axisYType: "secondary",
+                //showInLegend: true,
+                dataPoints: [
+                    {% for key, value in stats.items %}
+                        { label: "{{key}}", y: {{value}} },
+                    {% endfor %}
+                        {%comment%}
+                    { label: "Producto B", y: 42 },
+                    { label: "Producto C", y: 18 },
+                    { label: "Producto D", y: 25 }
+                        {%endcomment%}
+                ]
+            }]
+        });
+        chart.render();
+    }
+</script>
+

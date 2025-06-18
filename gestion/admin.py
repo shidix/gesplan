@@ -62,8 +62,13 @@ class TruckManteinanceConceptAdmin(admin.ModelAdmin):
 class TruckManteinanceStatusAdmin(admin.ModelAdmin):
     list_display = ('code', 'name')
 
+class FacilityWasteManagerTabular(admin.TabularInline):
+    model = FacilityWasteManager
+    extra = 1
+
 class WasteAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'external_manager')
+    inlines = [FacilityWasteManagerTabular,]
 
 class WasteInFacilityAdmin(admin.ModelAdmin):
     list_display = ('code', 'facility', 'waste', 'filling_degree', 'toRoute')

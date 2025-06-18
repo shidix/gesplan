@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block central_content %}
+    <ul class="nav nav-tabs sub d-flex justify-content-center pt-3 b-none">
+        <li class="nav-item"> <a class="nav-link sub {%if not current_tab or current_tab == ""%}active{%endif%}" 
+            data-bs-toggle="tab" href="#facilities"> {% trans "Puntos limpios" %}</a> </li>
+        <li class="nav-item"> <a class="nav-link sub {%if current_tab == "mpl"%}active{%endif%}" data-bs-toggle="tab" 
+            href="#facilities-mpl"> {%trans "Mini puntos limpios"%}</a> </li>
+        <li class="nav-item"> <a class="nav-link sub {%if current_tab == "ext"%}active{%endif%}" data-bs-toggle="tab" 
+            href="#trays"> {%trans "Bandejas"%}</a> </li>
+    </ul>
+
+    <div class="tab-content internal mt-3">
+        {# -------------------------- PUNTOS LIMPIOS ------------------------#}
+        <div class="tab-pane container {%if not current_tab or current_tab == ""%}active{%endif%}" id="facilities">
+            <div id="div-facilities"> {% include "facilities/facilities.html" with items=fac_list%}</div></div>
+
+        {# -------------------------- MINI PUNTOS LIMPIOS ------------------------#}
+        <div class="tab-pane container {%if current_tab == "mpl"%}active{%endif%}" id="facilities-mpl">
+            <div id="div-facilities-mpl"> {% include "facilities/facilities.html" with items=mpl_list%}</div></div>
+
+        {# -------------------------- GESTORES EXTERNOS ------------------------#}
+        <div class="tab-pane container {%if current_tab == "ext"%}active{%endif%}" id="trays">
+            <div id="div-trays"> {% include "facilities/trays.html" with items=tray_list%}</div></div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}
+     

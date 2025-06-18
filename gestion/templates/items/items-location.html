@@ -1,51 +1,65 @@
+{% extends 'base.html' %}
 {% load i18n %}
 
+{% block central_content %}
 
-<div class="row modal-head m-0">
-    <div class="col-11"><i class="far fa-building"></i>&nbsp; {% trans 'Material' %}: {{obj.name}} </div>
-    <div class="col-1">
-        <div class="d-flex justify-content-end"> 
-            <button type="button" class="btn btn-lg" data-bs-dismiss="modal" title="{% trans "Close" %}">
-            <i class="fas fa-times"></i></button> </div>
+    <div class="row modal-head m-0">
+        <div class="col-12"><i class="far fa-building"></i>&nbsp; {% trans 'Material' %}: {{obj.name}} </div>
     </div>
-</div>
-
-<h1> {% trans "Materiales entregados a los empleados" %} </h1>
-<div class="row main-th py-3 m-0">
-    <div class="col-4"> {% trans 'Empleado' %} </div>
-    <div class="col-2"> {% trans 'Fecha de entrega' %} </div>
-    <div class="col-2"> {% trans 'Cantidad' %} </div>
-    <div class="col-2"> {% trans 'Descripción' %} </div>
-    <div class="col-2"> {% trans 'Devolución' %} </div>
-</div>
-
-{% for item in obj.employees.all %}
-    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-4">{{ item.employee.name|default:"---" }}</div>
-        <div class="col-2">{{ item.date|date:"d-m-Y H:i" }}</div>
-        <div class="col-2">{{ item.amount|default:0 }}</div>
-        <div class="col-2">{{ item.desc|default:"---" }}</div>
-        <div class="col-2">{%if item.returned%}{{item.return_date|date:"d-m-Y H:i"}}{%else%}<i class="fas fa-times"></i>{%endif%}</div>
+    <div class="row toolbar-search p-2 m-0">
+        <div class="col-lg-1 b-search"><i class="fas fa-search pt-2"></i></div>
+        <div class="col-lg-5 p-0">
+            <input type="hidden" class="autosearch" name="s-item-emp-id" id="s-item-emp-id" value="{{obj.id}}"
+                data-url="{%url "items-emps-search"%}" data-target="div-emps" 
+                data-related="s-item-emp-id,s-item-emp-name,s-item-emp-idate,s-item-emp-edate" />
+            {% trans "Nombre" %}:
+            <input type="text" class="autosearch form-control form-control-dark w-100" name="s-item-emp-name" id="s-item-emp-name" 
+                placeholder="{%trans 'Nombre'%}" data-url="{%url "items-emps-search"%}" data-target="div-emps" 
+                data-related="s-item-emp-id,s-item-emp-name,s-item-emp-idate,s-item-emp-edate" />
+        </div>
+        <div class="col-lg-3 p-0">
+            {% trans "Fecha inicial" %}:
+            <input type="date" class="autosearch form-control form-control-dark w-100" name="s-item-emp-idate" id="s-item-emp-idate" 
+                data-url="{%url "items-emps-search"%}" data-target="div-emps" 
+                data-related="s-item-emp-id,s-item-emp-name,s-item-emp-idate,s-item-emp-edate" />
+        </div>
+        <div class="col-lg-3 p-0">
+            {% trans "Fecha final" %}:
+            <input type="date" class="autosearch form-control form-control-dark w-100" name="s-item-emp-edate" id="s-item-emp-edate" 
+                data-url="{%url "items-emps-search"%}" data-target="div-emps" 
+                data-related="s-item-emp-id,s-item-emp-name,s-item-emp-idate,s-item-emp-edate" />
+        </div>
     </div>
-{% endfor %}
+    <div id="div-emps">{%include "items/items-location-emps.html" with item_list=obj.employees.all%}</div>
 
-<h1> {% trans "Materiales entregados a las instalaciones" %} </h1>
-<div class="row main-th py-3 m-0">
-    <div class="col-4"> {% trans 'Instalaciones' %} </div>
-    <div class="col-2"> {% trans 'Fecha de entrega' %} </div>
-    <div class="col-2"> {% trans 'Cantidad' %} </div>
-    <div class="col-2"> {% trans 'Descripción' %} </div>
-    <div class="col-2"> {% trans 'Devolución' %} </div>
-</div>
+    <hr/>
 
-{% for item in obj.facilities.all %}
-    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-4">{{ item.facility.description|default:"---" }}</div>
-        <div class="col-2">{{ item.date|date:"d-m-Y H:i" }}</div>
-        <div class="col-2">{{ item.amount|default:0 }}</div>
-        <div class="col-2">{{ item.desc|default:"---" }}</div>
-        <div class="col-2">{%if item.returned%}{{item.return_date|date:"d-m-Y H:i"}}{%else%}<i class="fas fa-times"></i>{%endif%}</div>
+    <div class="row toolbar-search p-2 m-0">
+        <div class="col-lg-1 b-search"><i class="fas fa-search pt-2"></i></div>
+        <div class="col-lg-5 p-0">
+            <input type="hidden" class="autosearch" name="s-item-fac-id" id="s-item-fac-id" value="{{obj.id}}"
+                data-url="{%url "items-facs-search"%}" data-target="div-facs" 
+                data-related="s-item-fac-id,s-item-fac-name,s-item-fac-idate,s-item-fac-edate" />
+            {% trans "Nombre" %}:
+            <input type="text" class="autosearch form-control form-control-dark w-100" name="s-item-fac-name" id="s-item-fac-name" 
+                placeholder="{%trans 'Nombre'%}" data-url="{%url "items-facs-search"%}" data-target="div-facs" 
+                data-related="s-item-fac-id,s-item-fac-name,s-item-fac-idate,s-item-fac-edate" />
+        </div>
+        <div class="col-lg-3 p-0">
+            {% trans "Fecha inicial" %}:
+            <input type="date" class="autosearch form-control form-control-dark w-100" name="s-item-fac-idate" id="s-item-fac-idate" 
+                data-url="{%url "items-facs-search"%}" data-target="div-facs" 
+                data-related="s-item-fac-id,s-item-fac-name,s-item-fac-idate,s-item-fac-edate" />
+        </div>
+        <div class="col-lg-3 p-0">
+            {% trans "Fecha final" %}:
+            <input type="date" class="autosearch form-control form-control-dark w-100" name="s-item-fac-edate" id="s-item-fac-edate" 
+                data-url="{%url "items-facs-search"%}" data-target="div-facs" 
+                data-related="s-item-fac-id,s-item-fac-name,s-item-fac-idate,s-item-fac-edate" />
+        </div>
     </div>
-{% endfor %}
+    <div id="div-facs">{%include "items/items-location-facs.html" with item_list=obj.facilities.all%}</div>
+
+{% endblock central_content %}
 
 

@@ -13,12 +13,20 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-12">
+    <div class="col-8">
         <div class="greybox-sm p-1">
             {% trans "Nombre" %}
             <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name|default:""}}" 
                 title="{{obj.name}}" data-model-name="gestion.item" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
                 data-target="div-notification" placeholder="Nombre..." /> <span id="name__msg"></span>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="greybox-sm p-1">
+            {% trans "Cantidad" %}
+            <input type="text" class="form-control autosave" id="amount" name="amount" value="{{obj.amount}}" 
+                title="{{obj.amount}}" data-model-name="gestion.item" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Cantidad..." disabled/> <span id="amount__msg"></span>
         </div>
     </div>
 </div>

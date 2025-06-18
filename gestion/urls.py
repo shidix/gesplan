@@ -14,6 +14,7 @@ urlpatterns = [
     path('companies/remove', views.companies_remove, name='companies-remove'),
 
     #---------------------- FACILITIES -----------------------
+    path('facilities/index', views.facilities_index, name='facilities-index'),
     path('facilities', views.facilities, name='facilities'),
     path('facilities/list', views.facilities_list, name='facilities-list'),
     path('facilities/search', views.facilities_search, name='facilities-search'),
@@ -76,20 +77,27 @@ urlpatterns = [
     path('items/list', views.items_list, name='items-list'),
     path('items/search', views.items_search, name='items-search'),
     path('items/form', views.items_form, name='items-form'),
+    path('items/form-amount', views.items_form_amount, name='items-form-amount'),
+    path('items/form-amount/save', views.items_form_amount_save, name='items-form-amount-save'),
     path('items/remove', views.items_remove, name='items-remove'),
-    path('items/location', views.items_location, name='items-location'),
+    path('items/location/<int:obj_id>/', views.items_location, name='items-location'),
+    path('items/emps/search', views.items_emps_search, name='items-emps-search'),
+    path('items/facs/search', views.items_facs_search, name='items-facs-search'),
 
     #---------------------- OPERATION -----------------------
     path('operation/index', operation_views.index, name='operation-index'),
     path('operation/routes/view', operation_views.routes_view, name='operation-routes-view'),
     path('operation/routes/list', operation_views.routes_list, name='operation-routes-list'),
     path('operation/routes-ext/list', operation_views.routes_ext_list, name='operation-routes-ext-list'),
-    #path('operation/routes/form', operation_views.routes_form, name='operation-routes-form'),
+    path('operation/routes/form', operation_views.routes_form, name='operation-routes-form'),
     path('operation/routes-ext/form', operation_views.routes_ext_form, name='operation-routes-ext-form'),
     path('operation/routes/remove', operation_views.routes_remove, name='operation-routes-remove'),
     path('operation/facility-waste', operation_views.facility_waste, name='operation-facility-waste'),
     path('operation/report', operation_views.report, name='operation-report'),
     path('operation/report-search', operation_views.report_search, name='operation-report-search'),
+    path('operation/routes/source-save', operation_views.routes_source_save, name='operation-routes-source-save'),
+    path('operation/routes/img-upload', operation_views.routes_img_upload, name='operation-routes-img-upload'),
+    path('operation/routes/img-remove', operation_views.routes_img_remove, name='operation-routes-img-remove'),
 
     path('operation/index-external', operation_views.index_external, name='operation-index-external'),
     path('operation/routes-external/list', operation_views.routes_external_list, name='operation-routes-external-list'),
@@ -99,12 +107,17 @@ urlpatterns = [
     path('operation/facility-external', operation_views.facility_external, name='operation-facility-external'),
     path('operation/facility-waste-external', operation_views.facility_waste_external, name='operation-facility-waste-external'),
 
+    path('operation/index-cabildo', operation_views.index_cabildo, name='operation-index-cabildo'),
+    path('operation/facility-waste-cabildo', operation_views.facility_waste_cabildo, name='operation-facility-waste-cabildo'),
+    path('operation/routes/view-cabildo', operation_views.routes_view_cabildo, name='operation-routes-view-cabildo'),
+
     #---------------------- IMPORT -----------------------
     path('import', import_views.import_db, name='import'),
     path('import-db', import_views.import_db_file, name='import-db'),
 
-    #---------------------- TEST -----------------------
-    path('test-email', views.test_email, name='test-email'),
+    #---------------------- EMAIL -----------------------
+    path('email-warning/<slug:token>/', views.email_warning, name='email-warning'),
+    path('email-test', views.email_test, name='email-test'),
 
     #---------------------- AUTO -----------------------
     path('autosave_field/', auto_views.autosave_field, name='autosave_field'),

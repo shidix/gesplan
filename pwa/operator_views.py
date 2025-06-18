@@ -44,8 +44,11 @@ def operator_wastes_save(request):
         val = get_float(get_param(request.POST, "filling_degree"))
         re = RouteExt.objects.filter(waste=obj, weight=0).first()
         #if obj.filling_degree > 0 and val == 0 and not obj.toRoute and obj.waste.external_manager != None:
-        if val >= obj.warning_filling_degree and not obj.toRoute and obj.waste.external_manager != None and re == None:
-            RouteExt.objects.create(waste=obj, facility=obj.facility, external_manager=obj.waste.external_manager)
+        #if val >= obj.warning_filling_degree and not obj.toRoute and obj.waste.external_manager != None and re == None:
+        #    RouteExt.objects.create(waste=obj, facility=obj.facility, external_manager=obj.waste.external_manager)
+        manager = obj.external_manager
+        if val >= obj.warning_filling_degree and not obj.toRoute and manager != None and re == None:
+            RouteExt.objects.create(waste=obj, facility=obj.facility, external_manager=manager)
         obj.filling_degree = val
         obj.save()
         return redirect("pwa-operator")

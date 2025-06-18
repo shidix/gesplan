@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Exists, OuterRef, Sum
 
-
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from gesplan.decorators import group_required, group_required_json, group_required_pwa
 from gesplan.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc
@@ -32,6 +32,17 @@ def set_initial_dates(request):
     if edate == "":
         set_session(request, "s_citizen_edate", now.strftime("%Y-%m-%d"))
  
+def get_stats(request):
+    dic = {}
+    idate = datetime.strptime("{} 00:00:00".format(get_session(request, "s_citizen_idate")), "%Y-%m-%d %H:%M:%S")
+    edate = datetime.strptime("{} 23:59:59".format(get_session(request, "s_citizen_edate")), "%Y-%m-%d %H:%M:%S")
+    current = idate
+    while current <= edate:
+        #print(current.strftime("%Y-%m"))  # o actual.month, actual.year
+        dic[current.strftime("%Y-%m")] = Citizen.objects.filter(date__year=current.year, date__month=current.month).count()
+        current += relativedelta(months=1)
+    return dic
+
 def get_citizens(request):
     plate = get_session(request, "s_citizen_plate")
     idate = datetime.strptime("{} 00:00:00".format(get_session(request, "s_citizen_idate")), "%Y-%m-%d %H:%M:%S")
@@ -52,6 +63,7 @@ def get_citizens(request):
 def get_citizens_context(request):
     return {
         "items": get_citizens(request),
+        "stats": get_stats(request),
         "waste_list": Waste.objects.all(),
         "facility_list": Facility.getPL()
     }

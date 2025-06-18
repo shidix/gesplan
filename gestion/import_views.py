@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from gesplan.decorators import group_required
 from gesplan.commons import get_int, get_float, get_or_none, get_param, get_session, set_session, show_exc
 from .models import *
+from citizens.models import Town, Citizen, WasteCitizen
 
 def clean(val):
     return val.rstrip().lstrip()
@@ -70,6 +71,27 @@ def import_db_file(request):
                 fac = get_or_none(Facility, l[3].strip(), "ext_code")
 
                 WasteInFacility.objects.get_or_create(ext_code=clean(l[0]), toRoute=toRoute, code=clean(l[6]), filling_degree=get_float(l[1]), warning_filling_degree=get_float(l[5]), alert_filling_degree=get_float(l[2]), last_modification=last_modification, advise_frec=15, emails="", subject="", body="", waste=waste, facility=fac)
+            elif db == "citizen":
+                print(l[0])
+                try:
+                    date = datetime.datetime.strptime(clean(l[5])[:19], "%Y-%m-%d %H:%M:%S")
+                except Exception as e:
+                    print(e)
+                    date = datetime.datetime.min
+                try:
+                    town = get_or_none(Town, l[8].strip(), "ext_code")
+                    emp = get_or_none(Employee, l[10].strip(), "ext_code")
+                    fac = get_or_none(Facility, l[7].strip(), "ext_code")
+
+                    Citizen.objects.get_or_create(ext_code=clean(l[0]), code=clean(l[12]), device=clean(l[9]), identification=clean(l[1]), address=clean(l[2]), plate=clean(l[3]), phone=clean(l[4]), email="", date=date, observations=clean(l[6]), town=town, employee=emp, facility=fac)
+                except Exception as e:
+                    print(e)
+            elif db == "wastecitizen":
+                print(l[0])
+                waste = get_or_none(Waste, l[3].strip(), "ext_code")
+                citizen = get_or_none(Citizen, l[2].strip(), "ext_code")
+
+                WasteCitizen.objects.get_or_create(units=get_float(clean(l[1])), waste=waste, citizen=citizen)
  
         return redirect("import")
     except Exception as e:

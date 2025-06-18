@@ -2,16 +2,24 @@
 
 
 <div class="row main-th py-3 m-0">
-    <div class="col-10"> {% trans 'Nombre' %} </div>
+    <div class="col-8"> {% trans 'Nombre' %} </div>
+    <div class="col-2"> {% trans 'Cantidad' %} </div>
     <div class="col-2"></div>
 </div>
 
 {% for item in items %}
     <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
-        <div class="col-10">{{ item.name|default:"---" }}</div>
+        <div class="col-8">{{ item.name|default:"---" }}</div>
+        <div class="col-2">{{ item.amount }}</div>
         <div class="col-2 text-right">
+            {%comment%}
             <a class="btn btn-xs ark" data-url="{% url "items-location" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Localización' %}"><i class="fas fa-globe"></i></a> 
+            {%endcomment%}
+            <a class="btn btn-xs" href="{% url "items-location" item.id %}" title="{% trans 'Localización' %}">
+                <i class="fas fa-globe"></i></a> 
+            <a class="btn btn-xs ark" data-url="{%url "items-form-amount"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}"
+                title="{% trans 'Añadir stock' %}"><i class="fas fa-layer-group"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "items-form" %}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
                 title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
             <a class="btn btn-xs ark" data-url="{% url "items-remove" %}" data-target="item-list" data-obj_id="{{item.id}}" 

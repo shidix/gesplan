@@ -1,0 +1,43 @@
+{% load i18n %}
+
+
+<div class="row main-th py-3 m-0">
+    <div class="col-3"> {% trans 'Número' %} </div>
+    <div class="col-5"> {% trans 'Ubicación' %} </div>
+    <div class="col-3"> {% trans 'Fecha' %} </div>
+    <div class="col-1"></div>
+</div>
+
+{% for item in items %}
+    <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+        <div class="col-3">{{ item.number|default:"---" }}</div>
+        <div class="col-5">{{ item.current_location|default:"---" }}</div>
+        <div class="col-3">{{ item.current_date|date:"d-m-Y H:i" }}</div>
+        <div class="col-1 text-end">
+            <div class="dropdown">
+                <a class="pt-3" type="button" id="dropdownProfile" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-h"></i></a>
+                <div class="dropdown-menu user-dropdown" aria-labelledby="dropdownProfile" data-popper-placement="bottom-start"
+                    style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(721px, 380px);" >
+                    {%comment%}
+                    <ul class="m-0">
+                        <div class="dropdown-divider"></div>
+                        <li> 
+                            <a class="btn btn-xs ark" data-url="{%url "facilities-form"%}" data-target-modal="common-modal" data-obj_id="{{item.id}}" 
+                            title="{% trans 'Editar' %}"><i class="fas fa-edit"></i> {% trans 'Editar' %}</a></li>
+                        <div class="dropdown-divider"></div>
+                        <li> 
+                            <a class="btn btn-xs ark" data-url="{% url "facilities-remove" %}" data-target="fac-list" data-obj_id="{{item.id}}" 
+                            title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                            <i class="fas fa-trash"></i> {% trans 'Borrar' %}</a></li>
+                        <div class="dropdown-divider"></div>
+
+                    </ul>
+                    {%endcomment%}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endfor %}
+

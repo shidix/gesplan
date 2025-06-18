@@ -20,6 +20,7 @@ class Island(models.Model):
         return self.name
 
 class Town(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
     name = models.CharField(max_length=200, verbose_name = _('Municipio'))
     island = models.ForeignKey(Island, verbose_name=_('Isla'), on_delete=models.SET_NULL, null=True)
 
@@ -41,6 +42,7 @@ def get_next_code():
         return "000000"
 
 class Citizen(models.Model):
+    ext_code = models.IntegerField(verbose_name=_('External code'), null=True, blank=True, default=0)
     code = models.CharField(max_length=6, verbose_name=_('Código'), default=get_next_code, blank=True, null=True)
     device = models.CharField(max_length=255, verbose_name=_('Dispositivo'), null=True, blank=True)
     identification = models.CharField(max_length=200, verbose_name=_('Idenitificación'), null=False, blank=True, default="")
