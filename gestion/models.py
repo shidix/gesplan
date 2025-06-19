@@ -297,7 +297,7 @@ class WasteInFacility(models.Model):
         if self.waste != None and self.waste.external_manager != None:
             return self.waste.external_manager
 
-        fwm = FacilityWasteManager.objects(waste=self.waste, facility=self.facility).first()
+        fwm = FacilityWasteManager.objects.filter(waste=self.waste, facility=self.facility).first()
         return fwm.manager if fwm != None else None
 
     def class_state(self):
