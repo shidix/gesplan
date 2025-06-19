@@ -294,6 +294,9 @@ class WasteInFacility(models.Model):
 
     @property
     def external_manager(self):
+        if seft.waste != None and self.waste.external_manager != None:
+            return self.waste.external_manager
+
         fwm = FacilityWasteManager.objects(waste=self.waste, facility=self.facility).first()
         return fwm.manager if fwm != None else None
 
