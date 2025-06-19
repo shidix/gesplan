@@ -54,6 +54,7 @@ def operator_wastes_save(request):
         return redirect("pwa-operator")
         #return HttpResponse("Saved!")
     except Exception as e:
+        print(e)
         return HttpResponse(e)
 
 '''
