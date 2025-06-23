@@ -326,10 +326,18 @@ def send_warning_alert(sender, instance, **kwargs):
         email_to = instance.emails.split(",")
         send_warning_level_email(email_to, instance.subject, instance.body, instance.waste.name, instance.facility.description)
         instance.last_warning = datetime.datetime.now()
-        instance.save()
+        #instance.save()
+        if not hasattr(instance, '_guardar_recursivo'):
+            instance._guardar_recursivo = True  # Bandera de control
+            instance.save()
+            delattr(instance, '_guardar_recursivo')
     elif instance != None and instance.toRoute and instance.filling_degree < instance.warning_filling_degree:
         instance.last_warning = datetime.datetime.min
-        instance.save()
+        #instance.save()
+        if not hasattr(instance, '_guardar_recursivo'):
+            instance._guardar_recursivo = True  # Bandera de control
+            instance.save()
+            delattr(instance, '_guardar_recursivo')
 
 class FacilityManteinanceConcept(models.Model):
     code = models.CharField(max_length=10, verbose_name='Código')
