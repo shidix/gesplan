@@ -180,12 +180,14 @@ def get_wastes_in_facility(facility, comp):
 @group_required("external",)
 def index_external(request):
     items = RouteExt.objects.filter(external_manager=request.user.employee.company)
-    return render(request, "operations/external/index.html", {"routes_ext": items})
+    routes = Route.objects.filter(driver__company=request.user.employee.company)
+    return render(request, "operations/external/index.html", {"routes_ext": items, 'routes': routes})
 
 @group_required("external",)
 def routes_external_list(request):
     items = RouteExt.objects.filter(external_manager=request.user.employee.company)
-    return render(request, "operations/external/routes-list.html", {"routes_ext": items})
+    routes = Route.objects.filter(driver__company=request.user.employee.company)
+    return render(request, "operations/external/routes-ext-list.html", {"routes_ext": items, 'routes': routes})
 
 @group_required("external",)
 def routes_external_form(request):
@@ -218,7 +220,8 @@ def routes_external_remove(request):
     if obj != None:
         obj.delete()
     items = RouteExt.objects.filter(external_manager=request.user.employee.company)
-    return render(request, "operations/external/routes-list.html", {"routes_ext": items})
+    routes = Route.objects.filter(driver__company=request.user.employee.company)
+    return render(request, "operations/external/routes-ext-list.html", {"routes_ext": items, 'routes': routes})
 
 @group_required("external",)
 def facility_external(request):
