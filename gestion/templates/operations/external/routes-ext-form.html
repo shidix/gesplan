@@ -73,9 +73,9 @@
 
 <div class="d-flex justify-content-end p-2">
     <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "operation-routes-external-list" %}"
-        data-target="div-routes">{% trans "Guardar" %}</button>
+        data-target="div-routes-ext">{% trans "Guardar" %}</button>
     &nbsp; &nbsp;
-    <button class="btn btn-danger text-white ark" data-url="{% url "operation-routes-external-remove" %}" data-target="div-routes" 
+    <button class="btn btn-danger text-white ark" data-url="{% url "operation-routes-external-remove" %}" data-target="div-routes-ext" 
         data-obj_id="{{obj.id}}" data-bs-dismiss="modal" title="{% trans 'Borrar' %}" 
         data-confirm="{% trans "Are you sure to remove this element?" %}">{% trans "Eliminar"%}</i></button>
 

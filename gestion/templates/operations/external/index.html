@@ -3,11 +3,29 @@
 
 {% block central_content %}
     {# -------------------------- ROUTES ------------------------#}
+    {%comment%}
     <div class="toolbar-content p-3 text-end">
         <button type="button" class="btn btn-sm ark new" data-url="{%url "operation-routes-external-form"%}" 
             data-target-modal="common-modal"> <i class="fas fa-plus"></i> {% trans 'Crear Ruta' %}</button> 
     </div>
+    {%endcomment%}
  
-    <div id="div-routes">{% include "operations/external/routes-list.html" %} </div>
+    <ul class="nav nav-tabs mx-2 pl-2 pr-2 pt-2">
+        <li class="nav-item"> <a class="nav-link {%if not current_tab or current_tab == ""%}active{%endif%}" 
+            data-bs-toggle="tab" href="#routes-ext"> {% trans "Rutas" %}</a> </li>
+        <li class="nav-item"> <a class="nav-link {%if current_tab == "routes"%}active{%endif%}" data-bs-toggle="tab" href="#routes">
+            {%trans "Rutas Conductores"%}</a> </li>
+    </ul>
+    <div class="tab-content internal mx-2 p-0">
+        {# -------------------------- ROUTES EXT ------------------------#}
+        <div class="tab-pane container {%if not current_tab or current_tab == ""%}active{%endif%} m-0" id="routes-ext">
+            <div id="div-routes-ext"> {% include "operations/external/routes-ext-list.html" %}</div></div>
+
+        {# -------------------------- ROUTES ------------------------#}
+        <div class="tab-pane container {%if current_tab == "routes"%}active{%endif%} m-0" id="routes"><div id="div-routes">
+            {% include "operations/external/routes-list.html" %}</div></div>
+    </div>
+
+    {#<div id="div-routes">{% include "operations/external/routes-list.html" %} </div>#}
     {% include "common-modal.html" %}
 {% endblock central_content %}
